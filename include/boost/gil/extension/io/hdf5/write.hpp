@@ -8,29 +8,12 @@
 #ifndef BOOST_GIL_EXTENSION_IO_HDF5_WRITE_HPP
 #define BOOST_GIL_EXTENSION_IO_HDF5_WRITE_HPP
 
-template< typename Device >
-class writer< Device
-            , hdf5_tag
-            >
-{
-public:
+#include <boost/gil/extension/io/hdf5/tags.hpp>
+#include <boost/gil/extension/io/hdf5/detail/write.hpp>
+#include <boost/gil/extension/io/hdf5/detail/supported_types.hpp>
 
-    writer( Device & file )
-    : out(file)
-    {}
-
-    template<typename View>
-    void apply( const View& view )
-    {
-        // your implementation here
-    }
-
-    template<typename View>
-    void apply( const View&                        view
-              , const image_write_info< hdf5_tag >& info )
-    {
-        // your implementation here
-    }
-};
+#include <boost/gil/io/make_writer.hpp>
+#include <boost/gil/io/make_dynamic_image_writer.hpp>
+#include <boost/gil/io/write_view.hpp>
 
 #endif

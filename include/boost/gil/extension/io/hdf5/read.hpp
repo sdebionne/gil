@@ -8,46 +8,20 @@
 #ifndef BOOST_GIL_EXTENSION_IO_HDF5_READ_HPP
 #define BOOST_GIL_EXTENSION_IO_HDF5_READ_HPP
 
-template< typename Device
-        , typename ConversionPolicy
-        >
-class reader< Device
-            , hdf5_tag
-            , ConversionPolicy
-            >
-            : public reader_base< hdf5_tag
-                                , ConversionPolicy
-                                >
-{
-private:
+#include <boost/gil/extension/io/hdf5/tags.hpp>
+#include <boost/gil/extension/io/hdf5/detail/read.hpp>
+#include <boost/gil/extension/io/hdf5/detail/supported_types.hpp>
 
-    typedef typename ConversionPolicy::color_converter_type cc_t;
-
-public:
-
-    reader( Device& device )
-    : _io_dev( device )
-    {}
-
-    reader( Device&     device
-          , const cc_t& cc
-          )
-    : _io_dev( device )
-    , reader_base< hdf5_tag
-                 , ConversionPolicy
-                 >( cc )
-    {}
-
-    image_read_info< hdf5_tag > get_info()
-    {
-        // your implementation here
-    }
-
-    template< typename View >
-    void apply( const View& dst_view )
-    {
-        // your implementation here
-    }
-};
+#include <boost/gil/io/get_reader.hpp>
+#include <boost/gil/io/make_backend.hpp>
+#include <boost/gil/io/make_dynamic_image_reader.hpp>
+#include <boost/gil/io/make_reader.hpp>
+#include <boost/gil/io/make_scanline_reader.hpp>
+#include <boost/gil/io/read_and_convert_image.hpp>
+#include <boost/gil/io/read_and_convert_view.hpp>
+#include <boost/gil/io/read_image.hpp>
+#include <boost/gil/io/read_image_info.hpp>
+#include <boost/gil/io/read_view.hpp>
+#include <boost/gil/io/scanline_read_iterator.hpp>
 
 #endif
