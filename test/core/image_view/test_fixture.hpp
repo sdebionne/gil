@@ -34,4 +34,4 @@ auto make_image_rgb8() -> gil::rgb8_image_t
     return image;
 }
 
-}}}}
+}}}}  // namespace boost::gil::test::fixture

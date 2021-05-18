@@ -5,36 +5,39 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
+#include <boost/gil/cmyk.hpp>
 #include <boost/gil/color_convert.hpp>
 #include <boost/gil/gray.hpp>
 #include <boost/gil/rgb.hpp>
 #include <boost/gil/rgba.hpp>
-#include <boost/gil/cmyk.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
-#include <type_traits>
-
-#include "test_utility_output_stream.hpp"
 #include "core/pixel/test_fixture.hpp"
+#include "test_utility_output_stream.hpp"
+#include <type_traits>
 
 namespace gil = boost::gil;
 namespace mp11 = boost::mp11;
 
 #ifdef BOOST_GIL_TEST_DEBUG
-#include <boost/core/demangle.hpp>
-#include <iostream>
+#    include <boost/core/demangle.hpp>
+
+#    include <iostream>
 namespace {
 template <class T>
-std::string name() { return boost::core::demangle(typeid(T).name()); }
+std::string name()
+{
+    return boost::core::demangle(typeid(T).name());
 }
+}  // namespace
 #endif
 
 template <typename ColorSpaces>
 struct test_roundtrip_convertible
 {
-    template<typename Src, typename Dst>
+    template <typename Src, typename Dst>
     void operator()(mp11::mp_list<Src, Dst> const&) const
     {
 #ifdef BOOST_GIL_TEST_DEBUG
@@ -58,17 +61,15 @@ struct test_roundtrip_convertible
     }
     static void run()
     {
-        boost::mp11::mp_for_each
-        <
-            mp11::mp_product<mp11::mp_list, ColorSpaces, ColorSpaces>
-        >(test_roundtrip_convertible{});
+        boost::mp11::mp_for_each<mp11::mp_product<mp11::mp_list, ColorSpaces, ColorSpaces>>(
+            test_roundtrip_convertible{});
     }
 };
 
 template <typename ColorSpaces>
 struct test_convertible
 {
-    template<typename Src, typename Dst>
+    template <typename Src, typename Dst>
     void operator()(mp11::mp_list<Src, Dst> const&) const
     {
 #ifdef BOOST_GIL_TEST_DEBUG
@@ -86,24 +87,16 @@ struct test_convertible
     }
     static void run()
     {
-        boost::mp11::mp_for_each
-        <
-            mp11::mp_product<mp11::mp_list, ColorSpaces, ColorSpaces>
-        >(test_convertible{});
+        boost::mp11::mp_for_each<mp11::mp_product<mp11::mp_list, ColorSpaces, ColorSpaces>>(
+            test_convertible{});
     }
 };
 
 int main()
 {
-    test_convertible
-    <
-        mp11::mp_list<gil::cmyk_t, gil::gray_t, gil::rgb_t, gil::rgba_t>
-    >::run();
+    test_convertible<mp11::mp_list<gil::cmyk_t, gil::gray_t, gil::rgb_t, gil::rgba_t>>::run();
 
-    test_roundtrip_convertible
-    <
-        mp11::mp_list<gil::gray_t, gil::rgb_t>
-    >::run();
+    test_roundtrip_convertible<mp11::mp_list<gil::gray_t, gil::rgb_t>>::run();
 
     test_roundtrip_convertible<mp11::mp_list<gil::cmyk_t>>::run();
     test_roundtrip_convertible<mp11::mp_list<gil::gray_t>>::run();

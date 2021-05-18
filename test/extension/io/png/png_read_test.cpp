@@ -27,7 +27,7 @@ namespace fs = boost::filesystem;
 
 using gray_alpha8_pixel_t = gil::pixel<std::uint8_t, gil::gray_alpha_layout_t>;
 using gray_alpha8c_pixel_t = gil::pixel<std::uint8_t, gil::gray_alpha_layout_t> const;
-using gray_alpha8_image_t= gil::image<gray_alpha8_pixel_t, false>;
+using gray_alpha8_image_t = gil::image<gray_alpha8_pixel_t, false>;
 
 using gray_alpha16_pixel_t = gil::pixel<std::uint16_t, gil::gray_alpha_layout_t>;
 using gray_alpha16c_pixel_t = gil::pixel<std::uint16_t, gil::gray_alpha_layout_t> const;
@@ -39,10 +39,10 @@ void test_file(std::string filename)
     Image src, dst;
 
     gil::image_read_settings<gil::png_tag> settings;
-    settings._read_file_gamma        = true;
+    settings._read_file_gamma = true;
     settings._read_transparency_data = true;
 
-    using backend_t   = gil::get_reader_backend<std::string const, gil::png_tag>::type;
+    using backend_t = gil::get_reader_backend<std::string const, gil::png_tag>::type;
     backend_t backend = gil::read_image_info(png_in + filename, settings);
 
     gil::read_image(png_in + filename, src, settings);
@@ -55,7 +55,7 @@ void test_file(std::string filename)
     gil::read_image(png_out + filename, dst, settings);
 
     BOOST_TEST(gil::equal_pixels(gil::const_view(src), gil::const_view(dst)));
-#endif // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 template <typename Image>
@@ -319,7 +319,7 @@ void test_read_with_trns_chunk_color_type_3()
         BOOST_TEST_EQ(const_view(img).back(), gil::rgba8c_pixel_t(0, 0, 255, 255));
     }
 }
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
 
 #ifdef BOOST_GIL_IO_USE_PNG_TEST_SUITE_IMAGES
 void test_basic_format()
@@ -692,28 +692,18 @@ void test_gamma()
     // G25N3P04 - paletted, file-gamma = 2.50
     test_file<gil::rgb8_image_t>("G25N3P04.PNG");
 }
-#endif // BOOST_GIL_IO_USE_PNG_TEST_SUITE_IMAGES
+#endif  // BOOST_GIL_IO_USE_PNG_TEST_SUITE_IMAGES
 
 void test_corrupted_png_read()
 {
-// taken from https://github.com/boostorg/gil/issues/401#issue-518615480
-// author: https://github.com/misos1
+    // taken from https://github.com/boostorg/gil/issues/401#issue-518615480
+    // author: https://github.com/misos1
 
-	std::initializer_list<unsigned char> corrupt_png = {
-		0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A,
-		0x00, 0x00, 0x00, 0x0D,
-		'I', 'H', 'D', 'R',
-		0x00, 0x00, 0x04, 0x00,
-		0x00, 0x00, 0x05, 0xA9,
-		0x08, 0x02, 0x00, 0x00, 0x00,
-		0x68, 0x1B, 0xF7, 0x46,
-		0x00, 0x00, 0x00, 0x00,
-		'I', 'D', 'A', 'T',
-		0x35, 0xAF, 0x06, 0x1E,
-		0x00, 0x00, 0x00, 0x00,
-		'I', 'E', 'N', 'D',
-		0xAE, 0x42, 0x60, 0x82
-	};
+    std::initializer_list<unsigned char> corrupt_png
+        = {0x89, 'P',  'N',  'G',  0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 'I',  'H',  'D',
+           'R',  0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x05, 0xA9, 0x08, 0x02, 0x00, 0x00, 0x00, 0x68,
+           0x1B, 0xF7, 0x46, 0x00, 0x00, 0x00, 0x00, 'I',  'D',  'A',  'T',  0x35, 0xAF, 0x06, 0x1E,
+           0x00, 0x00, 0x00, 0x00, 'I',  'E',  'N',  'D',  0xAE, 0x42, 0x60, 0x82};
 
     std::stringstream ss(
         std::string(corrupt_png.begin(), corrupt_png.end()),
@@ -748,7 +738,7 @@ int main()
     test_read_with_trns_chunk_color_type_0();
     test_read_with_trns_chunk_color_type_2();
     test_read_with_trns_chunk_color_type_3();
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
 
 #ifdef BOOST_GIL_IO_USE_PNG_TEST_SUITE_IMAGES
     test_basic_format();
@@ -761,4 +751,3 @@ int main()
 
     return boost::report_errors();
 }
-

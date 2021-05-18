@@ -34,7 +34,7 @@ void test_pnm_scanline_reader(std::string filename)
 #ifdef BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
 void test_read_header()
 {
-    using backend_t   = gil::get_reader_backend<std::string const, gil::pnm_tag>::type;
+    using backend_t = gil::get_reader_backend<std::string const, gil::pnm_tag>::type;
     backend_t backend = gil::read_image_info(pnm_filename, gil::pnm_tag());
 
     BOOST_TEST_EQ(backend._info._type, gil::pnm_image_type::color_bin_t::value);
@@ -43,7 +43,7 @@ void test_read_header()
     BOOST_TEST_EQ(backend._info._max_value, 255u);
 }
 
-#ifdef BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES
+#    ifdef BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES
 void test_read_reference_images()
 {
     // p1.pnm
@@ -107,18 +107,20 @@ void test_read_reference_images()
         test_pnm_scanline_reader<gil::rgb8_image_t>("p6.pnm");
     }
 }
-#endif // BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES
+#    endif  // BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES
 
 int main()
 {
     test_read_header();
 
-#ifdef BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES
+#    ifdef BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES
     test_read_reference_images();
-#endif
+#    endif
 
     return boost::report_errors();
 }
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

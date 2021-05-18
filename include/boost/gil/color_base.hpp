@@ -9,9 +9,9 @@
 #ifndef BOOST_GIL_COLOR_BASE_HPP
 #define BOOST_GIL_COLOR_BASE_HPP
 
-#include <boost/gil/utilities.hpp>
 #include <boost/gil/concepts.hpp>
 #include <boost/gil/detail/mp11.hpp>
+#include <boost/gil/utilities.hpp>
 
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
@@ -21,44 +21,57 @@
 namespace boost { namespace gil {
 
 // Forward-declare
-template <typename P> P* memunit_advanced(const P* p, std::ptrdiff_t diff);
+template <typename P>
+P* memunit_advanced(const P* p, std::ptrdiff_t diff);
 
 // Forward-declare semantic_at_c
 template <int K, typename ColorBase>
-auto semantic_at_c(ColorBase& p)
-    -> typename std::enable_if
-    <
-        !std::is_const<ColorBase>::value,
-        typename kth_semantic_element_reference_type<ColorBase, K>::type
-    >::type;
+auto semantic_at_c(ColorBase& p) -> typename std::enable_if<
+    !std::is_const<ColorBase>::value,
+    typename kth_semantic_element_reference_type<ColorBase, K>::type>::type;
 
 
 template <int K, typename ColorBase>
-typename kth_semantic_element_const_reference_type<ColorBase,K>::type semantic_at_c(const ColorBase& p);
+typename kth_semantic_element_const_reference_type<ColorBase, K>::type semantic_at_c(
+    const ColorBase& p);
 
 // Forward declare element_reference_type
-template <typename ColorBase> struct element_reference_type;
-template <typename ColorBase> struct element_const_reference_type;
-template <typename ColorBase, int K> struct kth_element_type;
-template <typename ColorBase, int K> struct kth_element_type<const ColorBase,K> : public kth_element_type<ColorBase,K> {};
-template <typename ColorBase, int K> struct kth_element_reference_type;
-template <typename ColorBase, int K> struct kth_element_reference_type<const ColorBase,K> : public kth_element_reference_type<ColorBase,K> {};
-template <typename ColorBase, int K> struct kth_element_const_reference_type;
-template <typename ColorBase, int K> struct kth_element_const_reference_type<const ColorBase,K> : public kth_element_const_reference_type<ColorBase,K> {};
+template <typename ColorBase>
+struct element_reference_type;
+template <typename ColorBase>
+struct element_const_reference_type;
+template <typename ColorBase, int K>
+struct kth_element_type;
+template <typename ColorBase, int K>
+struct kth_element_type<const ColorBase, K> : public kth_element_type<ColorBase, K>
+{
+};
+template <typename ColorBase, int K>
+struct kth_element_reference_type;
+template <typename ColorBase, int K>
+struct kth_element_reference_type<const ColorBase, K>
+    : public kth_element_reference_type<ColorBase, K>
+{
+};
+template <typename ColorBase, int K>
+struct kth_element_const_reference_type;
+template <typename ColorBase, int K>
+struct kth_element_const_reference_type<const ColorBase, K>
+    : public kth_element_const_reference_type<ColorBase, K>
+{
+};
 
 namespace detail {
 
 template <typename DstLayout, typename SrcLayout, int K>
-struct mapping_transform : mp11::mp_at
-    <
-        typename SrcLayout::channel_mapping_t,
-        typename detail::type_to_index
-        <
-            typename DstLayout::channel_mapping_t,
-            std::integral_constant<int, K>
-        >
-    >::type
-{};
+struct mapping_transform
+    : mp11::mp_at<
+          typename SrcLayout::channel_mapping_t,
+          typename detail::type_to_index<
+              typename DstLayout::channel_mapping_t,
+              std::integral_constant<int, K>>>::type
+{
+};
 
 /// \defgroup ColorBaseModelHomogeneous detail::homogeneous_color_base
 /// \ingroup ColorBaseModel
@@ -67,8 +80,8 @@ struct mapping_transform : mp11::mp_at
 /// If the element type models Regular, this class models HomogeneousColorBaseValueConcept.
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(push)
-#pragma warning(disable:4512) //assignment operator could not be generated
+#    pragma warning(push)
+#    pragma warning(disable : 4512)  //assignment operator could not be generated
 #endif
 
 /// \brief A homogeneous color base holding one color element.
@@ -79,31 +92,40 @@ struct homogeneous_color_base<Element, Layout, 1>
 {
     using layout_t = Layout;
 
-    template
-    <
+    template <
         typename U = Element,
-        typename = typename std::enable_if<!std::is_reference<U>::value>::type
-    >
-    homogeneous_color_base() : v0_{} {}
+        typename = typename std::enable_if<!std::is_reference<U>::value>::type>
+    homogeneous_color_base() : v0_{}
+    {
+    }
 
-    explicit homogeneous_color_base(Element v) : v0_(v) {}
+    explicit homogeneous_color_base(Element v) : v0_(v)
+    {
+    }
 
     template <typename E2, typename L2>
-    homogeneous_color_base(homogeneous_color_base<E2, L2, 1> const& c)
-        : v0_(gil::at_c<0>(c))
-    {}
+    homogeneous_color_base(homogeneous_color_base<E2, L2, 1> const& c) : v0_(gil::at_c<0>(c))
+    {
+    }
 
-    auto at(std::integral_constant<int, 0>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 0>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
     // grayscale pixel values are convertible to channel type
     // FIXME: explicit?
-    operator Element() const { return v0_; }
+    operator Element() const
+    {
+        return v0_;
+    }
 
 private:
     Element v0_;
@@ -117,43 +139,51 @@ struct homogeneous_color_base<Element, Layout, 2>
 {
     using layout_t = Layout;
 
-    template
-    <
+    template <
         typename U = Element,
-        typename = typename std::enable_if<!std::is_reference<U>::value>::type
-    >
-    homogeneous_color_base() : v0_{}, v1_{} {}
+        typename = typename std::enable_if<!std::is_reference<U>::value>::type>
+    homogeneous_color_base() : v0_{}
+                             , v1_{}
+    {
+    }
 
-    explicit homogeneous_color_base(Element v) : v0_(v), v1_(v) {}
+    explicit homogeneous_color_base(Element v) : v0_(v), v1_(v)
+    {
+    }
 
-    homogeneous_color_base(Element v0, Element v1) : v0_(v0), v1_(v1) {}
+    homogeneous_color_base(Element v0, Element v1) : v0_(v0), v1_(v1)
+    {
+    }
 
     template <typename E2, typename L2>
     homogeneous_color_base(homogeneous_color_base<E2, L2, 2> const& c)
         : v0_(gil::at_c<mapping_transform<Layout, L2, 0>::value>(c))
         , v1_(gil::at_c<mapping_transform<Layout, L2, 1>::value>(c))
-    {}
+    {
+    }
 
     // Support for l-value reference proxy copy construction
     template <typename E2, typename L2>
     homogeneous_color_base(homogeneous_color_base<E2, L2, 2>& c)
         : v0_(gil::at_c<mapping_transform<Layout, L2, 0>::value>(c))
         , v1_(gil::at_c<mapping_transform<Layout, L2, 1>::value>(c))
-    {}
+    {
+    }
 
     // Support for planar_pixel_iterator construction and dereferencing
     template <typename P>
-    homogeneous_color_base(P* p, bool)
-        : v0_(&semantic_at_c<0>(*p))
-        , v1_(&semantic_at_c<1>(*p))
-    {}
+    homogeneous_color_base(P* p, bool) : v0_(&semantic_at_c<0>(*p))
+                                       , v1_(&semantic_at_c<1>(*p))
+    {
+    }
 
     // Support for planar_pixel_reference offset constructor
     template <typename Ptr>
     homogeneous_color_base(Ptr const& ptr, std::ptrdiff_t diff)
         : v0_(*memunit_advanced(semantic_at_c<0>(ptr), diff))
         , v1_(*memunit_advanced(semantic_at_c<1>(ptr), diff))
-    {}
+    {
+    }
 
     template <typename Ref>
     Ref deref() const
@@ -161,21 +191,29 @@ struct homogeneous_color_base<Element, Layout, 2>
         return Ref(*semantic_at_c<0>(*this), *semantic_at_c<1>(*this));
     }
 
-    auto at(std::integral_constant<int, 0>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 0>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 1>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
-    auto at(std::integral_constant<int, 1>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
     // Support for planar_pixel_reference operator[]
     Element at_c_dynamic(std::size_t i) const
@@ -199,25 +237,30 @@ struct homogeneous_color_base<Element, Layout, 3>
 {
     using layout_t = Layout;
 
-    template
-    <
+    template <
         typename U = Element,
-        typename = typename std::enable_if<!std::is_reference<U>::value>::type
-    >
-    homogeneous_color_base() : v0_{}, v1_{}, v2_{} {}
+        typename = typename std::enable_if<!std::is_reference<U>::value>::type>
+    homogeneous_color_base() : v0_{}
+                             , v1_{}
+                             , v2_{}
+    {
+    }
 
-    explicit homogeneous_color_base(Element v) : v0_(v), v1_(v), v2_(v) {}
+    explicit homogeneous_color_base(Element v) : v0_(v), v1_(v), v2_(v)
+    {
+    }
 
-    homogeneous_color_base(Element v0, Element v1, Element v2)
-        : v0_(v0), v1_(v1), v2_(v2)
-    {}
+    homogeneous_color_base(Element v0, Element v1, Element v2) : v0_(v0), v1_(v1), v2_(v2)
+    {
+    }
 
     template <typename E2, typename L2>
     homogeneous_color_base(homogeneous_color_base<E2, L2, 3> const& c)
         : v0_(gil::at_c<mapping_transform<Layout, L2, 0>::value>(c))
         , v1_(gil::at_c<mapping_transform<Layout, L2, 1>::value>(c))
         , v2_(gil::at_c<mapping_transform<Layout, L2, 2>::value>(c))
-    {}
+    {
+    }
 
     // Support for l-value reference proxy copy construction
     template <typename E2, typename L2>
@@ -225,7 +268,8 @@ struct homogeneous_color_base<Element, Layout, 3>
         : v0_(gil::at_c<mapping_transform<Layout, L2, 0>::value>(c))
         , v1_(gil::at_c<mapping_transform<Layout, L2, 1>::value>(c))
         , v2_(gil::at_c<mapping_transform<Layout, L2, 2>::value>(c))
-    {}
+    {
+    }
 
     // Support for planar_pixel_iterator construction and dereferencing
     template <typename P>
@@ -233,7 +277,8 @@ struct homogeneous_color_base<Element, Layout, 3>
         : v0_(&semantic_at_c<0>(*p))
         , v1_(&semantic_at_c<1>(*p))
         , v2_(&semantic_at_c<2>(*p))
-    {}
+    {
+    }
 
     // Support for planar_pixel_reference offset constructor
     template <typename Ptr>
@@ -241,48 +286,60 @@ struct homogeneous_color_base<Element, Layout, 3>
         : v0_(*memunit_advanced(semantic_at_c<0>(ptr), diff))
         , v1_(*memunit_advanced(semantic_at_c<1>(ptr), diff))
         , v2_(*memunit_advanced(semantic_at_c<2>(ptr), diff))
-    {}
+    {
+    }
 
     template <typename Ref>
     Ref deref() const
     {
-        return Ref(
-            *semantic_at_c<0>(*this),
-            *semantic_at_c<1>(*this),
-            *semantic_at_c<2>(*this));
+        return Ref(*semantic_at_c<0>(*this), *semantic_at_c<1>(*this), *semantic_at_c<2>(*this));
     }
 
-    auto at(std::integral_constant<int, 0>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 0>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 1>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
-    auto at(std::integral_constant<int, 1>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
-    auto at(std::integral_constant<int, 2>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v2_; }
+    auto at(std::integral_constant<int, 2>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v2_;
+    }
 
-    auto at(std::integral_constant<int, 2>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v2_; }
+    auto at(std::integral_constant<int, 2>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v2_;
+    }
 
     // Support for planar_pixel_reference operator[]
     Element at_c_dynamic(std::size_t i) const
     {
         switch (i)
         {
-        case 0: return v0_;
-        case 1: return v1_;
+        case 0:
+            return v0_;
+        case 1:
+            return v1_;
         }
         return v2_;
     }
@@ -301,18 +358,27 @@ struct homogeneous_color_base<Element, Layout, 4>
 {
     using layout_t = Layout;
 
-    template
-    <
+    template <
         typename U = Element,
-        typename = typename std::enable_if<!std::is_reference<U>::value>::type
-    >
-    homogeneous_color_base() : v0_{}, v1_{}, v2_{}, v3_{} {}
+        typename = typename std::enable_if<!std::is_reference<U>::value>::type>
+    homogeneous_color_base() : v0_{}
+                             , v1_{}
+                             , v2_{}
+                             , v3_{}
+    {
+    }
 
-    explicit homogeneous_color_base(Element v) : v0_(v), v1_(v), v2_(v), v3_(v) {}
-    
+    explicit homogeneous_color_base(Element v) : v0_(v), v1_(v), v2_(v), v3_(v)
+    {
+    }
+
     homogeneous_color_base(Element v0, Element v1, Element v2, Element v3)
-        : v0_(v0), v1_(v1), v2_(v2), v3_(v3)
-    {}
+        : v0_(v0)
+        , v1_(v1)
+        , v2_(v2)
+        , v3_(v3)
+    {
+    }
 
     template <typename E2, typename L2>
     homogeneous_color_base(homogeneous_color_base<E2, L2, 4> const& c)
@@ -320,7 +386,8 @@ struct homogeneous_color_base<Element, Layout, 4>
         , v1_(gil::at_c<mapping_transform<Layout, L2, 1>::value>(c))
         , v2_(gil::at_c<mapping_transform<Layout, L2, 2>::value>(c))
         , v3_(gil::at_c<mapping_transform<Layout, L2, 3>::value>(c))
-    {}
+    {
+    }
 
     // Support for l-value reference proxy copy construction
     template <typename E2, typename L2>
@@ -329,16 +396,18 @@ struct homogeneous_color_base<Element, Layout, 4>
         , v1_(gil::at_c<mapping_transform<Layout, L2, 1>::value>(c))
         , v2_(gil::at_c<mapping_transform<Layout, L2, 2>::value>(c))
         , v3_(gil::at_c<mapping_transform<Layout, L2, 3>::value>(c))
-    {}
+    {
+    }
 
     // Support for planar_pixel_iterator construction and dereferencing
     template <typename P>
-    homogeneous_color_base(P * p, bool)
+    homogeneous_color_base(P* p, bool)
         : v0_(&semantic_at_c<0>(*p))
         , v1_(&semantic_at_c<1>(*p))
         , v2_(&semantic_at_c<2>(*p))
         , v3_(&semantic_at_c<3>(*p))
-    {}
+    {
+    }
 
     // Support for planar_pixel_reference offset constructor
     template <typename Ptr>
@@ -347,7 +416,8 @@ struct homogeneous_color_base<Element, Layout, 4>
         , v1_(*memunit_advanced(semantic_at_c<1>(ptr), diff))
         , v2_(*memunit_advanced(semantic_at_c<2>(ptr), diff))
         , v3_(*memunit_advanced(semantic_at_c<3>(ptr), diff))
-    {}
+    {
+    }
 
     template <typename Ref>
     Ref deref() const
@@ -359,46 +429,65 @@ struct homogeneous_color_base<Element, Layout, 4>
             *semantic_at_c<3>(*this));
     }
 
-    auto at(std::integral_constant<int, 0>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 0>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 1>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
-    auto at(std::integral_constant<int, 1>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
-    auto at(std::integral_constant<int, 2>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v2_; }
+    auto at(std::integral_constant<int, 2>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v2_;
+    }
 
-    auto at(std::integral_constant<int, 2>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v2_; }
+    auto at(std::integral_constant<int, 2>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v2_;
+    }
 
-    auto at(std::integral_constant<int, 3>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v3_; }
+    auto at(std::integral_constant<int, 3>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v3_;
+    }
 
-    auto at(std::integral_constant<int, 3>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v3_; }
+    auto at(std::integral_constant<int, 3>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v3_;
+    }
 
     // Support for planar_pixel_reference operator[]
     Element at_c_dynamic(std::size_t i) const
     {
         switch (i)
         {
-        case 0: return v0_;
-        case 1: return v1_;
-        case 2: return v2_;
+        case 0:
+            return v0_;
+        case 1:
+            return v1_;
+        case 2:
+            return v2_;
         }
         return v3_;
     }
@@ -418,22 +507,29 @@ struct homogeneous_color_base<Element, Layout, 5>
 {
     using layout_t = Layout;
 
-    template
-    <
+    template <
         typename U = Element,
-        typename = typename std::enable_if<!std::is_reference<U>::value>::type
-    >
-    homogeneous_color_base()
-        : v0_{}, v1_{}, v2_{}, v3_{}, v4_{}
-    {}
+        typename = typename std::enable_if<!std::is_reference<U>::value>::type>
+    homogeneous_color_base() : v0_{}
+                             , v1_{}
+                             , v2_{}
+                             , v3_{}
+                             , v4_{}
+    {
+    }
 
-    explicit homogeneous_color_base(Element v)
-        : v0_(v), v1_(v), v2_(v), v3_(v), v4_(v)
-    {}
+    explicit homogeneous_color_base(Element v) : v0_(v), v1_(v), v2_(v), v3_(v), v4_(v)
+    {
+    }
 
     homogeneous_color_base(Element v0, Element v1, Element v2, Element v3, Element v4)
-        : v0_(v0), v1_(v1), v2_(v2), v3_(v3), v4_(v4)
-    {}
+        : v0_(v0)
+        , v1_(v1)
+        , v2_(v2)
+        , v3_(v3)
+        , v4_(v4)
+    {
+    }
 
     template <typename E2, typename L2>
     homogeneous_color_base(homogeneous_color_base<E2, L2, 5> const& c)
@@ -442,7 +538,8 @@ struct homogeneous_color_base<Element, Layout, 5>
         , v2_(gil::at_c<mapping_transform<Layout, L2, 2>::value>(c))
         , v3_(gil::at_c<mapping_transform<Layout, L2, 3>::value>(c))
         , v4_(gil::at_c<mapping_transform<Layout, L2, 4>::value>(c))
-    {}
+    {
+    }
 
     // Support for l-value reference proxy copy construction
     template <typename E2, typename L2>
@@ -452,7 +549,8 @@ struct homogeneous_color_base<Element, Layout, 5>
         , v2_(gil::at_c<mapping_transform<Layout, L2, 2>::value>(c))
         , v3_(gil::at_c<mapping_transform<Layout, L2, 3>::value>(c))
         , v4_(gil::at_c<mapping_transform<Layout, L2, 4>::value>(c))
-    {}
+    {
+    }
 
     // Support for planar_pixel_iterator construction and dereferencing
     template <typename P>
@@ -462,7 +560,8 @@ struct homogeneous_color_base<Element, Layout, 5>
         , v2_(&semantic_at_c<2>(*p))
         , v3_(&semantic_at_c<3>(*p))
         , v4_(&semantic_at_c<4>(*p))
-    {}
+    {
+    }
 
     // Support for planar_pixel_reference offset constructor
     template <typename Ptr>
@@ -472,48 +571,69 @@ struct homogeneous_color_base<Element, Layout, 5>
         , v2_(*memunit_advanced(semantic_at_c<2>(ptr), diff))
         , v3_(*memunit_advanced(semantic_at_c<3>(ptr), diff))
         , v4_(*memunit_advanced(semantic_at_c<4>(ptr), diff))
-    {}
+    {
+    }
 
 
-    auto at(std::integral_constant<int, 0>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 0>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v0_; }
+    auto at(std::integral_constant<int, 0>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v0_;
+    }
 
-    auto at(std::integral_constant<int, 1>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
-    auto at(std::integral_constant<int, 1>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v1_; }
+    auto at(std::integral_constant<int, 1>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v1_;
+    }
 
-    auto at(std::integral_constant<int, 2>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v2_; }
+    auto at(std::integral_constant<int, 2>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v2_;
+    }
 
-    auto at(std::integral_constant<int, 2>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v2_; }
+    auto at(std::integral_constant<int, 2>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v2_;
+    }
 
-    auto at(std::integral_constant<int, 3>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v3_; }
+    auto at(std::integral_constant<int, 3>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v3_;
+    }
 
-    auto at(std::integral_constant<int, 3>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v3_; }
+    auto at(std::integral_constant<int, 3>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v3_;
+    }
 
-    auto at(std::integral_constant<int, 4>)
-        -> typename element_reference_type<homogeneous_color_base>::type
-    { return v4_; }
+    auto at(std::integral_constant<int, 4>) ->
+        typename element_reference_type<homogeneous_color_base>::type
+    {
+        return v4_;
+    }
 
-    auto at(std::integral_constant<int, 4>) const
-        -> typename element_const_reference_type<homogeneous_color_base>::type
-    { return v4_; }
+    auto at(std::integral_constant<int, 4>) const ->
+        typename element_const_reference_type<homogeneous_color_base>::type
+    {
+        return v4_;
+    }
 
     template <typename Ref>
     Ref deref() const
@@ -531,10 +651,14 @@ struct homogeneous_color_base<Element, Layout, 5>
     {
         switch (i)
         {
-        case 0: return v0_;
-        case 1: return v1_;
-        case 2: return v2_;
-        case 3: return v3_;
+        case 0:
+            return v0_;
+        case 1:
+            return v1_;
+        case 2:
+            return v2_;
+        case 3:
+            return v3_;
         }
         return v4_;
     }
@@ -548,7 +672,7 @@ private:
 };
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
 // The following way of casting adjacent channels (the contents of color_base) into an array appears to be unsafe
@@ -562,48 +686,38 @@ private:
 // However, the client must nevertheless ensure that proper compiler settings are used for their compiler and their channel types.
 
 template <typename Element, typename Layout, int K>
-auto dynamic_at_c(homogeneous_color_base<Element,Layout,K>& cb, std::size_t i)
-    -> typename element_reference_type<homogeneous_color_base<Element, Layout, K>>::type
+auto dynamic_at_c(homogeneous_color_base<Element, Layout, K>& cb, std::size_t i) ->
+    typename element_reference_type<homogeneous_color_base<Element, Layout, K>>::type
 {
     BOOST_ASSERT(i < K);
     return (gil_reinterpret_cast<Element*>(&cb))[i];
 }
 
 template <typename Element, typename Layout, int K>
-auto dynamic_at_c(homogeneous_color_base<Element, Layout, K> const& cb, std::size_t i)
-    -> typename element_const_reference_type
-        <
-            homogeneous_color_base<Element, Layout, K>
-        >::type
+auto dynamic_at_c(homogeneous_color_base<Element, Layout, K> const& cb, std::size_t i) ->
+    typename element_const_reference_type<homogeneous_color_base<Element, Layout, K>>::type
 {
     BOOST_ASSERT(i < K);
     return (gil_reinterpret_cast_c<const Element*>(&cb))[i];
 }
 
 template <typename Element, typename Layout, int K>
-auto dynamic_at_c(homogeneous_color_base<Element&, Layout, K> const& cb, std::size_t i)
-    -> typename element_reference_type
-        <
-            homogeneous_color_base<Element&, Layout, K>
-        >::type
+auto dynamic_at_c(homogeneous_color_base<Element&, Layout, K> const& cb, std::size_t i) ->
+    typename element_reference_type<homogeneous_color_base<Element&, Layout, K>>::type
 {
     BOOST_ASSERT(i < K);
     return cb.at_c_dynamic(i);
 }
 
 template <typename Element, typename Layout, int K>
-auto dynamic_at_c(
-    homogeneous_color_base<Element const&, Layout, K>const& cb, std::size_t i)
-    -> typename element_const_reference_type
-        <
-            homogeneous_color_base<Element const&, Layout, K>
-        >::type
+auto dynamic_at_c(homogeneous_color_base<Element const&, Layout, K> const& cb, std::size_t i) ->
+    typename element_const_reference_type<homogeneous_color_base<Element const&, Layout, K>>::type
 {
     BOOST_ASSERT(i < K);
     return cb.at_c_dynamic(i);
 }
 
-} // namespace detail
+}  // namespace detail
 
 template <typename Element, typename Layout, int K1, int K>
 struct kth_element_type<detail::homogeneous_color_base<Element, Layout, K1>, K>
@@ -614,23 +728,20 @@ struct kth_element_type<detail::homogeneous_color_base<Element, Layout, K1>, K>
 template <typename Element, typename Layout, int K1, int K>
 struct kth_element_reference_type<detail::homogeneous_color_base<Element, Layout, K1>, K>
     : std::add_lvalue_reference<Element>
-{};
+{
+};
 
 template <typename Element, typename Layout, int K1, int K>
-struct kth_element_const_reference_type
-    <
-        detail::homogeneous_color_base<Element, Layout, K1>,
-        K
-    >
+struct kth_element_const_reference_type<detail::homogeneous_color_base<Element, Layout, K1>, K>
     : std::add_lvalue_reference<typename std::add_const<Element>::type>
-{};
+{
+};
 
 /// \brief Provides mutable access to the K-th element, in physical order
 /// \ingroup ColorBaseModelHomogeneous
 template <int K, typename E, typename L, int N>
-inline
-auto at_c(detail::homogeneous_color_base<E, L, N>& p)
-    -> typename std::add_lvalue_reference<E>::type
+inline auto at_c(detail::homogeneous_color_base<E, L, N>& p) ->
+    typename std::add_lvalue_reference<E>::type
 {
     return p.at(std::integral_constant<int, K>());
 }
@@ -638,15 +749,13 @@ auto at_c(detail::homogeneous_color_base<E, L, N>& p)
 /// \brief Provides constant access to the K-th element, in physical order
 /// \ingroup ColorBaseModelHomogeneous
 template <int K, typename E, typename L, int N>
-inline
-auto at_c(const detail::homogeneous_color_base<E, L, N>& p)
-    -> typename std::add_lvalue_reference<typename std::add_const<E>::type>::type
+inline auto at_c(const detail::homogeneous_color_base<E, L, N>& p) ->
+    typename std::add_lvalue_reference<typename std::add_const<E>::type>::type
 {
     return p.at(std::integral_constant<int, K>());
 }
 
-namespace detail
-{
+namespace detail {
 
 struct swap_fn
 {
@@ -658,11 +767,10 @@ struct swap_fn
     }
 };
 
-} // namespace detail
+}  // namespace detail
 
 template <typename E, typename L, int N>
-inline
-void swap(
+inline void swap(
     detail::homogeneous_color_base<E, L, N>& x,
     detail::homogeneous_color_base<E, L, N>& y)
 {

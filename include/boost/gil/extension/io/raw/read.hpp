@@ -9,10 +9,9 @@
 #ifndef BOOST_GIL_EXTENSION_IO_RAW_READ_HPP
 #define BOOST_GIL_EXTENSION_IO_RAW_READ_HPP
 
-#include <boost/gil/extension/io/raw/tags.hpp>
-#include <boost/gil/extension/io/raw/detail/supported_types.hpp>
 #include <boost/gil/extension/io/raw/detail/read.hpp>
-
+#include <boost/gil/extension/io/raw/detail/supported_types.hpp>
+#include <boost/gil/extension/io/raw/tags.hpp>
 #include <boost/gil/io/get_reader.hpp>
 #include <boost/gil/io/make_backend.hpp>
 #include <boost/gil/io/make_dynamic_image_reader.hpp>

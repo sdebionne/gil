@@ -38,7 +38,7 @@ namespace boost { namespace gil {
 /// \ingroup HE
 /// \tparam SrcKeyType Key Type of input histogram
 /// @param src_hist INPUT Input source histogram
-/// \brief Overload for histogram equalization algorithm, takes in a single source histogram 
+/// \brief Overload for histogram equalization algorithm, takes in a single source histogram
 ///        and returns the color map used for histogram equalization.
 ///
 template <typename SrcKeyType>
@@ -59,24 +59,24 @@ std::map<SrcKeyType, SrcKeyType> histogram_equalization(histogram<SrcKeyType> co
 ///        as well as transforming the destination histogram.
 ///
 template <typename SrcKeyType, typename DstKeyType>
-std::map<SrcKeyType, DstKeyType>
-    histogram_equalization(histogram<SrcKeyType> const& src_hist, histogram<DstKeyType>& dst_hist)
+std::map<SrcKeyType, DstKeyType> histogram_equalization(
+    histogram<SrcKeyType> const& src_hist,
+    histogram<DstKeyType>& dst_hist)
 {
     static_assert(
-        std::is_integral<SrcKeyType>::value &&
-        std::is_integral<DstKeyType>::value,
+        std::is_integral<SrcKeyType>::value && std::is_integral<DstKeyType>::value,
         "Source and destination histogram types are not appropriate");
 
     using value_t = typename histogram<SrcKeyType>::value_type;
     dst_hist.clear();
-    double sum          = src_hist.sum();
-    SrcKeyType min_key  = std::numeric_limits<DstKeyType>::min();
-    SrcKeyType max_key  = std::numeric_limits<DstKeyType>::max();
+    double sum = src_hist.sum();
+    SrcKeyType min_key = std::numeric_limits<DstKeyType>::min();
+    SrcKeyType max_key = std::numeric_limits<DstKeyType>::max();
     auto cumltv_srchist = cumulative_histogram(src_hist);
     std::map<SrcKeyType, DstKeyType> color_map;
     std::for_each(cumltv_srchist.begin(), cumltv_srchist.end(), [&](value_t const& v) {
-        DstKeyType trnsfrmd_key =
-            static_cast<DstKeyType>((v.second * (max_key - min_key)) / sum + min_key);
+        DstKeyType trnsfrmd_key
+            = static_cast<DstKeyType>((v.second * (max_key - min_key)) / sum + min_key);
         color_map[std::get<0>(v.first)] = trnsfrmd_key;
     });
     std::for_each(src_hist.begin(), src_hist.end(), [&](value_t const& v) {
@@ -111,17 +111,17 @@ void histogram_equalization(
             typename color_space_type<SrcView>::type,
             typename color_space_type<DstView>::type>::value,
         "Source and destination views must have same color space");
-    
+
     // Defining channel type
     using source_channel_t = typename channel_type<SrcView>::type;
-    using dst_channel_t    = typename channel_type<DstView>::type;
-    using coord_t          = typename SrcView::x_coord_t;
+    using dst_channel_t = typename channel_type<DstView>::type;
+    using coord_t = typename SrcView::x_coord_t;
 
     std::size_t const channels = num_channels<SrcView>::value;
-    coord_t const width        = src_view.width();
-    coord_t const height       = src_view.height();
-    std::size_t pixel_max      = std::numeric_limits<dst_channel_t>::max();
-    std::size_t pixel_min      = std::numeric_limits<dst_channel_t>::min();
+    coord_t const width = src_view.width();
+    coord_t const height = src_view.height();
+    std::size_t pixel_max = std::numeric_limits<dst_channel_t>::max();
+    std::size_t pixel_min = std::numeric_limits<dst_channel_t>::min();
 
     for (std::size_t i = 0; i < channels; i++)
     {

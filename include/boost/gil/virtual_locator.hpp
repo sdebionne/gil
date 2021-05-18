@@ -30,21 +30,18 @@ namespace boost { namespace gil {
 /// \tparam IsTransposed Indicates if locator should navigate in transposed mode.
 template <typename DerefFn, bool IsTransposed>
 class virtual_2d_locator
-    : public pixel_2d_locator_base
-        <
-            virtual_2d_locator<DerefFn, IsTransposed>,
-            position_iterator<DerefFn, IsTransposed>,
-            position_iterator<DerefFn, 1-IsTransposed>
-        >
+    : public pixel_2d_locator_base<
+          virtual_2d_locator<DerefFn, IsTransposed>,
+          position_iterator<DerefFn, IsTransposed>,
+          position_iterator<DerefFn, 1 - IsTransposed>>
 {
     using this_t = virtual_2d_locator<DerefFn, IsTransposed>;
+
 public:
-    using parent_t = pixel_2d_locator_base
-        <
-            virtual_2d_locator<DerefFn, IsTransposed>,
-            position_iterator<DerefFn, IsTransposed>,
-            position_iterator<DerefFn, 1-IsTransposed>
-        >;
+    using parent_t = pixel_2d_locator_base<
+        virtual_2d_locator<DerefFn, IsTransposed>,
+        position_iterator<DerefFn, IsTransposed>,
+        position_iterator<DerefFn, 1 - IsTransposed>>;
     using const_t = virtual_2d_locator<typename DerefFn::const_t, IsTransposed>;
     using deref_fn_t = DerefFn;
     using point_t = typename parent_t::point_t;
@@ -61,7 +58,9 @@ public:
 
         static type make(this_t const& loc, NewDerefFn const& new_deref_fn)
         {
-            return type(loc.pos(), loc.step(),
+            return type(
+                loc.pos(),
+                loc.step(),
                 deref_compose<NewDerefFn, DerefFn>(new_deref_fn, loc.deref_fn()));
         }
     };
@@ -71,31 +70,44 @@ public:
         point_t const& step = {1, 1},
         deref_fn_t const& deref_fn = deref_fn_t())
         : y_pos_(p, step, deref_fn)
-    {}
+    {
+    }
 
     template <typename D, bool TR>
-    virtual_2d_locator(virtual_2d_locator<D, TR> const &loc, coord_t y_step)
+    virtual_2d_locator(virtual_2d_locator<D, TR> const& loc, coord_t y_step)
         : y_pos_(loc.pos(), point_t(loc.step().x, loc.step().y * y_step), loc.deref_fn())
-    {}
+    {
+    }
 
     template <typename D, bool TR>
-    virtual_2d_locator(virtual_2d_locator<D, TR> const& loc, coord_t x_step, coord_t y_step, bool transpose = false)
-        : y_pos_(loc.pos()
-        , transpose ?
-            point_t(loc.step().x * y_step, loc.step().y * x_step) :
-            point_t(loc.step().x * x_step, loc.step().y * y_step)
-        , loc.deref_fn())
+    virtual_2d_locator(
+        virtual_2d_locator<D, TR> const& loc,
+        coord_t x_step,
+        coord_t y_step,
+        bool transpose = false)
+        : y_pos_(
+            loc.pos(),
+            transpose ? point_t(loc.step().x * y_step, loc.step().y * x_step)
+                      : point_t(loc.step().x * x_step, loc.step().y * y_step),
+            loc.deref_fn())
     {
         BOOST_ASSERT(transpose == (IsTransposed != TR));
     }
 
     template <typename D, bool TR>
-    virtual_2d_locator(virtual_2d_locator<D, TR> const& other) : y_pos_(other.y_pos_) {}
+    virtual_2d_locator(virtual_2d_locator<D, TR> const& other) : y_pos_(other.y_pos_)
+    {
+    }
 
-    virtual_2d_locator(virtual_2d_locator const& other) : y_pos_(other.y_pos_) {}
+    virtual_2d_locator(virtual_2d_locator const& other) : y_pos_(other.y_pos_)
+    {
+    }
     virtual_2d_locator& operator=(virtual_2d_locator const& other) = default;
 
-    bool operator==(const this_t& p) const { return y_pos_ == p.y_pos_; }
+    bool operator==(const this_t& p) const
+    {
+        return y_pos_ == p.y_pos_;
+    }
 
     auto x() -> x_iterator&
     {
@@ -107,30 +119,47 @@ public:
         return *gil_reinterpret_cast_c<x_iterator const*>(this);
     }
 
-    auto y() -> y_iterator& { return y_pos_; }
-    auto y() const -> y_iterator const& { return y_pos_; }
+    auto y() -> y_iterator&
+    {
+        return y_pos_;
+    }
+    auto y() const -> y_iterator const&
+    {
+        return y_pos_;
+    }
 
     /// Returns the y distance between two x_iterators given the difference of their x positions
     auto y_distance_to(this_t const& it2, x_coord_t) const -> y_coord_t
     {
-        return (it2.pos()[1 - IsTransposed] - pos()[1 - IsTransposed])
-                / step()[1 - IsTransposed];
+        return (it2.pos()[1 - IsTransposed] - pos()[1 - IsTransposed]) / step()[1 - IsTransposed];
     }
 
     /// \todo TODO: is there no gap at the end of each row?
     ///       i.e. can we use x_iterator to visit every pixel instead of nested loops?
-    bool is_1d_traversable(x_coord_t) const { return false; }
+    bool is_1d_traversable(x_coord_t) const
+    {
+        return false;
+    }
 
     // Methods specific for virtual 2D locator
-    auto pos() const -> point_t const& { return y_pos_.pos(); }
-    auto step() const -> point_t const& { return y_pos_.step(); }
-    auto deref_fn() const -> deref_fn_t const& { return y_pos_.deref_fn(); }
+    auto pos() const -> point_t const&
+    {
+        return y_pos_.pos();
+    }
+    auto step() const -> point_t const&
+    {
+        return y_pos_.step();
+    }
+    auto deref_fn() const -> deref_fn_t const&
+    {
+        return y_pos_.deref_fn();
+    }
 
 private:
     template <typename D, bool TR>
     friend class virtual_2d_locator;
 
-    y_iterator y_pos_; // current position, the step and the dereference object
+    y_iterator y_pos_;  // current position, the step and the dereference object
 };
 
 /////////////////////////////
@@ -166,9 +195,9 @@ struct is_planar<virtual_2d_locator<D, TR>>
 /////////////////////////////
 
 template <typename D, bool TR>
-struct dynamic_x_step_type<virtual_2d_locator<D,TR>>
+struct dynamic_x_step_type<virtual_2d_locator<D, TR>>
 {
-    using type = virtual_2d_locator<D,TR>;
+    using type = virtual_2d_locator<D, TR>;
 };
 
 /////////////////////////////
@@ -176,9 +205,9 @@ struct dynamic_x_step_type<virtual_2d_locator<D,TR>>
 /////////////////////////////
 
 template <typename D, bool TR>
-struct dynamic_y_step_type<virtual_2d_locator<D,TR>>
+struct dynamic_y_step_type<virtual_2d_locator<D, TR>>
 {
-    using type = virtual_2d_locator<D,TR>;
+    using type = virtual_2d_locator<D, TR>;
 };
 
 /////////////////////////////
@@ -186,9 +215,9 @@ struct dynamic_y_step_type<virtual_2d_locator<D,TR>>
 /////////////////////////////
 
 template <typename D, bool IsTransposed>
-struct transposed_type<virtual_2d_locator<D,IsTransposed>>
+struct transposed_type<virtual_2d_locator<D, IsTransposed>>
 {
-    using type = virtual_2d_locator<D,1-IsTransposed>;
+    using type = virtual_2d_locator<D, 1 - IsTransposed>;
 };
 
 }}  // namespace boost::gil

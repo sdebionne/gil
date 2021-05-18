@@ -21,28 +21,27 @@ that can be applied for a variety of tasks.
 
 int main()
 {
-   // Create a histogram class. Use uint or unsigned short as the default axes type in most cases.
+    // Create a histogram class. Use uint or unsigned short as the default axes type in most cases.
     histogram<unsigned char> h;
 
     // Fill histogram with GIL images (of any color space)
     gray8_image_t g;
     read_image("test_adaptive.png", g, png_tag{});
 
-    fill_histogram
-    (
-        view(g), // Input image view
-        h,       // Histogram to be filled
-        1,       // Histogram bin widths
-        false,   // Specify whether to accumulate over the values already present in h (default = false)
-        true,    // Specify whether to have a sparse or continuous histogram (default = true)
-        false,   // Specify if image mask is to be specified
-        {{}},    // Mask as a 2D vector. Used only if prev argument specified
-        {0},     // Lower limit on the values in histogram (default numeric_limit::min() on axes)
-        {255},   // Upper limit on the values in histogram (default numeric_limit::max() on axes)
-        true     // Use specified limits if this is true (default is false)
+    fill_histogram(
+        view(g),  // Input image view
+        h,        // Histogram to be filled
+        1,        // Histogram bin widths
+        false,  // Specify whether to accumulate over the values already present in h (default = false)
+        true,   // Specify whether to have a sparse or continuous histogram (default = true)
+        false,  // Specify if image mask is to be specified
+        {{}},   // Mask as a 2D vector. Used only if prev argument specified
+        {0},    // Lower limit on the values in histogram (default numeric_limit::min() on axes)
+        {255},  // Upper limit on the values in histogram (default numeric_limit::max() on axes)
+        true    // Use specified limits if this is true (default is false)
     );
 
-    // Normalize the histogram 
+    // Normalize the histogram
     h.normalize();
 
     // Get a cumulative histogram from the histogram

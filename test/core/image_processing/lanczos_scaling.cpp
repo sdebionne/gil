@@ -35,22 +35,14 @@ void test_lanczos_black_image()
     const gil::point_t output_dimensions(input_dimensions.x / 2, input_dimensions.y / 2);
     gil::rgb8_image_t image(input_dimensions, gil::rgb8_pixel_t(0, 0, 0), 0);
     // fill with values other than 0
-    gil::rgb8_image_t output_image(
-        output_dimensions,
-        gil::rgb8_pixel_t(100, 100, 100),
-        0
-    );
-    gil::rgb8_image_t expected(
-        output_dimensions,
-        gil::rgb8_pixel_t(0, 0, 0),
-        0
-    );
+    gil::rgb8_image_t output_image(output_dimensions, gil::rgb8_pixel_t(100, 100, 100), 0);
+    gil::rgb8_image_t expected(output_dimensions, gil::rgb8_pixel_t(0, 0, 0), 0);
 
     auto view = gil::view(image);
     auto output_view = gil::view(output_image);
     auto expected_view = gil::view(expected);
     gil::scale_lanczos(view, output_view, 5);
-    BOOST_TEST(are_equal(expected_view,output_view));
+    BOOST_TEST(are_equal(expected_view, output_view));
 }
 
 void test_lanczos_response_on_zero()

@@ -6,15 +6,16 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <boost/gil/image.hpp>
-#include <boost/gil/image_view.hpp>
-#include <boost/gil/image_processing/numeric.hpp>
 #include <boost/gil/image_processing/harris.hpp>
+#include <boost/gil/image_processing/numeric.hpp>
+#include <boost/gil/image_view.hpp>
 
 #include <boost/core/lightweight_test.hpp>
 
 namespace gil = boost::gil;
 
-bool are_equal(gil::gray32f_view_t expected, gil::gray32f_view_t actual) {
+bool are_equal(gil::gray32f_view_t expected, gil::gray32f_view_t actual)
+{
     if (expected.dimensions() != actual.dimensions())
         return false;
 
@@ -43,12 +44,7 @@ void test_blank_image()
     gil::gray32f_image_t m22(dimensions);
     gil::gray32f_image_t expected(dimensions, gil::gray32f_pixel_t(0), 0);
     gil::compute_tensor_entries(
-        gil::view(dx),
-        gil::view(dy),
-        gil::view(m11),
-        gil::view(m12_21),
-        gil::view(m22)
-    );
+        gil::view(dx), gil::view(dy), gil::view(m11), gil::view(m12_21), gil::view(m22));
     BOOST_TEST(are_equal(gil::view(expected), gil::view(m11)));
     BOOST_TEST(are_equal(gil::view(expected), gil::view(m12_21)));
     BOOST_TEST(are_equal(gil::view(expected), gil::view(m22)));
@@ -61,8 +57,7 @@ void test_blank_image()
         gil::view(m22),
         unnormalized_mean,
         0.04f,
-        gil::view(harris_response)
-    );
+        gil::view(harris_response));
     BOOST_TEST(are_equal(gil::view(expected), gil::view(harris_response)));
 }
 

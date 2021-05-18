@@ -12,8 +12,10 @@ namespace boost { namespace gil { namespace detail {
 
 // TODO: Remove, replace with ignore_unised?
 template <typename T>
-void initialize_it(T&) {}
+void initialize_it(T&)
+{
+}
 
-}}} // namespace boost::gil::detail
+}}}  // namespace boost::gil::detail
 
 #endif

@@ -31,16 +31,17 @@ void test_write_tile_and_compare_with_minisblack_strip_32()
     gil::read_image(filename_strip, img_strip, gil::tiff_tag());
 
     gil::image_write_info<gil::tiff_tag> info;
-    info._is_tiled   = true;
+    info._is_tiled = true;
     info._tile_width = info._tile_length = 16;
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(
         tiff_out + "write_minisblack_tile_and_compare_with_32.tif", gil::view(img_strip), info);
-    gil::read_image(tiff_out + "write_minisblack_tile_and_compare_with_32.tif", img_saved, gil::tiff_tag());
+    gil::read_image(
+        tiff_out + "write_minisblack_tile_and_compare_with_32.tif", img_saved, gil::tiff_tag());
 
     BOOST_TEST(gil::equal_pixels(gil::const_view(img_strip), gil::const_view(img_saved)));
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_write_tile_and_compare_with_minisblack_strip_64()
@@ -53,15 +54,17 @@ void test_write_tile_and_compare_with_minisblack_strip_64()
     gil::read_image(filename_strip, img_strip, gil::tiff_tag());
 
     gil::image_write_info<gil::tiff_tag> info;
-    info._is_tiled   = true;
+    info._is_tiled = true;
     info._tile_width = info._tile_length = 16;
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
-    write_view(tiff_out + "write_minisblack_tile_and_compare_with_64.tif", gil::view(img_strip), info);
-    gil::read_image(tiff_out + "write_minisblack_tile_and_compare_with_64.tif", img_saved, gil::tiff_tag());
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+    write_view(
+        tiff_out + "write_minisblack_tile_and_compare_with_64.tif", gil::view(img_strip), info);
+    gil::read_image(
+        tiff_out + "write_minisblack_tile_and_compare_with_64.tif", img_saved, gil::tiff_tag());
 
     BOOST_TEST(gil::equal_pixels(gil::const_view(img_strip), gil::const_view(img_saved)));
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -75,5 +78,7 @@ int main()
 }
 
 #else
-int main() {}
+int main()
+{
+}
 #endif  // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES

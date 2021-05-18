@@ -16,54 +16,32 @@
 
 namespace boost { namespace gil {
 
-template< typename T
-        , typename FormatTag
-        , class Enable = void
-        >
+template <typename T, typename FormatTag, class Enable = void>
 struct get_read_device
-{};
+{
+};
 
 template <typename Device, typename FormatTag>
-struct get_read_device
-<
+struct get_read_device<
     Device,
     FormatTag,
-    typename std::enable_if
-    <
-        mp11::mp_and
-        <
-            detail::is_adaptable_input_device<FormatTag, Device>,
-            is_format_tag<FormatTag>
-        >::value
-    >::type
->
+    typename std::enable_if<mp11::mp_and<
+        detail::is_adaptable_input_device<FormatTag, Device>,
+        is_format_tag<FormatTag>>::value>::type>
 {
-    using type = typename detail::is_adaptable_input_device
-        <
-            FormatTag,
-            Device
-        >::device_type;
+    using type = typename detail::is_adaptable_input_device<FormatTag, Device>::device_type;
 };
 
 template <typename String, typename FormatTag>
-struct get_read_device
-<
+struct get_read_device<
     String,
     FormatTag,
-    typename std::enable_if
-    <
-        mp11::mp_and
-        <
-            detail::is_supported_path_spec<String>,
-            is_format_tag<FormatTag>
-        >::value
-    >::type
->
+    typename std::enable_if<
+        mp11::mp_and<detail::is_supported_path_spec<String>, is_format_tag<FormatTag>>::value>::type>
 {
     using type = detail::file_stream_device<FormatTag>;
 };
 
-} // namespace gil
-} // namespace boost
+}}  // namespace boost::gil
 
 #endif

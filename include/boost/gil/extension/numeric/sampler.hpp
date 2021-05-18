@@ -8,8 +8,8 @@
 #ifndef BOOST_GIL_EXTENSION_NUMERIC_SAMPLER_HPP
 #define BOOST_GIL_EXTENSION_NUMERIC_SAMPLER_HPP
 
-#include <boost/gil/extension/numeric/pixel_numeric_operations.hpp>
 #include <boost/gil/extension/dynamic_image/dynamic_image_all.hpp>
+#include <boost/gil/extension/numeric/pixel_numeric_operations.hpp>
 
 namespace boost { namespace gil {
 
@@ -33,7 +33,9 @@ concept SamplerConcept {
 
 /// \brief A sampler that sets the destination pixel to the closest one in the source. If outside the bounds, it doesn't change the destination
 /// \ingroup ImageAlgorithms
-struct nearest_neighbor_sampler {};
+struct nearest_neighbor_sampler
+{
+};
 
 template <typename DstP, typename SrcView, typename F>
 bool sample(nearest_neighbor_sampler, SrcView const& src, point<F> const& p, DstP& result)
@@ -41,146 +43,189 @@ bool sample(nearest_neighbor_sampler, SrcView const& src, point<F> const& p, Dst
     typename SrcView::point_t center(iround(p));
     if (center.x >= 0 && center.y >= 0 && center.x < src.width() && center.y < src.height())
     {
-        result=src(center.x,center.y);
+        result = src(center.x, center.y);
         return true;
     }
     return false;
 }
 
-struct cast_channel_fn {
+struct cast_channel_fn
+{
     template <typename SrcChannel, typename DstChannel>
-    void operator()(const SrcChannel& src, DstChannel& dst) {
+    void operator()(const SrcChannel& src, DstChannel& dst)
+    {
         using dst_value_t = typename channel_traits<DstChannel>::value_type;
         dst = dst_value_t(src);
     }
 };
 
 template <typename SrcPixel, typename DstPixel>
-void cast_pixel(const SrcPixel& src, DstPixel& dst) {
-    static_for_each(src,dst,cast_channel_fn());
+void cast_pixel(const SrcPixel& src, DstPixel& dst)
+{
+    static_for_each(src, dst, cast_channel_fn());
 }
 
 namespace detail {
 
 template <typename Weight>
-struct add_dst_mul_src_channel {
+struct add_dst_mul_src_channel
+{
     Weight _w;
-    add_dst_mul_src_channel(Weight w) : _w(w) {}
+    add_dst_mul_src_channel(Weight w) : _w(w)
+    {
+    }
 
     template <typename SrcChannel, typename DstChannel>
-    void operator()(const SrcChannel& src, DstChannel& dst) const {
-        dst += DstChannel(src*_w);
+    void operator()(const SrcChannel& src, DstChannel& dst) const
+    {
+        dst += DstChannel(src * _w);
     }
 };
 
 // dst += DST_TYPE(src * w)
-template <typename SrcP,typename Weight,typename DstP>
-struct add_dst_mul_src {
-    void operator()(const SrcP& src, Weight weight, DstP& dst) const {
-        static_for_each(src,dst, add_dst_mul_src_channel<Weight>(weight));
-//        pixel_assigns_t<DstP,DstP&>()(
-//            pixel_plus_t<DstP,DstP,DstP>()(
-//                pixel_multiplies_scalar_t<SrcP,Weight,DstP>()(src,weight),
-//                dst),
-//            dst);
+template <typename SrcP, typename Weight, typename DstP>
+struct add_dst_mul_src
+{
+    void operator()(const SrcP& src, Weight weight, DstP& dst) const
+    {
+        static_for_each(src, dst, add_dst_mul_src_channel<Weight>(weight));
+        //        pixel_assigns_t<DstP,DstP&>()(
+        //            pixel_plus_t<DstP,DstP,DstP>()(
+        //                pixel_multiplies_scalar_t<SrcP,Weight,DstP>()(src,weight),
+        //                dst),
+        //            dst);
     }
 };
-} // namespace detail
+}  // namespace detail
 
 /// \brief A sampler that sets the destination pixel as the bilinear interpolation of the four closest pixels from the source.
 /// If outside the bounds, it doesn't change the destination
 /// \ingroup ImageAlgorithms
-struct bilinear_sampler {};
+struct bilinear_sampler
+{
+};
 
 template <typename DstP, typename SrcView, typename F>
 bool sample(bilinear_sampler, SrcView const& src, point<F> const& p, DstP& result)
 {
     using SrcP = typename SrcView::value_type;
-    point_t p0(ifloor(p.x), ifloor(p.y)); // the closest integer coordinate top left from p
-    point<F> frac(p.x-p0.x, p.y-p0.y);
+    point_t p0(ifloor(p.x), ifloor(p.y));  // the closest integer coordinate top left from p
+    point<F> frac(p.x - p0.x, p.y - p0.y);
 
-    if (p0.x < -1 || p0.y < -1 || p0.x>=src.width() || p0.y>=src.height())
+    if (p0.x < -1 || p0.y < -1 || p0.x >= src.width() || p0.y >= src.height())
     {
         return false;
     }
 
-	pixel<F,devicen_layout_t<num_channels<SrcView>::value> > mp(0); // suboptimal
-	typename SrcView::xy_locator loc=src.xy_at(p0.x,p0.y);
+    pixel<F, devicen_layout_t<num_channels<SrcView>::value>> mp(0);  // suboptimal
+    typename SrcView::xy_locator loc = src.xy_at(p0.x, p0.y);
 
-	if (p0.x == -1)
+    if (p0.x == -1)
     {
-		if (p0.y == -1)
+        if (p0.y == -1)
         {
-		    // the top-left corner pixel
-			++loc.y();
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1],  1        ,mp);
-		}
-        else if (p0.y+1<src.height())
+            // the top-left corner pixel
+            ++loc.y();
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], 1, mp);
+        }
+        else if (p0.y + 1 < src.height())
         {
             // on the first column, but not the top-left nor bottom-left corner pixel
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1], (1-frac.y),mp);
-			++loc.y();
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1],    frac.y ,mp);
-		}
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], (1 - frac.y), mp);
+            ++loc.y();
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], frac.y, mp);
+        }
         else
         {
-			// the bottom-left corner pixel
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1],  1        ,mp);
-		}
-	}
-    else if (p0.x+1<src.width())
+            // the bottom-left corner pixel
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], 1, mp);
+        }
+    }
+    else if (p0.x + 1 < src.width())
     {
-		if (p0.y == -1)
+        if (p0.y == -1)
         {
-		    // on the first row, but not the top-left nor top-right corner pixel
-			++loc.y();
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc,      (1-frac.x)           ,mp);
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1],   frac.x            ,mp);
-		}
-        else if (p0.y+1<src.height())
+            // on the first row, but not the top-left nor top-right corner pixel
+            ++loc.y();
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, (1 - frac.x), mp);
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], frac.x, mp);
+        }
+        else if (p0.y + 1 < src.height())
         {
-			// most common case - inside the image, not on the frist nor last row/column
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc,      (1-frac.x)*(1-frac.y),mp);
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1],   frac.x *(1-frac.y),mp);
-			++loc.y();
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc,      (1-frac.x)*   frac.y ,mp);
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1],   frac.x *   frac.y ,mp);
-		}
+            // most common case - inside the image, not on the frist nor last row/column
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, (1 - frac.x) * (1 - frac.y), mp);
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], frac.x * (1 - frac.y), mp);
+            ++loc.y();
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, (1 - frac.x) * frac.y, mp);
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], frac.x * frac.y, mp);
+        }
         else
         {
-			// on the last row, but not the bottom-left nor bottom-right corner pixel
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc,      (1-frac.x)           ,mp);
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(loc.x()[1],   frac.x            ,mp);
-		}
-	}
+            // on the last row, but not the bottom-left nor bottom-right corner pixel
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, (1 - frac.x), mp);
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    loc.x()[1], frac.x, mp);
+        }
+    }
     else
     {
         if (p0.y == -1)
         {
             // the top-right corner pixel
             ++loc.y();
-            detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc,  1        ,mp);
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, 1, mp);
         }
-        else if (p0.y+1<src.height())
+        else if (p0.y + 1 < src.height())
         {
-			// on the last column, but not the top-right nor bottom-right corner pixel
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc, (1-frac.y),mp);
-			++loc.y();
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc,    frac.y ,mp);
-		}
+            // on the last column, but not the top-right nor bottom-right corner pixel
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, (1 - frac.y), mp);
+            ++loc.y();
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, frac.y, mp);
+        }
         else
         {
-			// the bottom-right corner pixel
-			detail::add_dst_mul_src<SrcP,F,pixel<F,devicen_layout_t<num_channels<SrcView>::value> > >()(*loc,  1        ,mp);
-		}
-	}
+            // the bottom-right corner pixel
+            detail::
+                add_dst_mul_src<SrcP, F, pixel<F, devicen_layout_t<num_channels<SrcView>::value>>>()(
+                    *loc, 1, mp);
+        }
+    }
 
-	// Convert from floating point average value to the source type
-	SrcP src_result;
-	cast_pixel(mp,src_result);
+    // Convert from floating point average value to the source type
+    SrcP src_result;
+    cast_pixel(mp, src_result);
 
-	color_convert(src_result, result);
-	return true;
+    color_convert(src_result, result);
+    return true;
 }
 
 }}  // namespace boost::gil

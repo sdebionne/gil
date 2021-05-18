@@ -8,13 +8,11 @@
 //
 
 #include <boost/gil/point.hpp>
+
 #include <cmath>
 #include <cstddef>
 
-namespace boost
-{
-namespace gil
-{
+namespace boost { namespace gil {
 /// \defgroup Rasterization
 /// \brief A set of functions to rasterize shapes
 ///
@@ -75,8 +73,8 @@ struct bresenham_line_rasterizer
         }
         std::ptrdiff_t const x_increment = end.x >= start.x ? 1 : -1;
         std::ptrdiff_t const y_increment = end.y >= start.y ? 1 : -1;
-        double const slope =
-            height == 1 ? 0 : static_cast<double>(height) / static_cast<double>(width);
+        double const slope = height == 1 ? 0
+                                         : static_cast<double>(height) / static_cast<double>(width);
         std::ptrdiff_t y = start.y;
         double error_term = 0;
         for (std::ptrdiff_t x = start.x; x != end.x; x += x_increment)
@@ -94,4 +92,4 @@ struct bresenham_line_rasterizer
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil

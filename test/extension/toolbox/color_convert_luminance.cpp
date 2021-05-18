@@ -16,8 +16,20 @@
 
 namespace gil = boost::gil;
 
-struct double_zero { static double apply() { return 0.0; } };
-struct double_one  { static double apply() { return 1.0; } };
+struct double_zero
+{
+    static double apply()
+    {
+        return 0.0;
+    }
+};
+struct double_one
+{
+    static double apply()
+    {
+        return 1.0;
+    }
+};
 
 using gray64f_pixel_t = gil::pixel<double, gil::gray_layout_t>;
 using rgb64f_pixel_t = gil::pixel<double, gil::rgb_layout_t>;

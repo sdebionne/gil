@@ -8,9 +8,8 @@
 #ifndef BOOST_GIL_IO_DYNAMIC_IO_NEW_HPP
 #define BOOST_GIL_IO_DYNAMIC_IO_NEW_HPP
 
-#include <boost/gil/extension/dynamic_image/dynamic_image_all.hpp>
-
 #include <boost/gil/detail/mp11.hpp>
+#include <boost/gil/extension/dynamic_image/dynamic_image_all.hpp>
 #include <boost/gil/io/error.hpp>
 
 #include <type_traits>
@@ -22,25 +21,28 @@ namespace detail {
 template <long N>
 struct construct_matched_t
 {
-    template <typename ...Images,typename Pred>
+    template <typename... Images, typename Pred>
     static bool apply(any_image<Images...>& img, Pred pred)
     {
-        if (pred.template apply<mp11::mp_at_c<any_image<Images...>, N-1>>())
+        if (pred.template apply<mp11::mp_at_c<any_image<Images...>, N - 1>>())
         {
-            using image_t = mp11::mp_at_c<any_image<Images...>, N-1>;
+            using image_t = mp11::mp_at_c<any_image<Images...>, N - 1>;
             image_t x;
             img = std::move(x);
             return true;
         }
         else
-            return construct_matched_t<N-1>::apply(img, pred);
+            return construct_matched_t<N - 1>::apply(img, pred);
     }
 };
 template <>
 struct construct_matched_t<0>
 {
-    template <typename ...Images,typename Pred>
-    static bool apply(any_image<Images...>&,Pred) { return false; }
+    template <typename... Images, typename Pred>
+    static bool apply(any_image<Images...>&, Pred)
+    {
+        return false;
+    }
 };
 
 // A function object that can be passed to apply_operation.
@@ -53,10 +55,16 @@ private:
     OpClass* _op;
 
     template <typename View>
-    void apply(View const& view, std::true_type) { _op->apply(view); }
+    void apply(View const& view, std::true_type)
+    {
+        _op->apply(view);
+    }
 
     template <typename View, typename Info>
-    void apply(View const& view, Info const & info, const std::true_type) { _op->apply(view, info); }
+    void apply(View const& view, Info const& info, const std::true_type)
+    {
+        _op->apply(view, info);
+    }
 
     template <typename View>
     void apply(View const& /* view */, std::false_type)
@@ -64,14 +72,16 @@ private:
         io_error("dynamic_io: unsupported view type for the given file format");
     }
 
-    template <typename View, typename Info >
+    template <typename View, typename Info>
     void apply(View const& /* view */, Info const& /* info */, const std::false_type)
     {
         io_error("dynamic_io: unsupported view type for the given file format");
     }
 
 public:
-    dynamic_io_fnobj(OpClass* op) : _op(op) {}
+    dynamic_io_fnobj(OpClass* op) : _op(op)
+    {
+    }
 
     using result_type = void;
 
@@ -81,24 +91,24 @@ public:
         apply(view, typename IsSupported::template apply<View>::type());
     }
 
-    template< typename View, typename Info >
+    template <typename View, typename Info>
     void operator()(View const& view, Info const& info)
     {
         apply(view, info, typename IsSupported::template apply<View>::type());
     }
 };
 
-} // namespace detail
+}  // namespace detail
 
 /// \brief Within the any_image, constructs an image with the given dimensions
 ///        and a type that satisfies the given predicate
-template <typename ...Images,typename Pred>
+template <typename... Images, typename Pred>
 inline bool construct_matched(any_image<Images...>& img, Pred pred)
 {
     constexpr auto size = mp11::mp_size<any_image<Images...>>::value;
     return detail::construct_matched_t<size>::apply(img, pred);
 }
 
-} }  // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

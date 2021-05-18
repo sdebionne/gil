@@ -13,13 +13,13 @@
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/typedefs.hpp>
 
-#include "hvstack.hpp"
-
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <set>
 #include <vector>
+
+#include "hvstack.hpp"
 
 namespace gil = boost::gil;
 
@@ -38,14 +38,14 @@ gil::gray8_image_t to_grayscale(gil::rgb8_view_t original)
         for (long int x = 0; x < original.width(); ++x)
         {
             // scale the values into range [0, 1] and calculate linear intensity
-            double red_intensity =
-                original(x, y).at(std::integral_constant<int, 0>{}) / max_channel_intensity;
-            double green_intensity =
-                original(x, y).at(std::integral_constant<int, 1>{}) / max_channel_intensity;
-            double blue_intensity =
-                original(x, y).at(std::integral_constant<int, 2>{}) / max_channel_intensity;
-            auto linear_luminosity =
-                0.2126 * red_intensity + 0.7152 * green_intensity + 0.0722 * blue_intensity;
+            double red_intensity
+                = original(x, y).at(std::integral_constant<int, 0>{}) / max_channel_intensity;
+            double green_intensity
+                = original(x, y).at(std::integral_constant<int, 1>{}) / max_channel_intensity;
+            double blue_intensity
+                = original(x, y).at(std::integral_constant<int, 2>{}) / max_channel_intensity;
+            auto linear_luminosity
+                = 0.2126 * red_intensity + 0.7152 * green_intensity + 0.0722 * blue_intensity;
 
             // perform gamma adjustment
             double gamma_compressed_luminosity = 0;
@@ -71,12 +71,7 @@ void apply_gaussian_blur(gil::gray8_view_t input_view, gil::gray8_view_t output_
     constexpr static auto filterHeight = 5ull;
     constexpr static auto filterWidth = 5ull;
     constexpr static double filter[filterHeight][filterWidth] = {
-        { 2, 4, 6, 4, 2 },
-        { 4, 9, 12, 9, 4 },
-        { 5, 12, 15, 12, 5},
-        { 4, 9, 12, 9, 4 },
-        { 2, 4, 5, 4, 2 }
-    };
+        {2, 4, 6, 4, 2}, {4, 9, 12, 9, 4}, {5, 12, 15, 12, 5}, {4, 9, 12, 9, 4}, {2, 4, 5, 4, 2}};
     constexpr double factor = 1.0 / 159;
     constexpr double bias = 0.0;
 
@@ -93,14 +88,14 @@ void apply_gaussian_blur(gil::gray8_view_t input_view, gil::gray8_view_t output_
                 {
                     int image_x = x - filterWidth / 2 + filter_x;
                     int image_y = y - filterHeight / 2 + filter_y;
-                    if (image_x >= input_view.width() || image_x < 0 ||
-                        image_y >= input_view.height() || image_y < 0)
+                    if (image_x >= input_view.width() || image_x < 0
+                        || image_y >= input_view.height() || image_y < 0)
                     {
                         continue;
                     }
                     auto& pixel = input_view(image_x, image_y);
-                    intensity +=
-                        pixel.at(std::integral_constant<int, 0>{}) * filter[filter_y][filter_x];
+                    intensity
+                        += pixel.at(std::integral_constant<int, 0>{}) * filter[filter_y][filter_x];
                 }
             }
             auto& pixel = output_view(gil::point_t(x, y));
@@ -109,8 +104,9 @@ void apply_gaussian_blur(gil::gray8_view_t input_view, gil::gray8_view_t output_
     }
 }
 
-std::vector<gil::point_t> suppress(gil::gray32f_view_t harris_response,
-                                   double harris_response_threshold)
+std::vector<gil::point_t> suppress(
+    gil::gray32f_view_t harris_response,
+    double harris_response_threshold)
 {
     std::vector<gil::point_t> corner_points;
     for (gil::gray32f_view_t::coord_t y = 1; y < harris_response.height() - 1; ++y)
@@ -120,18 +116,24 @@ std::vector<gil::point_t> suppress(gil::gray32f_view_t harris_response,
             auto value = [](gil::gray32f_pixel_t pixel) {
                 return pixel.at(std::integral_constant<int, 0>{});
             };
-            double values[9] = {
-                value(harris_response(x - 1, y - 1)), value(harris_response(x, y - 1)),
-                value(harris_response(x + 1, y - 1)), value(harris_response(x - 1, y)),
-                value(harris_response(x, y)),         value(harris_response(x + 1, y)),
-                value(harris_response(x - 1, y + 1)), value(harris_response(x, y + 1)),
-                value(harris_response(x + 1, y + 1))};
+            double values[9]
+                = {value(harris_response(x - 1, y - 1)),
+                   value(harris_response(x, y - 1)),
+                   value(harris_response(x + 1, y - 1)),
+                   value(harris_response(x - 1, y)),
+                   value(harris_response(x, y)),
+                   value(harris_response(x + 1, y)),
+                   value(harris_response(x - 1, y + 1)),
+                   value(harris_response(x, y + 1)),
+                   value(harris_response(x + 1, y + 1))};
 
-            auto maxima = *std::max_element(values, values + 9,
-                                            [](double lhs, double rhs) { return lhs < rhs; });
+            auto maxima = *std::max_element(values, values + 9, [](double lhs, double rhs) {
+                return lhs < rhs;
+            });
 
-            if (maxima == value(harris_response(x, y)) &&
-                std::count(values, values + 9, maxima) == 1 && maxima >= harris_response_threshold)
+            if (maxima == value(harris_response(x, y))
+                && std::count(values, values + 9, maxima) == 1
+                && maxima >= harris_response_threshold)
             {
                 corner_points.emplace_back(x, y);
             }
@@ -178,14 +180,18 @@ int main(int argc, char* argv[])
     gil::gray32f_image_t m11(x_gradient.dimensions());
     gil::gray32f_image_t m12_21(x_gradient.dimensions());
     gil::gray32f_image_t m22(x_gradient.dimensions());
-    gil::compute_tensor_entries(x_gradient, y_gradient, gil::view(m11), gil::view(m12_21),
-                                gil::view(m22));
+    gil::compute_tensor_entries(
+        x_gradient, y_gradient, gil::view(m11), gil::view(m12_21), gil::view(m22));
 
     gil::gray32f_image_t harris_response(x_gradient.dimensions());
     auto gaussian_kernel = gil::generate_gaussian_kernel(window_size, 0.84089642);
-    gil::compute_harris_responses(gil::view(m11), gil::view(m12_21), gil::view(m22),
-                                  gaussian_kernel, discrimnation_constant,
-                                  gil::view(harris_response));
+    gil::compute_harris_responses(
+        gil::view(m11),
+        gil::view(m12_21),
+        gil::view(m22),
+        gaussian_kernel,
+        discrimnation_constant,
+        gil::view(harris_response));
 
     auto corner_points = suppress(gil::view(harris_response), harris_response_threshold);
     for (auto point : corner_points)

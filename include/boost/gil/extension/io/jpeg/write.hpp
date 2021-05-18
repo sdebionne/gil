@@ -8,12 +8,11 @@
 #ifndef BOOST_GIL_EXTENSION_IO_JPEG_WRITE_HPP
 #define BOOST_GIL_EXTENSION_IO_JPEG_WRITE_HPP
 
-#include <boost/gil/extension/io/jpeg/tags.hpp>
 #include <boost/gil/extension/io/jpeg/detail/supported_types.hpp>
 #include <boost/gil/extension/io/jpeg/detail/write.hpp>
-
-#include <boost/gil/io/make_writer.hpp>
+#include <boost/gil/extension/io/jpeg/tags.hpp>
 #include <boost/gil/io/make_dynamic_image_writer.hpp>
+#include <boost/gil/io/make_writer.hpp>
 #include <boost/gil/io/write_view.hpp>
 
 #endif

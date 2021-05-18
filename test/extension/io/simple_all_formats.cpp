@@ -5,9 +5,9 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#include <boost/gil/extension/io/png.hpp>
 #include <boost/gil/extension/io/bmp.hpp>
 #include <boost/gil/extension/io/jpeg.hpp>
+#include <boost/gil/extension/io/png.hpp>
 #include <boost/gil/extension/io/pnm.hpp>
 #include <boost/gil/extension/io/targa.hpp>
 #include <boost/gil/extension/io/tiff.hpp>

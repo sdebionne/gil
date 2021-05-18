@@ -10,10 +10,10 @@
 // when compiling with concepts check enabled.
 // See https://bugs.llvm.org/show_bug.cgi?id=41759
 #if !defined(BOOST_GIL_USE_CONCEPT_CHECK) && !defined(__clang__)
-#error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
+#    error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
 #endif
-#include <boost/gil/concepts.hpp>
 #include <boost/gil/color_base.hpp>
+#include <boost/gil/concepts.hpp>
 #include <boost/gil/typedefs.hpp>
 
 #include <boost/concept_check.hpp>
@@ -23,20 +23,14 @@ using boost::function_requires;
 
 int main()
 {
-    function_requires<gil::ColorBaseConcept
-        <
-            gil::detail::homogeneous_color_base<std::uint8_t, gil::gray_layout_t, 1>
-        >>();
+    function_requires<gil::ColorBaseConcept<
+        gil::detail::homogeneous_color_base<std::uint8_t, gil::gray_layout_t, 1>>>();
 
-    function_requires<gil::HomogeneousColorBaseConcept
-        <
-            gil::detail::homogeneous_color_base<std::uint8_t, gil::gray_layout_t, 1>
-        >>();
+    function_requires<gil::HomogeneousColorBaseConcept<
+        gil::detail::homogeneous_color_base<std::uint8_t, gil::gray_layout_t, 1>>>();
 
-    function_requires<gil::HomogeneousColorBaseValueConcept
-        <
-            gil::detail::homogeneous_color_base<std::uint8_t, gil::gray_layout_t, 1>
-        >>();
+    function_requires<gil::HomogeneousColorBaseValueConcept<
+        gil::detail::homogeneous_color_base<std::uint8_t, gil::gray_layout_t, 1>>>();
 
     // FIXME: https://github.com/boostorg/gil/issues/271
     //function_requires
@@ -50,5 +44,4 @@ int main()
     function_requires<gil::ColorBaseConcept<gil::gray8_pixel_t>>();
     function_requires<gil::ColorBaseConcept<gil::rgb8_pixel_t>>();
     function_requires<gil::ColorBaseConcept<gil::bgr8_pixel_t>>();
-
 }

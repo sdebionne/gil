@@ -7,9 +7,9 @@
 //
 
 #include <boost/gil/histogram.hpp>
-#include <boost/gil/image_view.hpp>
-#include <boost/gil/image_processing/histogram_equalization.hpp>
 #include <boost/gil/image_processing/adaptive_histogram_equalization.hpp>
+#include <boost/gil/image_processing/histogram_equalization.hpp>
+#include <boost/gil/image_view.hpp>
 
 #include <boost/core/lightweight_test.hpp>
 
@@ -20,19 +20,14 @@ namespace gil = boost::gil;
 
 double epsilon = 1.0;
 
-std::uint8_t image_matrix[] = 
-{
-    1, 1, 1, 1, 
-    3, 3, 3, 3, 
-    5, 5, 5, 5,
-    7, 7, 7, 7
-};
-gil::gray8c_view_t gray_view = gil::interleaved_view(4, 4, reinterpret_cast<gil::gray8c_pixel_t*>(image_matrix), 4);
+std::uint8_t image_matrix[] = {1, 1, 1, 1, 3, 3, 3, 3, 5, 5, 5, 5, 7, 7, 7, 7};
+gil::gray8c_view_t gray_view
+    = gil::interleaved_view(4, 4, reinterpret_cast<gil::gray8c_pixel_t*>(image_matrix), 4);
 
 void check_actual_clip_limit()
 {
     gil::histogram<unsigned char> h;
-    for(std::size_t i = 0; i < 100; i++)
+    for (std::size_t i = 0; i < 100; i++)
     {
         if (i % 40 == 0)
         {
@@ -48,7 +43,7 @@ void check_actual_clip_limit()
 
     long actual_limit = round(value * h.sum()), max_bin_val = 0;
     double excess = 0;
-    for(std::size_t i = 0; i < 100; i++)
+    for (std::size_t i = 0; i < 100; i++)
     {
         if (h(i) > actual_limit)
             excess += actual_limit - h(i);
@@ -60,7 +55,7 @@ void check_actual_clip_limit()
 void check_clip_and_redistribute()
 {
     gil::histogram<unsigned char> h, h2;
-    for(std::size_t i = 0; i < 100; i++)
+    for (std::size_t i = 0; i < 100; i++)
     {
         if (i % 50 == 0)
         {
@@ -72,9 +67,9 @@ void check_clip_and_redistribute()
         }
     }
     bool check = true;
-    double limit = 0.001; 
+    double limit = 0.001;
     gil::detail::clip_and_redistribute(h, h2, limit);
-    for(std::size_t i = 0; i < 100; i++)
+    for (std::size_t i = 0; i < 100; i++)
     {
         check = check & (std::abs(limit * h.sum() - h2(i)) < epsilon);
     }

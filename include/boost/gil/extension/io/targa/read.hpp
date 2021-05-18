@@ -8,11 +8,10 @@
 #ifndef BOOST_GIL_EXTENSION_IO_TARGA_READ_HPP
 #define BOOST_GIL_EXTENSION_IO_TARGA_READ_HPP
 
-#include <boost/gil/extension/io/targa/tags.hpp>
 #include <boost/gil/extension/io/targa/detail/read.hpp>
 #include <boost/gil/extension/io/targa/detail/scanline_read.hpp>
 #include <boost/gil/extension/io/targa/detail/supported_types.hpp>
-
+#include <boost/gil/extension/io/targa/tags.hpp>
 #include <boost/gil/io/get_reader.hpp>
 #include <boost/gil/io/make_backend.hpp>
 #include <boost/gil/io/make_dynamic_image_reader.hpp>

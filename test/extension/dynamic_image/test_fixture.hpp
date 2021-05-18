@@ -10,12 +10,9 @@
 
 #include <tuple>
 
-namespace boost { namespace gil {
+namespace boost { namespace gil { namespace test { namespace fixture {
 
-namespace test { namespace fixture {
-
-using dynamic_image = gil::any_image
-<
+using dynamic_image = gil::any_image<
     gil::gray8_image_t,
     gil::gray16_image_t,
     gil::gray32_image_t,
@@ -27,8 +24,7 @@ using dynamic_image = gil::any_image
     gil::rgb32_image_t,
     gil::rgba8_image_t,
     gil::rgba16_image_t,
-    gil::rgba32_image_t
->;
+    gil::rgba32_image_t>;
 
 template <typename Image>
 struct fill_any_view
@@ -37,11 +33,15 @@ struct fill_any_view
     using pixel_t = typename Image::value_type;
 
     fill_any_view(std::initializer_list<int> dst_view_indices, pixel_t pixel_value)
-        : dst_view_indices_(dst_view_indices), pixel_value_(pixel_value)
-    {}
+        : dst_view_indices_(dst_view_indices)
+        , pixel_value_(pixel_value)
+    {
+    }
 
     template <typename View>
-    void operator()(View& /*dst_view*/) { /* sink any other views here */ }
+    void operator()(View& /*dst_view*/)
+    { /* sink any other views here */
+    }
 
     void operator()(typename Image::view_t& dst_view)
     {
@@ -54,4 +54,4 @@ struct fill_any_view
     pixel_t pixel_value_;
 };
 
-}}}} // namespace boost::gil::test::fixture
+}}}}  // namespace boost::gil::test::fixture

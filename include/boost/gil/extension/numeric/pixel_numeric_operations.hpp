@@ -8,9 +8,8 @@
 #ifndef BOOST_GIL_EXTENSION_NUMERIC_PIXEL_NUMERIC_OPERATIONS_HPP
 #define BOOST_GIL_EXTENSION_NUMERIC_PIXEL_NUMERIC_OPERATIONS_HPP
 
-#include <boost/gil/extension/numeric/channel_numeric_operations.hpp>
-
 #include <boost/gil/color_base_algorithm.hpp>
+#include <boost/gil/extension/numeric/channel_numeric_operations.hpp>
 #include <boost/gil/pixel.hpp>
 
 namespace boost { namespace gil {
@@ -37,13 +36,14 @@ struct pixel_plus_t
     auto operator()(PixelRef1 const& p1, PixelRef2 const& p2) const -> PixelResult
     {
         PixelResult result;
-        static_transform(p1, p2, result,
-            channel_plus_t
-            <
+        static_transform(
+            p1,
+            p2,
+            result,
+            channel_plus_t<
                 typename channel_type<PixelRef1>::type,
                 typename channel_type<PixelRef2>::type,
-                typename channel_type<PixelResult>::type
-            >());
+                typename channel_type<PixelResult>::type>());
         return result;
     }
 };
@@ -59,13 +59,14 @@ struct pixel_minus_t
     auto operator()(PixelRef1 const& p1, PixelRef2 const& p2) const -> PixelResult
     {
         PixelResult result;
-        static_transform(p1, p2, result,
-            channel_minus_t
-            <
+        static_transform(
+            p1,
+            p2,
+            result,
+            channel_minus_t<
                 typename channel_type<PixelRef1>::type,
                 typename channel_type<PixelRef2>::type,
-                typename channel_type<PixelResult>::type
-            >());
+                typename channel_type<PixelResult>::type>());
         return result;
     }
 };
@@ -81,12 +82,16 @@ struct pixel_multiplies_scalar_t
     auto operator()(PixelRef const& p, Scalar const& s) const -> PixelResult
     {
         PixelResult result;
-        static_transform(p, result,
+        static_transform(
+            p,
+            result,
             std::bind(
-                channel_multiplies_scalar_t<typename channel_type<PixelRef>::type,
-                Scalar,
-                typename channel_type<PixelResult>::type>(),
-                std::placeholders::_1, s));
+                channel_multiplies_scalar_t<
+                    typename channel_type<PixelRef>::type,
+                    Scalar,
+                    typename channel_type<PixelResult>::type>(),
+                std::placeholders::_1,
+                s));
         return result;
     }
 };
@@ -102,13 +107,14 @@ struct pixel_multiply_t
     auto operator()(PixelRef1 const& p1, PixelRef2 const& p2) const -> PixelResult
     {
         PixelResult result;
-        static_transform(p1, p2, result,
-            channel_multiplies_t
-            <
+        static_transform(
+            p1,
+            p2,
+            result,
+            channel_multiplies_t<
                 typename channel_type<PixelRef1>::type,
                 typename channel_type<PixelRef2>::type,
-                typename channel_type<PixelResult>::type
-            >());
+                typename channel_type<PixelResult>::type>());
         return result;
     }
 };
@@ -124,11 +130,16 @@ struct pixel_divides_scalar_t
     auto operator()(PixelRef const& p, Scalar const& s) const -> PixelResult
     {
         PixelResult result;
-        static_transform(p, result,
-            std::bind(channel_divides_scalar_t<typename channel_type<PixelRef>::type,
-                Scalar,
-                typename channel_type<PixelResult>::type>(),
-                std::placeholders::_1, s));
+        static_transform(
+            p,
+            result,
+            std::bind(
+                channel_divides_scalar_t<
+                    typename channel_type<PixelRef>::type,
+                    Scalar,
+                    typename channel_type<PixelResult>::type>(),
+                std::placeholders::_1,
+                s));
         return result;
     }
 };
@@ -144,13 +155,14 @@ struct pixel_divide_t
     auto operator()(PixelRef1 const& p1, PixelRef2 const& p2) const -> PixelResult
     {
         PixelResult result;
-        static_transform(p1, p2, result,
-            channel_divides_t
-            <
+        static_transform(
+            p1,
+            p2,
+            result,
+            channel_divides_t<
                 typename channel_type<PixelRef1>::type,
                 typename channel_type<PixelRef2>::type,
-                typename channel_type<PixelResult>::type
-            >());
+                typename channel_type<PixelResult>::type>());
         return result;
     }
 };
@@ -202,16 +214,16 @@ struct pixel_assigns_t
 {
     auto operator()(PixelRef const& src, PixelResult& dst) const -> PixelResult
     {
-        static_for_each(src, dst,
-            channel_assigns_t
-            <
+        static_for_each(
+            src,
+            dst,
+            channel_assigns_t<
                 typename channel_type<PixelRef>::type,
-                typename channel_type<PixelResult>::type
-            >());
+                typename channel_type<PixelResult>::type>());
         return dst;
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

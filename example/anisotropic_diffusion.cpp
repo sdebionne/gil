@@ -16,12 +16,16 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+
 #include <type_traits>
 
 namespace gil = boost::gil;
 
-void gray_version(std::string const& input_path, std::string const& output_path,
-                  unsigned int iteration_count, float kappa)
+void gray_version(
+    std::string const& input_path,
+    std::string const& output_path,
+    unsigned int iteration_count,
+    float kappa)
 {
     gil::gray8_image_t input;
     gil::read_image(input_path, input, gil::png_tag{});
@@ -42,8 +46,9 @@ void gray_version(std::string const& input_path, std::string const& output_path,
     gil::for_each_pixel(output_view, [&sum_after](gil::gray32f_pixel_t p) { sum_after += p[0]; });
 
     gil::gray8_image_t true_output(output.dimensions());
-    gil::transform_pixels(output_view, gil::view(true_output),
-                          [](gil::gray32f_pixel_t p) { return static_cast<gil::uint8_t>(p[0]); });
+    gil::transform_pixels(output_view, gil::view(true_output), [](gil::gray32f_pixel_t p) {
+        return static_cast<gil::uint8_t>(p[0]);
+    });
 
     gil::write_view(output_path, gil::view(true_output), gil::png_tag{});
 
@@ -52,8 +57,11 @@ void gray_version(std::string const& input_path, std::string const& output_path,
               << "difference: " << sum_after - sum_before << '\n';
 }
 
-void rgb_version(const std::string& input_path, const std::string& output_path,
-                 unsigned int iteration_count, float kappa)
+void rgb_version(
+    const std::string& input_path,
+    const std::string& output_path,
+    unsigned int iteration_count,
+    float kappa)
 {
     gil::rgb8_image_t input;
     gil::read_image(input_path, input, gil::png_tag{});
@@ -85,8 +93,10 @@ void rgb_version(const std::string& input_path, const std::string& output_path,
 
     gil::rgb8_image_t true_output(output.dimensions());
     gil::transform_pixels(output_view, gil::view(true_output), [](gil::rgb32f_pixel_t p) {
-        return gil::rgb8_pixel_t(static_cast<gil::uint8_t>(p[0]), static_cast<gil::uint8_t>(p[1]),
-                                 static_cast<gil::uint8_t>(p[2]));
+        return gil::rgb8_pixel_t(
+            static_cast<gil::uint8_t>(p[0]),
+            static_cast<gil::uint8_t>(p[1]),
+            static_cast<gil::uint8_t>(p[2]));
     });
 
     gil::write_view(output_path, gil::view(true_output), gil::png_tag{});

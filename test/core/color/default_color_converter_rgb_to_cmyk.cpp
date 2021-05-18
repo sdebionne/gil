@@ -1,12 +1,13 @@
 #include <boost/gil.hpp>
+#include <boost/gil/cmyk.hpp>
 #include <boost/gil/color_convert.hpp>
 #include <boost/gil/rgb.hpp>
-#include <boost/gil/cmyk.hpp>
-#include <boost/mp11.hpp>
+
 #include <boost/core/lightweight_test.hpp>
-#include <type_traits>
+#include <boost/mp11.hpp>
 
 #include "test_utility_output_stream.hpp"
+#include <type_traits>
 
 namespace gil = boost::gil;
 
@@ -16,7 +17,7 @@ void test_unsigned_rgb_to_unsigned_cmyk()
     {
         gil::rgb8_pixel_t src{0, 0, 0};
         gil::cmyk8_pixel_t dst;
-        gil::cmyk8_pixel_t expected_dst{0,0,0,255};
+        gil::cmyk8_pixel_t expected_dst{0, 0, 0, 255};
 
         gil::color_convert(src, dst);
         BOOST_TEST_EQ(dst, expected_dst);
@@ -92,7 +93,7 @@ void test_signed_rgb_to_unsigned_cmyk()
     {
         gil::rgb8s_pixel_t src{-128, -128, -128};
         gil::cmyk8_pixel_t dst;
-        gil::cmyk8_pixel_t expected_dst{0,0,0,255};
+        gil::cmyk8_pixel_t expected_dst{0, 0, 0, 255};
 
         gil::color_convert(src, dst);
         BOOST_TEST_EQ(dst, expected_dst);
@@ -244,7 +245,7 @@ void test_signed_rgb_to_signed_cmyk()
     {
         gil::rgb8s_pixel_t src{-128, -128, -128};
         gil::cmyk8s_pixel_t dst;
-        gil::cmyk8s_pixel_t expected_dst{-128,-128,-128, 127};
+        gil::cmyk8s_pixel_t expected_dst{-128, -128, -128, 127};
 
         gil::color_convert(src, dst);
         BOOST_TEST_EQ(dst, expected_dst);

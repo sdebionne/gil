@@ -16,32 +16,33 @@
 namespace boost { namespace gil { namespace detail {
 
 template <typename ChannelValue>
-struct is_channel_integral : std::is_integral<ChannelValue> {};
+struct is_channel_integral : std::is_integral<ChannelValue>
+{
+};
 
 template <int NumBits>
-struct is_channel_integral<boost::gil::packed_channel_value<NumBits>> : std::true_type {};
+struct is_channel_integral<boost::gil::packed_channel_value<NumBits>> : std::true_type
+{
+};
 
 template <typename BitField, int FirstBit, int NumBits, bool IsMutable>
-struct is_channel_integral
-    <
-        boost::gil::packed_channel_reference<BitField, FirstBit, NumBits, IsMutable>
-    > : std::true_type
-{};
+struct is_channel_integral<
+    boost::gil::packed_channel_reference<BitField, FirstBit, NumBits, IsMutable>> : std::true_type
+{
+};
 
 template <typename BitField, int NumBits, bool IsMutable>
-struct is_channel_integral
-    <
-        boost::gil::packed_dynamic_channel_reference<BitField, NumBits, IsMutable>
-    > : std::true_type
-{};
+struct is_channel_integral<boost::gil::packed_dynamic_channel_reference<BitField, NumBits, IsMutable>>
+    : std::true_type
+{
+};
 
 template <typename BaseChannelValue, typename MinVal, typename MaxVal>
-struct is_channel_integral
-    <
-        boost::gil::scoped_channel_value<BaseChannelValue, MinVal, MaxVal>
-    > : std::is_integral<BaseChannelValue>
-{};
+struct is_channel_integral<boost::gil::scoped_channel_value<BaseChannelValue, MinVal, MaxVal>>
+    : std::is_integral<BaseChannelValue>
+{
+};
 
-}}} //namespace boost::gil::detail
+}}}  //namespace boost::gil::detail
 
 #endif

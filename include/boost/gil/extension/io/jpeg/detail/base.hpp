@@ -15,24 +15,21 @@
 namespace boost { namespace gil {
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(push)
-#pragma warning(disable:4324) //structure was padded due to __declspec(align())
+#    pragma warning(push)
+#    pragma warning(disable : 4324)  //structure was padded due to __declspec(align())
 #endif
 
 class jpeg_io_base
 {
-
 protected:
-
     jpeg_error_mgr _jerr;
-    jmp_buf        _mark;
+    jmp_buf _mark;
 };
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
-} // namespace gil
-} // namespace boost
+}}  // namespace boost::gil
 
 #endif

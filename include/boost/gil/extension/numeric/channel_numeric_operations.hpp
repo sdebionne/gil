@@ -35,9 +35,11 @@ struct channel_plus_t
 {
     using ChannelRef1 = typename channel_traits<Channel1>::const_reference;
     using ChannelRef2 = typename channel_traits<Channel2>::const_reference;
-    static_assert(std::is_convertible<ChannelRef1, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef1, ChannelResult>::value,
         "ChannelRef1 not convertible to ChannelResult");
-    static_assert(std::is_convertible<ChannelRef2, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef2, ChannelResult>::value,
         "ChannelRef2 not convertible to ChannelResult");
 
     /// \param ch1 - first of the two addends (augend).
@@ -56,9 +58,11 @@ struct channel_minus_t
 {
     using ChannelRef1 = typename channel_traits<Channel1>::const_reference;
     using ChannelRef2 = typename channel_traits<Channel2>::const_reference;
-    static_assert(std::is_convertible<ChannelRef1, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef1, ChannelResult>::value,
         "ChannelRef1 not convertible to ChannelResult");
-    static_assert(std::is_convertible<ChannelRef2, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef2, ChannelResult>::value,
         "ChannelRef2 not convertible to ChannelResult");
 
     /// \param ch1 - minuend operand of the subtraction.
@@ -77,9 +81,11 @@ struct channel_multiplies_t
 {
     using ChannelRef1 = typename channel_traits<Channel1>::const_reference;
     using ChannelRef2 = typename channel_traits<Channel2>::const_reference;
-    static_assert(std::is_convertible<ChannelRef1, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef1, ChannelResult>::value,
         "ChannelRef1 not convertible to ChannelResult");
-    static_assert(std::is_convertible<ChannelRef2, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef2, ChannelResult>::value,
         "ChannelRef2 not convertible to ChannelResult");
 
     /// \param ch1 - first of the two factors (multiplicand).
@@ -98,9 +104,11 @@ struct channel_divides_t
 {
     using ChannelRef1 = typename channel_traits<Channel1>::const_reference;
     using ChannelRef2 = typename channel_traits<Channel2>::const_reference;
-    static_assert(std::is_convertible<ChannelRef1, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef1, ChannelResult>::value,
         "ChannelRef1 not convertible to ChannelResult");
-    static_assert(std::is_convertible<ChannelRef2, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef2, ChannelResult>::value,
         "ChannelRef2 not convertible to ChannelResult");
 
     /// \param ch1 - dividend operand of the two division operation.
@@ -118,10 +126,12 @@ template <typename Channel, typename Scalar, typename ChannelResult>
 struct channel_plus_scalar_t
 {
     using ChannelRef = typename channel_traits<Channel>::const_reference;
-    static_assert(std::is_convertible<ChannelRef, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef, ChannelResult>::value,
         "ChannelRef not convertible to ChannelResult");
     static_assert(std::is_scalar<Scalar>::value, "Scalar not a scalar");
-    static_assert(std::is_convertible<Scalar, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<Scalar, ChannelResult>::value,
         "Scalar not convertible to ChannelResult");
 
     auto operator()(ChannelRef channel, Scalar const& scalar) const -> ChannelResult
@@ -137,10 +147,12 @@ template <typename Channel, typename Scalar, typename ChannelResult>
 struct channel_minus_scalar_t
 {
     using ChannelRef = typename channel_traits<Channel>::const_reference;
-    static_assert(std::is_convertible<ChannelRef, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef, ChannelResult>::value,
         "ChannelRef not convertible to ChannelResult");
     static_assert(std::is_scalar<Scalar>::value, "Scalar not a scalar");
-    static_assert(std::is_convertible<Scalar, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<Scalar, ChannelResult>::value,
         "Scalar not convertible to ChannelResult");
 
     /// \param channel - minuend operand of the subtraction.
@@ -159,10 +171,12 @@ template <typename Channel, typename Scalar, typename ChannelResult>
 struct channel_multiplies_scalar_t
 {
     using ChannelRef = typename channel_traits<Channel>::const_reference;
-    static_assert(std::is_convertible<ChannelRef, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef, ChannelResult>::value,
         "ChannelRef not convertible to ChannelResult");
     static_assert(std::is_scalar<Scalar>::value, "Scalar not a scalar");
-    static_assert(std::is_convertible<Scalar, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<Scalar, ChannelResult>::value,
         "Scalar not convertible to ChannelResult");
 
     /// \param channel - first of the two factors (multiplicand).
@@ -180,10 +194,12 @@ template <typename Channel, typename Scalar, typename ChannelResult>
 struct channel_divides_scalar_t
 {
     using ChannelRef = typename channel_traits<Channel>::const_reference;
-    static_assert(std::is_convertible<ChannelRef, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<ChannelRef, ChannelResult>::value,
         "ChannelRef not convertible to ChannelResult");
     static_assert(std::is_scalar<Scalar>::value, "Scalar not a scalar");
-    static_assert(std::is_convertible<Scalar, ChannelResult>::value,
+    static_assert(
+        std::is_convertible<Scalar, ChannelResult>::value,
         "Scalar not convertible to ChannelResult");
 
     /// \param channel - dividend operand of the two division operation.
@@ -235,7 +251,8 @@ struct channel_assigns_t
 {
     using ChannelRef1 = typename channel_traits<Channel1>::const_reference;
     using ChannelRef2 = typename channel_traits<Channel2>::reference;
-    static_assert(std::is_convertible<ChannelRef1, Channel2>::value,
+    static_assert(
+        std::is_convertible<ChannelRef1, Channel2>::value,
         "ChannelRef1 not convertible to Channel2");
 
     /// \param ch1 - assignor side (input) of the assignment operation

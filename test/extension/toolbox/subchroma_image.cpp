@@ -84,12 +84,13 @@ void test_subchroma_image()
         std::size_t const y_height = 240;
 
         std::size_t image_size = (y_width * y_height)
-            + (y_width / image_t::ss_X) * (y_height / image_t::ss_Y)
-            + (y_width / image_t::ss_X) * (y_height / image_t::ss_Y);
+                               + (y_width / image_t::ss_X) * (y_height / image_t::ss_Y)
+                               + (y_width / image_t::ss_X) * (y_height / image_t::ss_Y);
 
-        std::vector<unsigned char> data(image_size); // TODO: Initialize? --mloskot
+        std::vector<unsigned char> data(image_size);  // TODO: Initialize? --mloskot
 
-        image_t::view_t v = gil::subchroma_view<pixel_t, factors_t>(y_width, y_height, &data.front());
+        image_t::view_t v
+            = gil::subchroma_view<pixel_t, factors_t>(y_width, y_height, &data.front());
         //gil::rgb8_pixel_t p;  // TODO: Why RGB?? --mloskot
         //p = *v.xy_at(0, 0);
         auto p = *v.xy_at(0, 0);

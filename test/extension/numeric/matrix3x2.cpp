@@ -20,7 +20,9 @@ namespace gil = boost::gil;
 template <typename T>
 struct with_tolerance
 {
-    with_tolerance(T tolerance) : tolerance(tolerance) {}
+    with_tolerance(T tolerance) : tolerance(tolerance)
+    {
+    }
     bool operator()(T lhs, T rhs)
     {
         return (std::abs(lhs - rhs) <= tolerance);
@@ -203,17 +205,17 @@ void test_matrix3x2_inverse()
 
 void test_matrix3x2_center_rotate()
 {
-    gil::point<double> dimension(100.0,100.0);
+    gil::point<double> dimension(100.0, 100.0);
     gil::matrix3x2<double> m1;
 
     m1 = gil::center_rotate(dimension, HALF_PI);
 
-    BOOST_TEST_WITH(m1.a , std::cos(HALF_PI) , with_tolerance<double>(1e-9));
-    BOOST_TEST_EQ  (m1.b ,  1);
-    BOOST_TEST_EQ  (m1.c , -1);
-    BOOST_TEST_WITH(m1.d , std::cos(HALF_PI) , with_tolerance<double>(1e-9));
-    BOOST_TEST_EQ  (m1.e ,  100);
-    BOOST_TEST_WITH(m1.f , std::cos(HALF_PI) , with_tolerance<double>(1e-9));
+    BOOST_TEST_WITH(m1.a, std::cos(HALF_PI), with_tolerance<double>(1e-9));
+    BOOST_TEST_EQ(m1.b, 1);
+    BOOST_TEST_EQ(m1.c, -1);
+    BOOST_TEST_WITH(m1.d, std::cos(HALF_PI), with_tolerance<double>(1e-9));
+    BOOST_TEST_EQ(m1.e, 100);
+    BOOST_TEST_WITH(m1.f, std::cos(HALF_PI), with_tolerance<double>(1e-9));
 }
 
 int main()

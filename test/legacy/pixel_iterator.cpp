@@ -6,7 +6,8 @@
 // http://www.boost.org/LICENSE_1_0.txt
 //
 #ifdef _MSC_VER
-#pragma warning(disable : 4244) // 'argument': conversion from 'int' to 'unsigned char', possible loss of data
+#    pragma warning(                                                                               \
+        disable : 4244)  // 'argument': conversion from 'int' to 'unsigned char', possible loss of data
 #endif
 
 #include <boost/gil.hpp>
@@ -16,12 +17,13 @@
 
 #include <exception>
 #include <iostream>
-#include <type_traits>
 #include <vector>
 
+#include <type_traits>
+
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunused-variable"
 #endif
 
 using namespace boost::gil;
@@ -31,76 +33,87 @@ void test_pixel_iterator()
 {
     boost::function_requires<Point2DConcept<point<int>>>();
 
-    boost::function_requires<MutablePixelIteratorConcept<bgr8_ptr_t> >();
-    boost::function_requires<MutablePixelIteratorConcept<cmyk8_planar_ptr_t> >();
-    boost::function_requires<PixelIteratorConcept<rgb8c_planar_step_ptr_t> >();
-    boost::function_requires<MutableStepIteratorConcept<rgb8_step_ptr_t> >();
+    boost::function_requires<MutablePixelIteratorConcept<bgr8_ptr_t>>();
+    boost::function_requires<MutablePixelIteratorConcept<cmyk8_planar_ptr_t>>();
+    boost::function_requires<PixelIteratorConcept<rgb8c_planar_step_ptr_t>>();
+    boost::function_requires<MutableStepIteratorConcept<rgb8_step_ptr_t>>();
 
-    boost::function_requires<MutablePixelLocatorConcept<rgb8_step_loc_t> >();
-    boost::function_requires<PixelLocatorConcept<rgb8c_planar_step_loc_t> >();
+    boost::function_requires<MutablePixelLocatorConcept<rgb8_step_loc_t>>();
+    boost::function_requires<PixelLocatorConcept<rgb8c_planar_step_loc_t>>();
 
-    boost::function_requires<MutableStepIteratorConcept<cmyk8_planar_step_ptr_t> >();
-    boost::function_requires<StepIteratorConcept<gray8c_step_ptr_t> >();
+    boost::function_requires<MutableStepIteratorConcept<cmyk8_planar_step_ptr_t>>();
+    boost::function_requires<StepIteratorConcept<gray8c_step_ptr_t>>();
 
-    boost::function_requires<MutablePixelLocatorConcept<memory_based_2d_locator<rgb8_step_ptr_t> > >();
+    boost::function_requires<MutablePixelLocatorConcept<memory_based_2d_locator<rgb8_step_ptr_t>>>();
 
-    using bgr121_ref_t = bit_aligned_pixel_reference
-        <
-            std::uint8_t,
-            boost::mp11::mp_list_c<int,1,2,1>,
-            bgr_layout_t,
-            true
-        > const;
+    using bgr121_ref_t = bit_aligned_pixel_reference<
+        std::uint8_t,
+        boost::mp11::mp_list_c<int, 1, 2, 1>,
+        bgr_layout_t,
+        true> const;
     using bgr121_ptr_t = bit_aligned_pixel_iterator<bgr121_ref_t>;
 
-    boost::function_requires<MutablePixelIteratorConcept<bgr121_ptr_t> >();
-    boost::function_requires<PixelBasedConcept<bgr121_ptr_t> >();
-    boost::function_requires<MemoryBasedIteratorConcept<bgr121_ptr_t> >();
-    boost::function_requires<HasDynamicXStepTypeConcept<bgr121_ptr_t> >();
+    boost::function_requires<MutablePixelIteratorConcept<bgr121_ptr_t>>();
+    boost::function_requires<PixelBasedConcept<bgr121_ptr_t>>();
+    boost::function_requires<MemoryBasedIteratorConcept<bgr121_ptr_t>>();
+    boost::function_requires<HasDynamicXStepTypeConcept<bgr121_ptr_t>>();
 
-// TEST dynamic_step_t
-    static_assert(std::is_same<cmyk16_step_ptr_t, dynamic_x_step_type<cmyk16_step_ptr_t>::type>::value, "");
-    static_assert(std::is_same<cmyk16_planar_step_ptr_t, dynamic_x_step_type<cmyk16_planar_ptr_t>::type>::value, "");
+    // TEST dynamic_step_t
+    static_assert(
+        std::is_same<cmyk16_step_ptr_t, dynamic_x_step_type<cmyk16_step_ptr_t>::type>::value, "");
+    static_assert(
+        std::is_same<cmyk16_planar_step_ptr_t, dynamic_x_step_type<cmyk16_planar_ptr_t>::type>::value,
+        "");
 
-    static_assert(std::is_same<iterator_type<uint8_t,gray_layout_t,false,false,false>::type,gray8c_ptr_t>::value, "");
+    static_assert(
+        std::is_same<
+            iterator_type<uint8_t, gray_layout_t, false, false, false>::type,
+            gray8c_ptr_t>::value,
+        "");
 
-// TEST iterator_is_step
+    // TEST iterator_is_step
     static_assert(iterator_is_step<cmyk16_step_ptr_t>::value, "");
     static_assert(iterator_is_step<cmyk16_planar_step_ptr_t>::value, "");
     static_assert(!iterator_is_step<cmyk16_planar_ptr_t>::value, "");
 
     using ccv_rgb_g_fn = color_convert_deref_fn<rgb8c_ref_t, gray8_pixel_t>;
     using ccv_g_rgb_fn = color_convert_deref_fn<gray8c_ref_t, rgb8_pixel_t>;
-    gil_function_requires<PixelDereferenceAdaptorConcept<ccv_rgb_g_fn> >();
-    gil_function_requires<PixelDereferenceAdaptorConcept<deref_compose<ccv_rgb_g_fn,ccv_g_rgb_fn> > >();
+    gil_function_requires<PixelDereferenceAdaptorConcept<ccv_rgb_g_fn>>();
+    gil_function_requires<
+        PixelDereferenceAdaptorConcept<deref_compose<ccv_rgb_g_fn, ccv_g_rgb_fn>>>();
 
     using rgb2gray_ptr = dereference_iterator_adaptor<rgb8_ptr_t, ccv_rgb_g_fn>;
     static_assert(!iterator_is_step<rgb2gray_ptr>::value, "");
 
     using rgb2gray_step_ptr = dynamic_x_step_type<rgb2gray_ptr>::type;
-    static_assert(std::is_same<rgb2gray_step_ptr, dereference_iterator_adaptor<rgb8_step_ptr_t, ccv_rgb_g_fn>>::value, "");
+    static_assert(
+        std::is_same<
+            rgb2gray_step_ptr,
+            dereference_iterator_adaptor<rgb8_step_ptr_t, ccv_rgb_g_fn>>::value,
+        "");
 
-    make_step_iterator(rgb2gray_ptr(),2);
+    make_step_iterator(rgb2gray_ptr(), 2);
 
     using rgb2gray_step_ptr1 = dereference_iterator_adaptor<rgb8_step_ptr_t, ccv_rgb_g_fn>;
     static_assert(iterator_is_step<rgb2gray_step_ptr1>::value, "");
-    static_assert(std::is_same<rgb2gray_step_ptr1, dynamic_x_step_type<rgb2gray_step_ptr1>::type>::value, "");
+    static_assert(
+        std::is_same<rgb2gray_step_ptr1, dynamic_x_step_type<rgb2gray_step_ptr1>::type>::value, "");
 
-    using rgb2gray_step_ptr2 = memory_based_step_iterator<dereference_iterator_adaptor<rgb8_ptr_t, ccv_rgb_g_fn>>;
-    static_assert(iterator_is_step<rgb2gray_step_ptr2 >::value, "");
-    static_assert(std::is_same<rgb2gray_step_ptr2, dynamic_x_step_type<rgb2gray_step_ptr2>::type>::value, "");
-    make_step_iterator(rgb2gray_step_ptr2(),2);
+    using rgb2gray_step_ptr2
+        = memory_based_step_iterator<dereference_iterator_adaptor<rgb8_ptr_t, ccv_rgb_g_fn>>;
+    static_assert(iterator_is_step<rgb2gray_step_ptr2>::value, "");
+    static_assert(
+        std::is_same<rgb2gray_step_ptr2, dynamic_x_step_type<rgb2gray_step_ptr2>::type>::value, "");
+    make_step_iterator(rgb2gray_step_ptr2(), 2);
 
-// bit_aligned iterators test
+    // bit_aligned iterators test
 
     // Mutable reference to a BGR232 pixel
-    using bgr232_ref_t = bit_aligned_pixel_reference
-        <
-            std::uint8_t,
-            boost::mp11::mp_list_c<unsigned, 2, 3, 2>,
-            bgr_layout_t,
-            true
-        > const;
+    using bgr232_ref_t = bit_aligned_pixel_reference<
+        std::uint8_t,
+        boost::mp11::mp_list_c<unsigned, 2, 3, 2>,
+        bgr_layout_t,
+        true> const;
 
     // A mutable iterator over BGR232 pixels
     using bgr232_ptr_t = bit_aligned_pixel_iterator<bgr232_ref_t>;
@@ -109,18 +122,19 @@ void test_pixel_iterator()
     using bgr232_pixel_t = std::iterator_traits<bgr232_ptr_t>::value_type;
     static_assert(sizeof(bgr232_pixel_t) == 1, "");
 
-    bgr232_pixel_t red(0,0,3); // = 0RRGGGBB, = 01100000
+    bgr232_pixel_t red(0, 0, 3);  // = 0RRGGGBB, = 01100000
 
     // a buffer of 7 bytes fits exactly 8 BGR232 pixels.
     unsigned char pix_buffer[7];
-    std::fill(pix_buffer,pix_buffer+7,0);
-    bgr232_ptr_t pix_it(&pix_buffer[0],0);  // start at bit 0 of the first pixel
-    for (int i=0; i<8; ++i) {
+    std::fill(pix_buffer, pix_buffer + 7, 0);
+    bgr232_ptr_t pix_it(&pix_buffer[0], 0);  // start at bit 0 of the first pixel
+    for (int i = 0; i < 8; ++i)
+    {
         *pix_it++ = red;
     }
 
-	// test cross byte pixel values - meaning when a pixel value is stretched over two bytes
-	using gray3_image_t = bit_aligned_image1_type<3, gray_layout_t>::type;
+    // test cross byte pixel values - meaning when a pixel value is stretched over two bytes
+    using gray3_image_t = bit_aligned_image1_type<3, gray_layout_t>::type;
     using image_t = gray3_image_t;
 
     using view_t = image_t::view_t;
@@ -128,34 +142,42 @@ void test_pixel_iterator()
 
     using iterator_t = bit_aligned_pixel_iterator<ref_t>;
 
-	std::vector< unsigned char > buf( 4 );
-	// bit pattern is: 1011 0110  0110 1101  1101 1011
-	// each byte is read right to left
-	buf[0] = 182;
+    std::vector<unsigned char> buf(4);
+    // bit pattern is: 1011 0110  0110 1101  1101 1011
+    // each byte is read right to left
+    buf[0] = 182;
     buf[1] = 109;
     buf[2] = 219;
 
-    iterator_t it( &buf[0], 0 );
+    iterator_t it(&buf[0], 0);
 
-    ref_t p1 = *it; it++;
-    ref_t p2 = *it; it++;
-    ref_t p3 = *it; it++;
-    ref_t p4 = *it; it++;
-    ref_t p5 = *it; it++;
-    ref_t p6 = *it; it++;
-    ref_t p7 = *it; it++;
-    ref_t p8 = *it; it++;
+    ref_t p1 = *it;
+    it++;
+    ref_t p2 = *it;
+    it++;
+    ref_t p3 = *it;
+    it++;
+    ref_t p4 = *it;
+    it++;
+    ref_t p5 = *it;
+    it++;
+    ref_t p6 = *it;
+    it++;
+    ref_t p7 = *it;
+    it++;
+    ref_t p8 = *it;
+    it++;
 
-    unsigned char v1 = get_color( p1, gray_color_t() );
-    unsigned char v2 = get_color( p2, gray_color_t() );
-    unsigned char v3 = get_color( p3, gray_color_t() );
-    unsigned char v4 = get_color( p4, gray_color_t() );
-    unsigned char v5 = get_color( p5, gray_color_t() );
-    unsigned char v6 = get_color( p6, gray_color_t() );
-    unsigned char v7 = get_color( p7, gray_color_t() );
-    unsigned char v8 = get_color( p8, gray_color_t() );
+    unsigned char v1 = get_color(p1, gray_color_t());
+    unsigned char v2 = get_color(p2, gray_color_t());
+    unsigned char v3 = get_color(p3, gray_color_t());
+    unsigned char v4 = get_color(p4, gray_color_t());
+    unsigned char v5 = get_color(p5, gray_color_t());
+    unsigned char v6 = get_color(p6, gray_color_t());
+    unsigned char v7 = get_color(p7, gray_color_t());
+    unsigned char v8 = get_color(p8, gray_color_t());
 
-	// all values should be 110b ( 6 );
+    // all values should be 110b ( 6 );
     BOOST_ASSERT(v1 == 6);
     BOOST_ASSERT(v2 == 6);
     BOOST_ASSERT(v3 == 6);
@@ -360,6 +382,5 @@ int main()
 }
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
-

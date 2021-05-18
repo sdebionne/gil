@@ -14,40 +14,37 @@
 
 namespace boost { namespace gil { namespace detail {
 
-template< typename View >
-bool is_allowed( const image_read_info< pnm_tag >& info
-               , std::true_type   // is read_and_no_convert
-               )
+template <typename View>
+bool is_allowed(
+    const image_read_info<pnm_tag>& info,
+    std::true_type  // is read_and_no_convert
+)
 {
-    pnm_image_type::type asc_type = is_read_supported< typename get_pixel_type< View >::type
-                                                     , pnm_tag
-                                                     >::_asc_type;
+    pnm_image_type::type asc_type
+        = is_read_supported<typename get_pixel_type<View>::type, pnm_tag>::_asc_type;
 
-    pnm_image_type::type bin_type = is_read_supported< typename get_pixel_type< View >::type
-                                                     , pnm_tag
-                                                     >::_bin_type;
-    if( info._type == pnm_image_type::mono_asc_t::value )
+    pnm_image_type::type bin_type
+        = is_read_supported<typename get_pixel_type<View>::type, pnm_tag>::_bin_type;
+    if (info._type == pnm_image_type::mono_asc_t::value)
     {
         // ascii mono images are read gray8_image_t
-        return (  asc_type == pnm_image_type::gray_asc_t::value );
+        return (asc_type == pnm_image_type::gray_asc_t::value);
     }
 
 
-    return (  asc_type == info._type
-           || bin_type == info._type
-           );
+    return (asc_type == info._type || bin_type == info._type);
 }
 
-template< typename View >
-bool is_allowed( const image_read_info< pnm_tag >& /* info */
-               , std::false_type  // is read_and_convert
-               )
+template <typename View>
+bool is_allowed(
+    const image_read_info<pnm_tag>& /* info */
+    ,
+    std::false_type  // is read_and_convert
+)
 {
     return true;
 }
 
-} // namespace detail
-} // namespace gil
-} // namespace boost
+}}}  // namespace boost::gil::detail
 
 #endif

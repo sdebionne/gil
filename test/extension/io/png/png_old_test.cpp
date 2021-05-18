@@ -8,8 +8,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/png/old.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include "mandel_view.hpp"
 #include "paths.hpp"
@@ -58,28 +58,23 @@ void test_old_read_and_convert_view()
 
 void test_old_write_view()
 {
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::png_write_view(
         png_out + "old_write_view_test.png",
         create_mandel_view(320, 240, gil::rgb8_pixel_t(0, 0, 255), gil::rgb8_pixel_t(0, 255, 0)));
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_old_dynamic_image()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::rgba8_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::rgba8_image_t>
+        image;
 
     gil::png_read_image(png_filename.c_str(), image);
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::png_write_view(png_out + "old_dynamic_image_test.png", gil::view(image));
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -96,5 +91,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

@@ -1,9 +1,10 @@
-#include <boost/gil/typedefs.hpp>
-#include <boost/gil/image_processing/numeric.hpp>
 #include <boost/gil/extension/io/png.hpp>
 #include <boost/gil/extension/numeric/convolve.hpp>
-#include <string>
+#include <boost/gil/image_processing/numeric.hpp>
+#include <boost/gil/typedefs.hpp>
+
 #include <iostream>
+#include <string>
 
 namespace gil = boost::gil;
 
@@ -11,7 +12,8 @@ int main(int argc, char* argv[])
 {
     if (argc != 5)
     {
-        std::cerr << "usage: " << argv[0] << ": <input.png> <sobel|scharr> <output-x.png> <output-y.png>\n";
+        std::cerr << "usage: " << argv[0]
+                  << ": <input.png> <sobel|scharr> <output-x.png> <output-y.png>\n";
         return -1;
     }
 

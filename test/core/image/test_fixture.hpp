@@ -9,21 +9,21 @@
 #define BOOST_GIL_TEST_CORE_IMAGE_TEST_FIXTURE_HPP
 
 #include <boost/gil.hpp>
+
 #include <boost/assert.hpp>
 
 #include <cstdint>
-#include <initializer_list>
 #include <limits>
 #include <random>
 #include <tuple>
-#include <type_traits>
 
 #include "core/test_fixture.hpp"
+#include <initializer_list>
+#include <type_traits>
 
 namespace boost { namespace gil { namespace test { namespace fixture {
 
-using image_types = std::tuple
-<
+using image_types = std::tuple<
     gil::gray8_image_t,
     gil::gray16_image_t,
     gil::gray32_image_t,
@@ -35,11 +35,9 @@ using image_types = std::tuple
     gil::rgb32_image_t,
     gil::rgba8_image_t,
     gil::rgba16_image_t,
-    gil::rgba32_image_t
->;
+    gil::rgba32_image_t>;
 
-using rgb_interleaved_image_types = std::tuple
-<
+using rgb_interleaved_image_types = std::tuple<
     gil::bgr8_image_t,
     gil::bgr16_image_t,
     gil::bgr32_image_t,
@@ -48,8 +46,7 @@ using rgb_interleaved_image_types = std::tuple
     gil::rgb32_image_t,
     gil::rgba8_image_t,
     gil::rgba16_image_t,
-    gil::rgba32_image_t
->;
+    gil::rgba32_image_t>;
 
 template <typename Image, typename Generator>
 auto generate_image(std::ptrdiff_t size_x, std::ptrdiff_t size_y, Generator&& generate) -> Image
@@ -79,6 +76,6 @@ auto create_image(std::ptrdiff_t size_x, std::ptrdiff_t size_y, int channel_valu
     return out;
 }
 
-}}}} // namespace boost::gil::test::fixture
+}}}}  // namespace boost::gil::test::fixture
 
 #endif

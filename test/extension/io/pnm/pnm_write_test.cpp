@@ -14,13 +14,14 @@
 #include "mandel_view.hpp"
 #include "paths.hpp"
 
-namespace gil = boost::gil;;
+namespace gil = boost::gil;
+;
 
 #ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 void test_write()
 {
-    mandel_view<gil::rgb8_pixel_t>::type v =
-        create_mandel_view(200, 200, gil::rgb8_pixel_t(0, 0, 255), gil::rgb8_pixel_t(0, 255, 0));
+    mandel_view<gil::rgb8_pixel_t>::type v
+        = create_mandel_view(200, 200, gil::rgb8_pixel_t(0, 0, 255), gil::rgb8_pixel_t(0, 255, 0));
 
     // test writing all supported image types
     {

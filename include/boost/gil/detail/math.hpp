@@ -8,8 +8,9 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_DETAIL_MATH_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_DETAIL_MATH_HPP
 
-#include <array>
 #include <boost/gil/extension/numeric/kernel.hpp>
+
+#include <array>
 
 namespace boost { namespace gil { namespace detail {
 
@@ -28,6 +29,6 @@ inline detail::kernel_2d<T, Allocator> get_identity_kernel()
     return kernel;
 }
 
-}}} // namespace boost::gil::detail
+}}}  // namespace boost::gil::detail
 
 #endif

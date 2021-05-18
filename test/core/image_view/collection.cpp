@@ -17,11 +17,10 @@
 
 namespace gil = boost::gil;
 
-namespace
-{
+namespace {
 gil::gray8_pixel_t const gray128(128);
 gil::gray8_pixel_t const gray255(255);
-} // unnamed namespace
+}  // unnamed namespace
 
 // Collection
 
@@ -93,7 +92,7 @@ void test_rbegin()
 {
     gil::gray8_image_t image(2, 2, gray255);
     auto view = gil::view(image);
-    view(1,1) = gray128;
+    view(1, 1) = gray128;
     BOOST_TEST_EQ(*view.rbegin(), gray128);
 }
 

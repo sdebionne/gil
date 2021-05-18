@@ -7,18 +7,18 @@
 //
 #include <boost/gil.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <memory>
 #include <random>
-#include <type_traits>
 #include <vector>
 
-#include "test_utility_output_stream.hpp"
 #include "core/channel/test_fixture.hpp"
 #include "core/image/test_fixture.hpp"
 #include "core/pixel/test_fixture.hpp"
+#include "test_utility_output_stream.hpp"
+#include <type_traits>
 
 namespace boost { namespace gil { namespace test { namespace fixture {
 
@@ -38,10 +38,17 @@ struct pixel_array
         : pixels_(new Pixel[x_size * y_size])
         , x_size_(x_size)
         , y_size_(y_size)
-    {}
+    {
+    }
 
-    auto begin() -> iterator { return pixels_.get(); }
-    auto end() -> iterator { return pixels_.get() + x_size_ * y_size_; }
+    auto begin() -> iterator
+    {
+        return pixels_.get();
+    }
+    auto end() -> iterator
+    {
+        return pixels_.get() + x_size_ * y_size_;
+    }
 
 private:
     std::unique_ptr<Pixel[]> pixels_;
@@ -49,7 +56,7 @@ private:
     std::size_t y_size_;
 };
 
-}}}}
+}}}}  // namespace boost::gil::test::fixture
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
@@ -57,19 +64,19 @@ namespace fixture = boost::gil::test::fixture;
 struct fill_with_pixel_integer_types
 {
     template <typename Pixel>
-    void operator()(Pixel const &)
+    void operator()(Pixel const&)
     {
         using pixel_t = Pixel;
         auto min_pixel = fixture::pixel_generator<pixel_t>::min();
         auto max_pixel = fixture::pixel_generator<pixel_t>::max();
         auto rnd_pixel = fixture::pixel_generator<pixel_t>::random();
 
-        for (auto const &fill_pixel : {min_pixel, max_pixel, rnd_pixel})
+        for (auto const& fill_pixel : {min_pixel, max_pixel, rnd_pixel})
         {
             fixture::pixel_array<pixel_t> pixels;
             std::uninitialized_fill(pixels.begin(), pixels.end(), fill_pixel);
 
-            for (pixel_t const &p : pixels)
+            for (pixel_t const& p : pixels)
                 BOOST_TEST_EQ(p, fill_pixel);
         }
     }
@@ -82,18 +89,18 @@ struct fill_with_pixel_integer_types
 struct fill_with_pixel_float_types
 {
     template <typename Pixel>
-    void operator()(Pixel const &)
+    void operator()(Pixel const&)
     {
         using pixel_t = Pixel;
         auto min_pixel = fixture::pixel_generator<pixel_t>::min();
         auto max_pixel = fixture::pixel_generator<pixel_t>::max();
 
-        for (auto const &fill_pixel : {min_pixel, max_pixel})
+        for (auto const& fill_pixel : {min_pixel, max_pixel})
         {
             fixture::pixel_array<Pixel> pixels;
             std::uninitialized_fill(pixels.begin(), pixels.end(), fill_pixel);
 
-            for (Pixel const &p : pixels)
+            for (Pixel const& p : pixels)
                 BOOST_TEST_EQ(p, fill_pixel);
         }
     }
@@ -103,14 +110,13 @@ struct fill_with_pixel_float_types
     }
 };
 
-void
-test_fill_with_packed_pixel_gray3()
+void test_fill_with_packed_pixel_gray3()
 {
     auto min_pixel = fixture::packed_pixel_gray3{0};
     auto mid_pixel = fixture::packed_pixel_gray3{3};
     auto max_pixel = fixture::packed_pixel_gray3{7};
 
-    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel} )
+    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel})
     {
         fixture::pixel_array<fixture::packed_pixel_gray3> pixels;
         std::uninitialized_fill(pixels.begin(), pixels.end(), fill_pixel);
@@ -118,7 +124,9 @@ test_fill_with_packed_pixel_gray3()
         for (fixture::packed_pixel_gray3 const& p : pixels)
         {
             BOOST_TEST_EQ(p, fill_pixel);
-            BOOST_TEST_EQ((int)get_color(p, gil::gray_color_t()), (int)get_color(fill_pixel, gil::gray_color_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::gray_color_t()),
+                (int)get_color(fill_pixel, gil::gray_color_t()));
         }
     }
 }
@@ -129,7 +137,7 @@ void test_fill_with_packed_pixel_bgr121()
     auto mid_pixel = fixture::packed_pixel_bgr121{8};
     auto max_pixel = fixture::packed_pixel_bgr121{17};
 
-    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel} )
+    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel})
     {
         fixture::pixel_array<fixture::packed_pixel_bgr121> pixels;
         std::uninitialized_fill(pixels.begin(), pixels.end(), fill_pixel);
@@ -137,9 +145,12 @@ void test_fill_with_packed_pixel_bgr121()
         for (fixture::packed_pixel_bgr121 const& p : pixels)
         {
             BOOST_TEST_EQ(p, fill_pixel);
-            BOOST_TEST_EQ((int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
         }
     }
 }
@@ -150,7 +161,7 @@ void test_fill_with_packed_pixel_rgb535()
     fixture::packed_pixel_rgb535 mid_pixel(15, 3, 15);
     fixture::packed_pixel_rgb535 max_pixel(31, 7, 31);
 
-    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel} )
+    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel})
     {
         fixture::pixel_array<fixture::packed_pixel_rgb535> pixels;
         std::uninitialized_fill(pixels.begin(), pixels.end(), fill_pixel);
@@ -158,9 +169,12 @@ void test_fill_with_packed_pixel_rgb535()
         for (fixture::packed_pixel_rgb535 const& p : pixels)
         {
             BOOST_TEST_EQ(p, fill_pixel);
-            BOOST_TEST_EQ((int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
         }
     }
 }
@@ -171,7 +185,7 @@ void test_bit_aligned_pixel_bgr232()
     fixture::bit_aligned_pixel_bgr232 mid_pixel(1, 4, 2);
     fixture::bit_aligned_pixel_bgr232 max_pixel(3, 7, 3);
 
-    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel} )
+    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel})
     {
         fixture::pixel_array<fixture::bit_aligned_pixel_bgr232> pixels;
         std::uninitialized_fill(pixels.begin(), pixels.end(), fill_pixel);
@@ -179,9 +193,12 @@ void test_bit_aligned_pixel_bgr232()
         for (fixture::bit_aligned_pixel_bgr232 const& p : pixels)
         {
             BOOST_TEST_EQ(p, fill_pixel);
-            BOOST_TEST_EQ((int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
         }
     }
 }
@@ -192,7 +209,7 @@ void test_bit_aligned_pixel_rgb567()
     fixture::bit_aligned_pixel_rgb567 mid_pixel(15, 31, 63);
     fixture::bit_aligned_pixel_rgb567 max_pixel(31, 63, 127);
 
-    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel} )
+    for (auto const& fill_pixel : {min_pixel, max_pixel, mid_pixel})
     {
         fixture::pixel_array<fixture::bit_aligned_pixel_rgb567> pixels;
         std::uninitialized_fill(pixels.begin(), pixels.end(), fill_pixel);
@@ -200,9 +217,12 @@ void test_bit_aligned_pixel_rgb567()
         for (fixture::bit_aligned_pixel_rgb567 const& p : pixels)
         {
             BOOST_TEST_EQ(p, fill_pixel);
-            BOOST_TEST_EQ((int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
-            BOOST_TEST_EQ((int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::red_t()), (int)get_color(fill_pixel, gil::red_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::green_t()), (int)get_color(fill_pixel, gil::green_t()));
+            BOOST_TEST_EQ(
+                (int)get_color(p, gil::blue_t()), (int)get_color(fill_pixel, gil::blue_t()));
         }
     }
 }

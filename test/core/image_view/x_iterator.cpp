@@ -71,7 +71,7 @@ void test_row_end()
     {
         gil::gray8_image_t image;
         auto view = gil::view(image);
-#ifdef NDEBUG // skip assertion on y < height(), see TODO comment in image_view.hpp
+#ifdef NDEBUG  // skip assertion on y < height(), see TODO comment in image_view.hpp
         BOOST_TEST_EQ(view.row_begin(0), view.row_end(0));
 #else
         boost::ignore_unused(view);
@@ -80,7 +80,7 @@ void test_row_end()
     {
         gil::rgb8_image_t image;
         auto view = gil::view(image);
-#ifdef NDEBUG // skip assertion on y < height(), see TODO comment in image_view.hpp
+#ifdef NDEBUG  // skip assertion on y < height(), see TODO comment in image_view.hpp
         BOOST_TEST_EQ(view.row_begin(0), view.row_end(0));
 #else
         boost::ignore_unused(view);

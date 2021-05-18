@@ -13,16 +13,22 @@
 namespace boost { namespace gil {
 
 // need this for various meta functions.
-struct any_image_pixel_t       {};
-struct any_image_channel_t     {};
-struct any_image_color_space_t {};
+struct any_image_pixel_t
+{
+};
+struct any_image_channel_t
+{
+};
+struct any_image_color_space_t
+{
+};
 
-template<>
-struct color_space_type< any_image_pixel_t >
+template <>
+struct color_space_type<any_image_pixel_t>
 {
     using type = any_image_color_space_t;
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

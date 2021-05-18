@@ -10,8 +10,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/jpeg.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -46,9 +46,9 @@ void test_read_image_info()
         BOOST_TEST_EQ(backend._info._height, 600u);
     }
     {
-        FILE *file = fopen(jpeg_filename.c_str(), "rb");
+        FILE* file = fopen(jpeg_filename.c_str(), "rb");
 
-        using backend_t = gil::get_reader_backend<FILE *, gil::jpeg_tag>::type;
+        using backend_t = gil::get_reader_backend<FILE*, gil::jpeg_tag>::type;
         backend_t backend = gil::read_image_info(file, gil::jpeg_tag());
 
         BOOST_TEST_EQ(backend._info._width, 1000u);
@@ -81,7 +81,7 @@ void test_read_image()
         BOOST_TEST_EQ(img.height(), 600u);
     }
     {
-        FILE *file = fopen(jpeg_filename.c_str(), "rb");
+        FILE* file = fopen(jpeg_filename.c_str(), "rb");
         gil::rgb8_image_t img;
         gil::read_image(file, img, gil::jpeg_tag());
 
@@ -90,7 +90,8 @@ void test_read_image()
     }
     {
         gil::rgb8_image_t img;
-        gil::image_read_settings<gil::jpeg_tag> settings(gil::point_t(0, 0), gil::point_t(10, 10), gil::jpeg_dct_method::slow);
+        gil::image_read_settings<gil::jpeg_tag> settings(
+            gil::point_t(0, 0), gil::point_t(10, 10), gil::jpeg_dct_method::slow);
         gil::read_image(jpeg_filename, img, settings);
 
         BOOST_TEST_EQ(img.width(), 10u);
@@ -125,7 +126,7 @@ void test_read_view()
         gil::read_view(in, gil::view(img), gil::jpeg_tag());
     }
     {
-        FILE *file = fopen(jpeg_filename.c_str(), "rb");
+        FILE* file = fopen(jpeg_filename.c_str(), "rb");
 
         gil::rgb8_image_t img(1000, 600);
         gil::read_view(file, gil::view(img), gil::jpeg_tag());
@@ -145,14 +146,14 @@ void test_read_and_convert_view()
         gil::read_and_convert_view(in, gil::view(img), gil::jpeg_tag());
     }
     {
-        FILE *file = fopen(jpeg_filename.c_str(), "rb");
+        FILE* file = fopen(jpeg_filename.c_str(), "rb");
 
         gil::rgb8_image_t img(1000, 600);
         gil::read_and_convert_view(file, gil::view(img), gil::jpeg_tag());
     }
 }
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 void test_write_view()
 {
     auto const b = gil::rgb8_pixel_t(0, 0, 255);
@@ -170,19 +171,19 @@ void test_write_view()
     }
     {
         std::string filename(jpeg_out + "write_test_file.jpg");
-        FILE *file = fopen(filename.c_str(), "wb");
+        FILE* file = fopen(filename.c_str(), "wb");
 
         gil::write_view(file, create_mandel_view(320, 240, b, g), gil::jpeg_tag());
     }
     {
         std::string filename(jpeg_out + "write_test_info.jpg");
-        FILE *file = fopen(filename.c_str(), "wb");
+        FILE* file = fopen(filename.c_str(), "wb");
 
         gil::image_write_info<gil::jpeg_tag> info;
         gil::write_view(file, create_mandel_view(320, 240, b, g), info);
     }
 }
-#endif //BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  //BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 
 void test_stream()
 {
@@ -207,9 +208,9 @@ void test_stream()
     // 5. Write out image.
     std::string filename(jpeg_out + "stream_test.jpg");
     std::ofstream out(filename.c_str(), std::ios_base::binary);
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(out, gil::view(dst), gil::jpeg_tag());
-#endif // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_stream_2()
@@ -228,27 +229,22 @@ void test_stream_2()
 
 void test_subimage()
 {
-    run_subimage_test<gil::rgb8_image_t, gil::jpeg_tag>(jpeg_filename,
-        gil::point_t(0, 0), gil::point_t(50, 50));
+    run_subimage_test<gil::rgb8_image_t, gil::jpeg_tag>(
+        jpeg_filename, gil::point_t(0, 0), gil::point_t(50, 50));
 
-    run_subimage_test<gil::rgb8_image_t, gil::jpeg_tag>(jpeg_filename,
-        gil::point_t(43, 24), gil::point_t(50, 50));
+    run_subimage_test<gil::rgb8_image_t, gil::jpeg_tag>(
+        jpeg_filename, gil::point_t(43, 24), gil::point_t(50, 50));
 }
 
 void test_dynamic_image()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::rgba8_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::rgba8_image_t>
+        image;
     gil::read_image(jpeg_filename.c_str(), image, gil::jpeg_tag());
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(jpeg_out + "old_dynamic_image_test.jpg", gil::view(image), gil::jpeg_tag());
-#endif // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -268,5 +264,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

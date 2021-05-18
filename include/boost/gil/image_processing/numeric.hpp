@@ -8,14 +8,14 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_NUMERIC_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_NUMERIC_HPP
 
-#include <boost/gil/extension/numeric/kernel.hpp>
+#include <boost/gil/detail/math.hpp>
 #include <boost/gil/extension/numeric/convolve.hpp>
+#include <boost/gil/extension/numeric/kernel.hpp>
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/typedefs.hpp>
-#include <boost/gil/detail/math.hpp>
 // fixes ambigious call to std::abs, https://stackoverflow.com/a/30084734/4593721
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
 
 namespace boost { namespace gil {
 
@@ -55,8 +55,9 @@ inline double lanczos(double x, std::ptrdiff_t a)
 }
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(push)
-#pragma warning(disable:4244) // 'argument': conversion from 'const Channel' to 'BaseChannelValue', possible loss of data
+#    pragma warning(push)
+#    pragma warning(                                                                               \
+        disable : 4244)  // 'argument': conversion from 'const Channel' to 'BaseChannelValue', possible loss of data
 #endif
 
 inline void compute_tensor_entries(
@@ -66,8 +67,10 @@ inline void compute_tensor_entries(
     boost::gil::gray32f_view_t m12_21,
     boost::gil::gray32f_view_t m22)
 {
-    for (std::ptrdiff_t y = 0; y < dx.height(); ++y) {
-        for (std::ptrdiff_t x = 0; x < dx.width(); ++x) {
+    for (std::ptrdiff_t y = 0; y < dx.height(); ++y)
+    {
+        for (std::ptrdiff_t x = 0; x < dx.width(); ++x)
+        {
             auto dx_value = dx(x, y);
             auto dy_value = dy(x, y);
             m11(x, y) = dx_value * dx_value;
@@ -78,7 +81,7 @@ inline void compute_tensor_entries(
 }
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
 /// \brief Generate mean kernel
@@ -95,7 +98,8 @@ inline detail::kernel_2d<T, Allocator> generate_normalized_mean(std::size_t side
     const float entry = 1.0f / static_cast<float>(side_length * side_length);
 
     detail::kernel_2d<T, Allocator> result(side_length, side_length / 2, side_length / 2);
-    for (auto& cell: result) {
+    for (auto& cell : result)
+    {
         cell = entry;
     }
 
@@ -113,7 +117,8 @@ inline detail::kernel_2d<T, Allocator> generate_unnormalized_mean(std::size_t si
         throw std::invalid_argument("kernel dimensions should be odd and equal");
 
     detail::kernel_2d<T, Allocator> result(side_length, side_length / 2, side_length / 2);
-    for (auto& cell: result) {
+    for (auto& cell : result)
+    {
         cell = 1.0f;
     }
 
@@ -126,7 +131,9 @@ inline detail::kernel_2d<T, Allocator> generate_unnormalized_mean(std::size_t si
 /// Fills supplied view with values taken from Gaussian distribution. See
 /// https://en.wikipedia.org/wiki/Gaussian_blur
 template <typename T = float, typename Allocator = std::allocator<T>>
-inline detail::kernel_2d<T, Allocator> generate_gaussian_kernel(std::size_t side_length, double sigma)
+inline detail::kernel_2d<T, Allocator> generate_gaussian_kernel(
+    std::size_t side_length,
+    double sigma)
 {
     if (side_length % 2 != 1)
         throw std::invalid_argument("kernel dimensions should be odd and equal");
@@ -141,7 +148,7 @@ inline detail::kernel_2d<T, Allocator> generate_gaussian_kernel(std::size_t side
         {
             const auto delta_x = middle > x ? middle - x : x - middle;
             const auto delta_y = middle > y ? middle - y : y - middle;
-            const double power = (delta_x * delta_x +  delta_y * delta_y) / (2 * sigma * sigma);
+            const double power = (delta_x * delta_x + delta_y * delta_y) / (2 * sigma * sigma);
             const double nominator = std::exp(-power);
             const float value = static_cast<float>(nominator / denominator);
             values[y * side_length + x] = value;
@@ -163,18 +170,18 @@ inline detail::kernel_2d<T, Allocator> generate_dx_sobel(unsigned int degree = 1
 {
     switch (degree)
     {
-        case 0:
-        {
-            return detail::get_identity_kernel<T, Allocator>();
-        }
-        case 1:
-        {
-            detail::kernel_2d<T, Allocator> result(3, 1, 1);
-            std::copy(detail::dx_sobel.begin(), detail::dx_sobel.end(), result.begin());
-            return result;
-        }
-        default:
-            throw std::logic_error("not supported yet");
+    case 0:
+    {
+        return detail::get_identity_kernel<T, Allocator>();
+    }
+    case 1:
+    {
+        detail::kernel_2d<T, Allocator> result(3, 1, 1);
+        std::copy(detail::dx_sobel.begin(), detail::dx_sobel.end(), result.begin());
+        return result;
+    }
+    default:
+        throw std::logic_error("not supported yet");
     }
 
     //to not upset compiler
@@ -193,18 +200,18 @@ inline detail::kernel_2d<T, Allocator> generate_dx_scharr(unsigned int degree = 
 {
     switch (degree)
     {
-        case 0:
-        {
-            return detail::get_identity_kernel<T, Allocator>();
-        }
-        case 1:
-        {
-            detail::kernel_2d<T, Allocator> result(3, 1, 1);
-            std::copy(detail::dx_scharr.begin(), detail::dx_scharr.end(), result.begin());
-            return result;
-        }
-        default:
-            throw std::logic_error("not supported yet");
+    case 0:
+    {
+        return detail::get_identity_kernel<T, Allocator>();
+    }
+    case 1:
+    {
+        detail::kernel_2d<T, Allocator> result(3, 1, 1);
+        std::copy(detail::dx_scharr.begin(), detail::dx_scharr.end(), result.begin());
+        return result;
+    }
+    default:
+        throw std::logic_error("not supported yet");
     }
 
     //to not upset compiler
@@ -223,18 +230,18 @@ inline detail::kernel_2d<T, Allocator> generate_dy_sobel(unsigned int degree = 1
 {
     switch (degree)
     {
-        case 0:
-        {
-            return detail::get_identity_kernel<T, Allocator>();
-        }
-        case 1:
-        {
-            detail::kernel_2d<T, Allocator> result(3, 1, 1);
-            std::copy(detail::dy_sobel.begin(), detail::dy_sobel.end(), result.begin());
-            return result;
-        }
-        default:
-            throw std::logic_error("not supported yet");
+    case 0:
+    {
+        return detail::get_identity_kernel<T, Allocator>();
+    }
+    case 1:
+    {
+        detail::kernel_2d<T, Allocator> result(3, 1, 1);
+        std::copy(detail::dy_sobel.begin(), detail::dy_sobel.end(), result.begin());
+        return result;
+    }
+    default:
+        throw std::logic_error("not supported yet");
     }
 
     //to not upset compiler
@@ -253,18 +260,18 @@ inline detail::kernel_2d<T, Allocator> generate_dy_scharr(unsigned int degree = 
 {
     switch (degree)
     {
-        case 0:
-        {
-            return detail::get_identity_kernel<T, Allocator>();
-        }
-        case 1:
-        {
-            detail::kernel_2d<T, Allocator> result(3, 1, 1);
-            std::copy(detail::dy_scharr.begin(), detail::dy_scharr.end(), result.begin());
-            return result;
-        }
-        default:
-            throw std::logic_error("not supported yet");
+    case 0:
+    {
+        return detail::get_identity_kernel<T, Allocator>();
+    }
+    case 1:
+    {
+        detail::kernel_2d<T, Allocator> result(3, 1, 1);
+        std::copy(detail::dy_scharr.begin(), detail::dy_scharr.end(), result.begin());
+        return result;
+    }
+    default:
+        throw std::logic_error("not supported yet");
     }
 
     //to not upset compiler
@@ -295,6 +302,6 @@ inline void compute_hessian_entries(
     detail::convolve_2d(dy, sobel_y, ddyy);
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

@@ -72,7 +72,7 @@ void test_col_end()
     {
         gil::gray8_image_t image;
         auto view = gil::view(image);
-#ifdef NDEBUG // skip assertion on x < width(), see TODO comment in image_view.hpp
+#ifdef NDEBUG  // skip assertion on x < width(), see TODO comment in image_view.hpp
         BOOST_TEST(view.col_begin(0) == view.col_end(0));
 #else
         boost::ignore_unused(view);
@@ -81,7 +81,7 @@ void test_col_end()
     {
         gil::rgb8_image_t image;
         auto view = gil::view(image);
-#ifdef NDEBUG // skip assertion on x < width(), see TODO comment in image_view.hpp
+#ifdef NDEBUG  // skip assertion on x < width(), see TODO comment in image_view.hpp
         BOOST_TEST(view.col_begin(0) == view.col_end(0));
 #else
         boost::ignore_unused(view);
@@ -96,12 +96,12 @@ void test_issue_432()
     {
         std::vector<gil::gray8_pixel_t> v(50);
         auto view = boost::gil::interleaved_view(10, 5, v.data(), 10 * sizeof(gil::gray8_pixel_t));
-        view.col_end(0); // BUG: Boost 1.72 always asserts
+        view.col_end(0);  // BUG: Boost 1.72 always asserts
     }
     {
         std::vector<gil::rgb8_pixel_t> v(50);
         auto view = boost::gil::interleaved_view(10, 5, v.data(), 10 * sizeof(gil::rgb8_pixel_t));
-        auto it = view.row_end(0); // BUG: Boost 1.72 always asserts
+        auto it = view.row_end(0);  // BUG: Boost 1.72 always asserts
         boost::ignore_unused(it);
     }
 }

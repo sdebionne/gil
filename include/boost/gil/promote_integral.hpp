@@ -2,7 +2,7 @@
 //
 // Copyright (c) 2015, Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
-// 
+//
 // Copyright (c) 2020, Debabrata Mandal <mandaldebabrata123@gmail.com>
 //
 // Licensed under the Boost Software License version 1.0.
@@ -23,48 +23,35 @@
 
 #include <climits>
 #include <cstddef>
+
 #include <type_traits>
 
-namespace boost { namespace gil
-{
+namespace boost { namespace gil {
 
-namespace detail { namespace promote_integral
-{
+namespace detail { namespace promote_integral {
 
 // meta-function that returns the bit size of a type
-template
-<
-    typename T,
-    bool IsFundamental = std::is_fundamental<T>::value
->
-struct bit_size {};
+template <typename T, bool IsFundamental = std::is_fundamental<T>::value>
+struct bit_size
+{
+};
 
 // for fundamental types, just return CHAR_BIT * sizeof(T)
 template <typename T>
-struct bit_size<T, true> : std::integral_constant<std::size_t, (CHAR_BIT * sizeof(T))> {};
+struct bit_size<T, true> : std::integral_constant<std::size_t, (CHAR_BIT * sizeof(T))>
+{
+};
 
-template
-<
-    typename T,
-    typename IntegralTypes,
-    std::size_t MinSize
->
+template <typename T, typename IntegralTypes, std::size_t MinSize>
 struct promote_to_larger
 {
     using current_type = boost::mp11::mp_first<IntegralTypes>;
     using list_after_front = boost::mp11::mp_rest<IntegralTypes>;
 
-    using type = typename std::conditional
-        <
-            (bit_size<current_type>::value >= MinSize),
-            current_type,
-            typename promote_to_larger
-                <
-                    T,
-                    list_after_front,
-                    MinSize
-                >::type
-        >::type;
+    using type = typename std::conditional<
+        (bit_size<current_type>::value >= MinSize),
+        current_type,
+        typename promote_to_larger<T, list_after_front, MinSize>::type>::type;
 };
 
 // The following specialization is required to finish the loop over
@@ -77,7 +64,7 @@ struct promote_to_larger<T, boost::mp11::mp_list<>, MinSize>
     using type = T;
 };
 
-}} // namespace detail::promote_integral
+}}  // namespace detail::promote_integral
 
 /*!
     \brief Meta-function to define an integral type with size
@@ -111,13 +98,11 @@ struct promote_to_larger<T, boost::mp11::mp_list<>, MinSize>
     considered only if the macro BOOST_HAS_LONG_LONG is defined
 
 */
-template
-<
+template <
     typename T,
     bool PromoteUnsignedToUnsigned = false,
     bool UseCheckedInteger = false,
-    bool IsIntegral = std::is_integral<T>::value
->
+    bool IsIntegral = std::is_integral<T>::value>
 class promote_integral
 {
 private:
@@ -132,68 +117,60 @@ private:
     // * if T is unsigned and P is unsigned: 2 * b
     // * if T is signed and P is signed: 2 * b - 1
     // * if T is unsigned and P is signed: 2 * b + 1
-    using min_bit_size_type = typename std::conditional
-        <
-            (PromoteUnsignedToUnsigned && is_unsigned),
-            std::integral_constant<std::size_t, (2 * bit_size_type::value)>,
-            typename std::conditional
-                <
-                    is_unsigned,
-                    std::integral_constant<std::size_t, (2 * bit_size_type::value + 1)>,
-                    std::integral_constant<std::size_t, (2 * bit_size_type::value - 1)>
-                >::type
-        >::type;
+    using min_bit_size_type = typename std::conditional<
+        (PromoteUnsignedToUnsigned && is_unsigned),
+        std::integral_constant<std::size_t, (2 * bit_size_type::value)>,
+        typename std::conditional<
+            is_unsigned,
+            std::integral_constant<std::size_t, (2 * bit_size_type::value + 1)>,
+            std::integral_constant<std::size_t, (2 * bit_size_type::value - 1)>>::type>::type;
 
     // Define the list of signed integral types we are going to use
     // for promotion
-    using signed_integral_types = boost::mp11::mp_list
-        <
-            short, int, long
+    using signed_integral_types = boost::mp11::mp_list<
+        short,
+        int,
+        long
 #if defined(BOOST_HAS_LONG_LONG)
-            , boost::long_long_type
+        ,
+        boost::long_long_type
 #endif
         >;
 
     // Define the list of unsigned integral types we are going to use
     // for promotion
-    using unsigned_integral_types = boost::mp11::mp_list
-        <
-            unsigned short, unsigned int, unsigned long, std::size_t
+    using unsigned_integral_types = boost::mp11::mp_list<
+        unsigned short,
+        unsigned int,
+        unsigned long,
+        std::size_t
 #if defined(BOOST_HAS_LONG_LONG)
-            , boost::ulong_long_type
+        ,
+        boost::ulong_long_type
 #endif
         >;
 
     // Define the list of integral types that will be used for
     // promotion (depending in whether we was to promote unsigned to
     // unsigned or not)
-    using integral_types = typename std::conditional
-        <
-            (is_unsigned && PromoteUnsignedToUnsigned),
-            unsigned_integral_types,
-            signed_integral_types
-        >::type;
+    using integral_types = typename std::conditional<
+        (is_unsigned && PromoteUnsignedToUnsigned),
+        unsigned_integral_types,
+        signed_integral_types>::type;
 
 public:
-    using type = typename detail::promote_integral::promote_to_larger
-        <
-            T,
-            integral_types,
-            min_bit_size_type::value
-        >::type;
+    using type = typename detail::promote_integral::
+        promote_to_larger<T, integral_types, min_bit_size_type::value>::type;
 };
 
 
 template <typename T, bool PromoteUnsignedToUnsigned, bool UseCheckedInteger>
-class promote_integral
-    <
-        T, PromoteUnsignedToUnsigned, UseCheckedInteger, false
-    >
+class promote_integral<T, PromoteUnsignedToUnsigned, UseCheckedInteger, false>
 {
 public:
     using type = T;
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
-#endif // BOOST_GIL_PROMOTE_INTEGRAL_HPP
+#endif  // BOOST_GIL_PROMOTE_INTEGRAL_HPP

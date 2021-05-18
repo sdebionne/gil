@@ -11,7 +11,9 @@
 
 namespace gil = boost::gil;
 
-struct FakeMatrix {};
+struct FakeMatrix
+{
+};
 
 int main()
 {

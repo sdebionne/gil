@@ -13,10 +13,10 @@
 
 namespace boost { namespace gil { namespace detail {
 
-template<typename L>
+template <typename L>
 using mp_back = ::boost::mp11::mp_at_c<L, ::boost::mp11::mp_size<L>::value - 1>;
 
-template<typename L>
+template <typename L>
 using mp_pop_back = ::boost::mp11::mp_take_c<L, ::boost::mp11::mp_size<L>::value - 1>;
 
 

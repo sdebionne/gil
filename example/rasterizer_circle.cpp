@@ -8,6 +8,7 @@
 //
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/png.hpp>
+
 #include <cmath>
 #include <limits>
 #include <vector>

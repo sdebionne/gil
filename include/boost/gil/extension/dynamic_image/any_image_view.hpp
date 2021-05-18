@@ -9,11 +9,11 @@
 #ifndef BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_ANY_IMAGE_VIEW_HPP
 #define BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_ANY_IMAGE_VIEW_HPP
 
+#include <boost/gil/detail/mp11.hpp>
 #include <boost/gil/dynamic_step.hpp>
 #include <boost/gil/image.hpp>
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/point.hpp>
-#include <boost/gil/detail/mp11.hpp>
 
 #include <boost/variant2/variant.hpp>
 
@@ -35,7 +35,10 @@ struct any_type_get_num_channels
 {
     using result_type = int;
     template <typename T>
-    result_type operator()(const T&) const { return num_channels<T>::value; }
+    result_type operator()(const T&) const
+    {
+        return num_channels<T>::value;
+    }
 };
 
 // works for both image_view and image
@@ -43,7 +46,10 @@ struct any_type_get_dimensions
 {
     using result_type = point<std::ptrdiff_t>;
     template <typename T>
-    result_type operator()(const T& v) const { return v.dimensions(); }
+    result_type operator()(const T& v) const
+    {
+        return v.dimensions();
+    }
 };
 
 // works for image_view
@@ -51,10 +57,13 @@ struct any_type_get_size
 {
     using result_type = std::size_t;
     template <typename T>
-    result_type operator()(const T& v) const { return v.size(); }
+    result_type operator()(const T& v) const
+    {
+        return v.size();
+    }
 };
 
-} // namespace detail
+}  // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS any_image_view
@@ -71,12 +80,12 @@ struct any_type_get_size
 /// To perform an algorithm on any_image_view, put the algorithm in a function object and invoke it by calling \p apply_operation(runtime_view, algorithm_fn);
 ////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...Views>
+template <typename... Views>
 class any_image_view : public variant2::variant<Views...>
 {
     using parent_t = variant2::variant<Views...>;
 
-public:    
+public:
     using const_t = detail::views_get_const_t<any_image_view>;
     using x_coord_t = std::ptrdiff_t;
     using y_coord_t = std::ptrdiff_t;
@@ -98,25 +107,40 @@ public:
         return *this;
     }
 
-    template <typename ...OtherViews>
+    template <typename... OtherViews>
     any_image_view& operator=(any_image_view<OtherViews...> const& view)
     {
         parent_t::operator=((variant2::variant<OtherViews...> const&)view);
         return *this;
     }
 
-    std::size_t num_channels()  const { return apply_operation(*this, detail::any_type_get_num_channels()); }
-    point_t     dimensions()    const { return apply_operation(*this, detail::any_type_get_dimensions()); }
-    size_type   size()          const { return apply_operation(*this, detail::any_type_get_size()); }
-    x_coord_t   width()         const { return dimensions().x; }
-    y_coord_t   height()        const { return dimensions().y; }
+    std::size_t num_channels() const
+    {
+        return apply_operation(*this, detail::any_type_get_num_channels());
+    }
+    point_t dimensions() const
+    {
+        return apply_operation(*this, detail::any_type_get_dimensions());
+    }
+    size_type size() const
+    {
+        return apply_operation(*this, detail::any_type_get_size());
+    }
+    x_coord_t width() const
+    {
+        return dimensions().x;
+    }
+    y_coord_t height() const
+    {
+        return dimensions().y;
+    }
 };
 
 /////////////////////////////
 //  HasDynamicXStepTypeConcept
 /////////////////////////////
 
-template <typename ...Views>
+template <typename... Views>
 struct dynamic_x_step_type<any_image_view<Views...>>
 {
 private:
@@ -135,7 +159,7 @@ public:
 //  HasDynamicYStepTypeConcept
 /////////////////////////////
 
-template <typename ...Views>
+template <typename... Views>
 struct dynamic_y_step_type<any_image_view<Views...>>
 {
 private:
@@ -150,7 +174,7 @@ public:
     using type = mp11::mp_transform<dynamic_step_view, any_image_view<Views...>>;
 };
 
-template <typename ...Views>
+template <typename... Views>
 struct dynamic_xy_step_type<any_image_view<Views...>>
 {
 private:
@@ -165,7 +189,7 @@ public:
     using type = mp11::mp_transform<dynamic_step_view, any_image_view<Views...>>;
 };
 
-template <typename ...Views>
+template <typename... Views>
 struct dynamic_xy_step_transposed_type<any_image_view<Views...>>
 {
 private:

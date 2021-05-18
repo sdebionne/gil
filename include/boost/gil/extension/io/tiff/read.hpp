@@ -8,13 +8,12 @@
 #ifndef BOOST_GIL_EXTENSION_IO_TIFF_READ_HPP
 #define BOOST_GIL_EXTENSION_IO_TIFF_READ_HPP
 
-#define BOOST_GIL_EXTENSION_IO_TIFF_READ_ENABLED // TODO: Document, explain, review
+#define BOOST_GIL_EXTENSION_IO_TIFF_READ_ENABLED  // TODO: Document, explain, review
 
-#include <boost/gil/extension/io/tiff/tags.hpp>
 #include <boost/gil/extension/io/tiff/detail/read.hpp>
 #include <boost/gil/extension/io/tiff/detail/scanline_read.hpp>
 #include <boost/gil/extension/io/tiff/detail/supported_types.hpp>
-
+#include <boost/gil/extension/io/tiff/tags.hpp>
 #include <boost/gil/io/get_reader.hpp>
 #include <boost/gil/io/make_backend.hpp>
 #include <boost/gil/io/make_dynamic_image_reader.hpp>

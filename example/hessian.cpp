@@ -1,13 +1,14 @@
-#include <boost/gil/image.hpp>
-#include <boost/gil/image_view.hpp>
-#include <boost/gil/image_processing/numeric.hpp>
-#include <boost/gil/image_processing/hessian.hpp>
 #include <boost/gil/extension/io/png.hpp>
-#include <vector>
-#include <functional>
-#include <set>
-#include <iostream>
+#include <boost/gil/image.hpp>
+#include <boost/gil/image_processing/hessian.hpp>
+#include <boost/gil/image_processing/numeric.hpp>
+#include <boost/gil/image_view.hpp>
+
 #include <fstream>
+#include <functional>
+#include <iostream>
+#include <set>
+#include <vector>
 
 namespace gil = boost::gil;
 
@@ -30,22 +31,19 @@ gil::gray8_image_t to_grayscale(gil::rgb8_view_t original)
         {
             // scale the values into range [0, 1] and calculate linear intensity
             auto& p = original(x, y);
-            double red_intensity = p.at(std::integral_constant<int, 0>{})
-                / max_channel_intensity;
-            double green_intensity = p.at(std::integral_constant<int, 1>{})
-                / max_channel_intensity;
-            double blue_intensity = p.at(std::integral_constant<int, 2>{})
-                / max_channel_intensity;
-            auto linear_luminosity = 0.2126 * red_intensity
-                                    + 0.7152 * green_intensity
-                                    + 0.0722 * blue_intensity;
+            double red_intensity = p.at(std::integral_constant<int, 0>{}) / max_channel_intensity;
+            double green_intensity = p.at(std::integral_constant<int, 1>{}) / max_channel_intensity;
+            double blue_intensity = p.at(std::integral_constant<int, 2>{}) / max_channel_intensity;
+            auto linear_luminosity
+                = 0.2126 * red_intensity + 0.7152 * green_intensity + 0.0722 * blue_intensity;
 
             // perform gamma adjustment
             double gamma_compressed_luminosity = 0;
             if (linear_luminosity < 0.0031308)
             {
                 gamma_compressed_luminosity = linear_luminosity * 12.92;
-            } else
+            }
+            else
             {
                 gamma_compressed_luminosity = 1.055 * std::pow(linear_luminosity, 1 / 2.4) - 0.055;
             }
@@ -62,14 +60,8 @@ void apply_gaussian_blur(gil::gray8_view_t input_view, gil::gray8_view_t output_
 {
     constexpr static std::ptrdiff_t filter_height = 5ull;
     constexpr static std::ptrdiff_t filter_width = 5ull;
-    constexpr static double filter[filter_height][filter_width] =
-    {
-        { 2,  4,  6,  4,  2 },
-        { 4, 9, 12, 9,  4 },
-        { 5, 12, 15, 12,  5 },
-        { 4, 9, 12, 9,  4 },
-        { 2,  4,  5,  4,  2 }
-    };
+    constexpr static double filter[filter_height][filter_width] = {
+        {2, 4, 6, 4, 2}, {4, 9, 12, 9, 4}, {5, 12, 15, 12, 5}, {4, 9, 12, 9, 4}, {2, 4, 5, 4, 2}};
     constexpr double factor = 1.0 / 159;
     constexpr double bias = 0.0;
 
@@ -86,20 +78,19 @@ void apply_gaussian_blur(gil::gray8_view_t input_view, gil::gray8_view_t output_
                 {
                     int image_x = x - filter_width / 2 + filter_x;
                     int image_y = y - filter_height / 2 + filter_y;
-                    if (image_x >= input_view.width() || image_x < 0 ||
-                        image_y >= input_view.height() || image_y < 0)
+                    if (image_x >= input_view.width() || image_x < 0
+                        || image_y >= input_view.height() || image_y < 0)
                     {
                         continue;
                     }
                     const auto& pixel = input_view(image_x, image_y);
-                    intensity += pixel.at(std::integral_constant<int, 0>{})
-                        * filter[filter_y][filter_x];
+                    intensity
+                        += pixel.at(std::integral_constant<int, 0>{}) * filter[filter_y][filter_x];
                 }
             }
             auto& pixel = output_view(gil::point_t(x, y));
             pixel = (std::min)((std::max)(int(factor * intensity + bias), 0), 255);
         }
-
     }
 }
 
@@ -115,26 +106,20 @@ std::vector<gil::point_t> suppress(
             auto value = [](gil::gray32f_pixel_t pixel) {
                 return pixel.at(std::integral_constant<int, 0>{});
             };
-            double values[9] = {
-                value(harris_response(x - 1, y - 1)),
-                value(harris_response(x, y - 1)),
-                value(harris_response(x + 1, y - 1)),
-                value(harris_response(x - 1, y)),
-                value(harris_response(x, y)),
-                value(harris_response(x + 1, y)),
-                value(harris_response(x - 1, y + 1)),
-                value(harris_response(x, y + 1)),
-                value(harris_response(x + 1, y + 1))
-            };
+            double values[9]
+                = {value(harris_response(x - 1, y - 1)),
+                   value(harris_response(x, y - 1)),
+                   value(harris_response(x + 1, y - 1)),
+                   value(harris_response(x - 1, y)),
+                   value(harris_response(x, y)),
+                   value(harris_response(x + 1, y)),
+                   value(harris_response(x - 1, y + 1)),
+                   value(harris_response(x, y + 1)),
+                   value(harris_response(x + 1, y + 1))};
 
-            auto maxima = *std::max_element(
-                values,
-                values + 9,
-                [](double lhs, double rhs)
-                {
-                    return lhs < rhs;
-                }
-            );
+            auto maxima = *std::max_element(values, values + 9, [](double lhs, double rhs) {
+                return lhs < rhs;
+            });
 
             if (maxima == value(harris_response(x, y))
                 && std::count(values, values + 9, maxima) == 1
@@ -148,11 +133,13 @@ std::vector<gil::point_t> suppress(
     return corner_points;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     if (argc != 5)
     {
-        std::cout << "usage: " << argv[0] << " <input.png> <odd-window-size>"
-            " <hessian-response-threshold> <output.png>\n";
+        std::cout << "usage: " << argv[0]
+                  << " <input.png> <odd-window-size>"
+                     " <hessian-response-threshold> <output.png>\n";
         return -1;
     }
 
@@ -182,12 +169,7 @@ int main(int argc, char* argv[]) {
     gil::gray32f_image_t m12_21(x_gradient.dimensions());
     gil::gray32f_image_t m22(x_gradient.dimensions());
     gil::compute_hessian_entries(
-        x_gradient,
-        y_gradient,
-        gil::view(m11),
-        gil::view(m12_21),
-        gil::view(m22)
-    );
+        x_gradient, y_gradient, gil::view(m11), gil::view(m12_21), gil::view(m22));
 
     gil::gray32f_image_t hessian_response(x_gradient.dimensions());
     auto gaussian_kernel = gil::generate_gaussian_kernel(window_size, 0.84089642);
@@ -196,11 +178,11 @@ int main(int argc, char* argv[]) {
         gil::view(m12_21),
         gil::view(m22),
         gaussian_kernel,
-        gil::view(hessian_response)
-    );
+        gil::view(hessian_response));
 
     auto corner_points = suppress(gil::view(hessian_response), hessian_determinant_threshold);
-    for (auto point: corner_points) {
+    for (auto point : corner_points)
+    {
         input_view(point) = gil::rgb8_pixel_t(0, 0, 0);
         input_view(point).at(std::integral_constant<int, 1>{}) = 255;
     }

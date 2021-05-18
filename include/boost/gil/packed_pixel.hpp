@@ -8,10 +8,11 @@
 #ifndef BOOST_GIL_PACKED_PIXEL_HPP
 #define BOOST_GIL_PACKED_PIXEL_HPP
 
-#include <boost/gil/pixel.hpp>
 #include <boost/gil/detail/mp11.hpp>
+#include <boost/gil/pixel.hpp>
 
 #include <functional>
+
 #include <type_traits>
 
 namespace boost { namespace gil {
@@ -48,40 +49,42 @@ namespace boost { namespace gil {
 template <typename BitField, typename ChannelRefs, typename Layout>
 struct packed_pixel
 {
-    BitField _bitfield{0}; // TODO: Make private
+    BitField _bitfield{0};  // TODO: Make private
 
     using layout_t = Layout;
     using value_type = packed_pixel<BitField, ChannelRefs, Layout>;
     using reference = value_type&;
     using const_reference = value_type const&;
 
-    static constexpr bool is_mutable =
-        channel_traits<mp11::mp_front<ChannelRefs>>::is_mutable;
+    static constexpr bool is_mutable = channel_traits<mp11::mp_front<ChannelRefs>>::is_mutable;
 
     packed_pixel() = default;
-    explicit packed_pixel(const BitField& bitfield) : _bitfield(bitfield) {}
+    explicit packed_pixel(const BitField& bitfield) : _bitfield(bitfield)
+    {
+    }
 
     // Construct from another compatible pixel type
-    packed_pixel(const packed_pixel& p) : _bitfield(p._bitfield) {}
+    packed_pixel(const packed_pixel& p) : _bitfield(p._bitfield)
+    {
+    }
 
     template <typename Pixel>
-    packed_pixel(Pixel const& p,
+    packed_pixel(
+        Pixel const& p,
         typename std::enable_if<is_pixel<Pixel>::value>::type* /*dummy*/ = nullptr)
     {
         check_compatible<Pixel>();
         static_copy(p, *this);
     }
 
-    packed_pixel(int chan0, int chan1)
-        : _bitfield(0)
+    packed_pixel(int chan0, int chan1) : _bitfield(0)
     {
         static_assert(num_channels<packed_pixel>::value == 2, "");
         gil::at_c<0>(*this) = chan0;
         gil::at_c<1>(*this) = chan1;
     }
 
-    packed_pixel(int chan0, int chan1, int chan2)
-        : _bitfield(0)
+    packed_pixel(int chan0, int chan1, int chan2) : _bitfield(0)
     {
         static_assert(num_channels<packed_pixel>::value == 3, "");
         gil::at_c<0>(*this) = chan0;
@@ -89,8 +92,7 @@ struct packed_pixel
         gil::at_c<2>(*this) = chan2;
     }
 
-    packed_pixel(int chan0, int chan1, int chan2, int chan3)
-        : _bitfield(0)
+    packed_pixel(int chan0, int chan1, int chan2, int chan3) : _bitfield(0)
     {
         static_assert(num_channels<packed_pixel>::value == 4, "");
         gil::at_c<0>(*this) = chan0;
@@ -99,8 +101,7 @@ struct packed_pixel
         gil::at_c<3>(*this) = chan3;
     }
 
-    packed_pixel(int chan0, int chan1, int chan2, int chan3, int chan4)
-        : _bitfield(0)
+    packed_pixel(int chan0, int chan1, int chan2, int chan3, int chan4) : _bitfield(0)
     {
         static_assert(num_channels<packed_pixel>::value == 5, "");
         gil::at_c<0>(*this) = chan0;
@@ -130,7 +131,10 @@ struct packed_pixel
     }
 
     template <typename Pixel>
-    bool operator!=(Pixel const& p) const { return !(*this==p); }
+    bool operator!=(Pixel const& p) const
+    {
+        return !(*this == p);
+    }
 
 private:
     template <typename Pixel>
@@ -147,7 +151,7 @@ private:
     }
 
     template <typename Pixel>
-    bool  equal(Pixel const& p, std::true_type) const
+    bool equal(Pixel const& p, std::true_type) const
     {
         check_compatible<Pixel>();
         return static_equal(*this, p);
@@ -167,7 +171,7 @@ private:
     }
 
     template <typename Channel>
-    bool equal (Channel const& channel, std::false_type) const
+    bool equal(Channel const& channel, std::false_type) const
     {
         check_gray();
         return gil::at_c<0>(*this) == channel;
@@ -211,26 +215,17 @@ struct kth_element_const_reference_type<packed_pixel<BitField, ChannelRefs, Layo
 };
 
 template <int K, typename P, typename C, typename L>
-inline
-auto at_c(packed_pixel<P, C, L>& p)
-    -> typename kth_element_reference_type<packed_pixel<P, C, L>, K>::type
+inline auto at_c(packed_pixel<P, C, L>& p) ->
+    typename kth_element_reference_type<packed_pixel<P, C, L>, K>::type
 {
-    return typename kth_element_reference_type
-        <
-            packed_pixel<P, C, L>,
-            K
-        >::type{&p._bitfield};
+    return typename kth_element_reference_type<packed_pixel<P, C, L>, K>::type{&p._bitfield};
 }
 
 template <int K, typename P, typename C, typename L>
-inline
-auto at_c(const packed_pixel<P, C, L>& p)
-    -> typename kth_element_const_reference_type<packed_pixel<P, C, L>, K>::type
+inline auto at_c(const packed_pixel<P, C, L>& p) ->
+    typename kth_element_const_reference_type<packed_pixel<P, C, L>, K>::type
 {
-    return typename kth_element_const_reference_type
-        <
-            packed_pixel<P, C, L>,
-        K>::type{&p._bitfield};
+    return typename kth_element_const_reference_type<packed_pixel<P, C, L>, K>::type{&p._bitfield};
 }
 
 /////////////////////////////
@@ -240,7 +235,9 @@ auto at_c(const packed_pixel<P, C, L>& p)
 // Metafunction predicate that flags packed_pixel as a model of PixelConcept.
 // Required by PixelConcept
 template <typename BitField, typename ChannelRefs, typename Layout>
-struct is_pixel<packed_pixel<BitField, ChannelRefs, Layout>> : std::true_type {};
+struct is_pixel<packed_pixel<BitField, ChannelRefs, Layout>> : std::true_type
+{
+};
 
 /////////////////////////////
 //  PixelBasedConcept
@@ -259,7 +256,9 @@ struct channel_mapping_type<packed_pixel<P, C, Layout>>
 };
 
 template <typename P, typename C, typename Layout>
-struct is_planar<packed_pixel<P, C, Layout>> : std::false_type {};
+struct is_planar<packed_pixel<P, C, Layout>> : std::false_type
+{
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Support for interleaved iterators over packed pixel
@@ -275,10 +274,13 @@ struct is_planar<packed_pixel<P, C, Layout>> : std::false_type {};
 template <typename P, typename C, typename L>
 struct iterator_is_mutable<packed_pixel<P, C, L>*>
     : std::integral_constant<bool, packed_pixel<P, C, L>::is_mutable>
-{};
+{
+};
 
 template <typename P, typename C, typename L>
-struct iterator_is_mutable<const packed_pixel<P, C, L>*> : std::false_type {};
+struct iterator_is_mutable<const packed_pixel<P, C, L>*> : std::false_type
+{
+};
 
 }}  // namespace boost::gil
 

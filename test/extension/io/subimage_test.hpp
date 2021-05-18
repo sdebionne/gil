@@ -16,7 +16,9 @@
 
 template <typename Image, typename Format>
 void run_subimage_test(
-    std::string const& filename, boost::gil::point_t const& top_left, boost::gil::point_t const& dimension)
+    std::string const& filename,
+    boost::gil::point_t const& top_left,
+    boost::gil::point_t const& dimension)
 {
     Image original, subimage;
     boost::gil::read_image(filename, original, Format{});
@@ -27,4 +29,4 @@ void run_subimage_test(
         boost::gil::subimage_view(boost::gil::const_view(original), top_left, dimension)));
 }
 
-#endif // BOOST_GIL_IO_TEST_SUBIMAGE_TEST_HPP
+#endif  // BOOST_GIL_IO_TEST_SUBIMAGE_TEST_HPP

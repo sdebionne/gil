@@ -5,8 +5,8 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#include <boost/gil/pixel.hpp>
 #include <boost/gil/concepts/pixel.hpp>
+#include <boost/gil/pixel.hpp>
 #include <boost/gil/typedefs.hpp>
 
 #include <boost/mp11.hpp>
@@ -62,71 +62,52 @@ void test_not_compatible()
 
 int main()
 {
-    test_compatible<gil::gray8_pixel_t, mp_list<
-        gil::gray8_pixel_t,
-        gil::gray8c_pixel_t>>();
-    test_compatible<gil::gray8s_pixel_t, mp_list<
-        gil::gray8s_pixel_t,
-        gil::gray8sc_pixel_t>>();
-    test_not_compatible<gil::gray8_pixel_t, mp_list<
-        gil::gray8s_pixel_t,
-        gil::gray8sc_pixel_t>>();
+    test_compatible<gil::gray8_pixel_t, mp_list<gil::gray8_pixel_t, gil::gray8c_pixel_t>>();
+    test_compatible<gil::gray8s_pixel_t, mp_list<gil::gray8s_pixel_t, gil::gray8sc_pixel_t>>();
+    test_not_compatible<gil::gray8_pixel_t, mp_list<gil::gray8s_pixel_t, gil::gray8sc_pixel_t>>();
 
-    test_compatible<gil::gray16_pixel_t, mp_list<
-        gil::gray16_pixel_t,
-        gil::gray16c_pixel_t>>();
-    test_compatible<gil::gray16s_pixel_t, mp_list<
-        gil::gray16s_pixel_t,
-        gil::gray16sc_pixel_t>>();
-    test_not_compatible<gil::gray16_pixel_t, mp_list<
-        gil::gray16s_pixel_t,
-        gil::gray16sc_pixel_t>>();
+    test_compatible<gil::gray16_pixel_t, mp_list<gil::gray16_pixel_t, gil::gray16c_pixel_t>>();
+    test_compatible<gil::gray16s_pixel_t, mp_list<gil::gray16s_pixel_t, gil::gray16sc_pixel_t>>();
+    test_not_compatible<gil::gray16_pixel_t, mp_list<gil::gray16s_pixel_t, gil::gray16sc_pixel_t>>();
 
-    test_compatible<gil::rgb8_pixel_t, mp_list<
-        gil::bgr8_pixel_t,
-        gil::bgr8c_pixel_t,
+    test_compatible<
         gil::rgb8_pixel_t,
-        gil::rgb8c_pixel_t>>();
-    test_compatible<gil::rgb8s_pixel_t, mp_list<
-        gil::bgr8s_pixel_t,
-        gil::bgr8sc_pixel_t,
+        mp_list<gil::bgr8_pixel_t, gil::bgr8c_pixel_t, gil::rgb8_pixel_t, gil::rgb8c_pixel_t>>();
+    test_compatible<
         gil::rgb8s_pixel_t,
-        gil::rgb8sc_pixel_t>>();
-    test_not_compatible<gil::rgb8_pixel_t, mp_list<
-        gil::argb8_pixel_t,
-        gil::abgr8_pixel_t,
-        gil::rgba8_pixel_t,
-        gil::bgr8s_pixel_t,
-        gil::bgr8sc_pixel_t,
-        gil::rgb8s_pixel_t,
-        gil::rgb8sc_pixel_t>>();
-
-    test_compatible<gil::rgba8_pixel_t, mp_list<
-        gil::abgr8_pixel_t,
-        gil::argb8_pixel_t,
-        gil::bgra8_pixel_t,
-        gil::bgra8c_pixel_t,
-        gil::rgba8_pixel_t,
-        gil::rgba8c_pixel_t>>();
-    test_not_compatible<gil::rgba8_pixel_t, mp_list<
+        mp_list<gil::bgr8s_pixel_t, gil::bgr8sc_pixel_t, gil::rgb8s_pixel_t, gil::rgb8sc_pixel_t>>();
+    test_not_compatible<
         gil::rgb8_pixel_t,
-        gil::rgb16_pixel_t,
-        gil::rgba16_pixel_t,
-        gil::cmyk8_pixel_t,
-        gil::cmyk16_pixel_t>>();
+        mp_list<
+            gil::argb8_pixel_t,
+            gil::abgr8_pixel_t,
+            gil::rgba8_pixel_t,
+            gil::bgr8s_pixel_t,
+            gil::bgr8sc_pixel_t,
+            gil::rgb8s_pixel_t,
+            gil::rgb8sc_pixel_t>>();
 
-    test_compatible<gil::cmyk8_pixel_t, mp_list<
-        gil::cmyk8_pixel_t,
-        gil::cmyk8c_pixel_t>>();
-    test_compatible<gil::cmyk8s_pixel_t, mp_list<
-        gil::cmyk8s_pixel_t,
-        gil::cmyk8sc_pixel_t>>();
-    test_not_compatible<gil::cmyk8_pixel_t, mp_list<
-        gil::cmyk8s_pixel_t,
-        gil::cmyk8sc_pixel_t>>();
+    test_compatible<
+        gil::rgba8_pixel_t,
+        mp_list<
+            gil::abgr8_pixel_t,
+            gil::argb8_pixel_t,
+            gil::bgra8_pixel_t,
+            gil::bgra8c_pixel_t,
+            gil::rgba8_pixel_t,
+            gil::rgba8c_pixel_t>>();
+    test_not_compatible<
+        gil::rgba8_pixel_t,
+        mp_list<
+            gil::rgb8_pixel_t,
+            gil::rgb16_pixel_t,
+            gil::rgba16_pixel_t,
+            gil::cmyk8_pixel_t,
+            gil::cmyk16_pixel_t>>();
 
-    test_compatible<gil::cmyk32f_pixel_t, mp_list<
-        gil::cmyk32f_pixel_t,
-        gil::cmyk32fc_pixel_t>>();
+    test_compatible<gil::cmyk8_pixel_t, mp_list<gil::cmyk8_pixel_t, gil::cmyk8c_pixel_t>>();
+    test_compatible<gil::cmyk8s_pixel_t, mp_list<gil::cmyk8s_pixel_t, gil::cmyk8sc_pixel_t>>();
+    test_not_compatible<gil::cmyk8_pixel_t, mp_list<gil::cmyk8s_pixel_t, gil::cmyk8sc_pixel_t>>();
 
+    test_compatible<gil::cmyk32f_pixel_t, mp_list<gil::cmyk32f_pixel_t, gil::cmyk32fc_pixel_t>>();
 }

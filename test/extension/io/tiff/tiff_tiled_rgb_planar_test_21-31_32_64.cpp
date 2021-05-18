@@ -61,5 +61,7 @@ int main()
 }
 
 #else
-int main() {}
+int main()
+{
+}
 #endif  // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES

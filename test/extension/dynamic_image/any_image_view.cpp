@@ -11,17 +11,17 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/core/lightweight_test_trait.hpp>
 
-#include <type_traits>
-
-#include "test_fixture.hpp"
 #include "core/image/test_fixture.hpp"
+#include "test_fixture.hpp"
+#include <type_traits>
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
 
 void test_any_image_view_nested_types()
 {
-    BOOST_TEST_TRAIT_SAME(gil::any_image_view<gil::gray8_view_t>::const_t, gil::any_image_view<gil::gray8c_view_t>);
+    BOOST_TEST_TRAIT_SAME(
+        gil::any_image_view<gil::gray8_view_t>::const_t, gil::any_image_view<gil::gray8c_view_t>);
 }
 
 

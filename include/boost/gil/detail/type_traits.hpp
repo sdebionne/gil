@@ -16,15 +16,13 @@ namespace boost { namespace gil { namespace detail {
 
 #if defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 50100
 
-template<class T>
+template <class T>
 struct is_trivially_default_constructible
-    : std::integral_constant
-    <
-        bool,
-        std::is_default_constructible<T>::value &&
-        std::has_trivial_default_constructor<T>::value
-    >
-{};
+    : std::integral_constant<
+          bool,
+          std::is_default_constructible<T>::value && std::has_trivial_default_constructor<T>::value>
+{
+};
 
 #else
 
@@ -34,6 +32,6 @@ using std::is_trivially_default_constructible;
 
 using std::is_trivially_destructible;
 
-}}} //namespace boost::gil::detail
+}}}  //namespace boost::gil::detail
 
 #endif

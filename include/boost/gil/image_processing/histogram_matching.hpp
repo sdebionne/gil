@@ -43,8 +43,9 @@ namespace boost { namespace gil {
 ///        reference histogram and returns the color map used for histogram matching.
 ///
 template <typename SrcKeyType, typename RefKeyType>
-std::map<SrcKeyType, SrcKeyType>
-    histogram_matching(histogram<SrcKeyType> const& src_hist, histogram<RefKeyType> const& ref_hist)
+std::map<SrcKeyType, SrcKeyType> histogram_matching(
+    histogram<SrcKeyType> const& src_hist,
+    histogram<RefKeyType> const& ref_hist)
 {
     histogram<SrcKeyType> dst_hist;
     return histogram_matching(src_hist, ref_hist, dst_hist);
@@ -58,7 +59,7 @@ std::map<SrcKeyType, SrcKeyType>
 /// @param src_hist INPUT source histogram
 /// @param ref_hist INPUT reference histogram
 /// @param dst_hist OUTPUT Output histogram
-/// \brief Overload for histogram matching algorithm, takes in source histogram, reference 
+/// \brief Overload for histogram matching algorithm, takes in source histogram, reference
 ///        histogram & destination histogram and returns the color map used for histogram
 ///        matching as well as transforming the destination histogram.
 ///
@@ -69,27 +70,26 @@ std::map<SrcKeyType, DstKeyType> histogram_matching(
     histogram<DstKeyType>& dst_hist)
 {
     static_assert(
-        std::is_integral<SrcKeyType>::value &&
-        std::is_integral<RefKeyType>::value &&
-        std::is_integral<DstKeyType>::value,
+        std::is_integral<SrcKeyType>::value && std::is_integral<RefKeyType>::value
+            && std::is_integral<DstKeyType>::value,
         "Source, Refernce or Destination histogram type is not appropriate.");
 
     using value_t = typename histogram<SrcKeyType>::value_type;
     dst_hist.clear();
-    double src_sum      = src_hist.sum();
-    double ref_sum      = ref_hist.sum();
+    double src_sum = src_hist.sum();
+    double ref_sum = ref_hist.sum();
     auto cumltv_srchist = cumulative_histogram(src_hist);
     auto cumltv_refhist = cumulative_histogram(ref_hist);
     std::map<SrcKeyType, RefKeyType> inverse_mapping;
-    
+
     std::vector<typename histogram<RefKeyType>::key_type> src_keys, ref_keys;
-    src_keys             = src_hist.sorted_keys();
-    ref_keys             = ref_hist.sorted_keys();
+    src_keys = src_hist.sorted_keys();
+    ref_keys = ref_hist.sorted_keys();
     std::ptrdiff_t start = ref_keys.size() - 1;
     RefKeyType ref_max;
     if (start >= 0)
         ref_max = std::get<0>(ref_keys[start]);
-    
+
     for (std::ptrdiff_t j = src_keys.size() - 1; j >= 0; --j)
     {
         double src_val = (cumltv_srchist[src_keys[j]] * ref_sum) / src_sum;
@@ -97,12 +97,12 @@ std::map<SrcKeyType, DstKeyType> histogram_matching(
         {
             start--;
         }
-        if (std::abs(cumltv_refhist[ref_keys[start]] - src_val) >
-            std::abs(cumltv_refhist(std::min<RefKeyType>(ref_max, std::get<0>(ref_keys[start + 1]))) -
-                src_val))
+        if (std::abs(cumltv_refhist[ref_keys[start]] - src_val) > std::abs(
+                cumltv_refhist(std::min<RefKeyType>(ref_max, std::get<0>(ref_keys[start + 1])))
+                - src_val))
         {
-            inverse_mapping[std::get<0>(src_keys[j])] = 
-                std::min<RefKeyType>(ref_max, std::get<0>(ref_keys[start + 1]));
+            inverse_mapping[std::get<0>(src_keys[j])]
+                = std::min<RefKeyType>(ref_max, std::get<0>(ref_keys[start + 1]));
         }
         else
         {
@@ -126,8 +126,8 @@ std::map<SrcKeyType, DstKeyType> histogram_matching(
 /// @param mask      INPUT Specify is mask is to be used
 /// @param src_mask  INPUT Mask vector over input image
 /// @param ref_mask  INPUT Mask vector over reference image
-/// \brief Overload for histogram matching algorithm, takes in both source, reference & 
-///        destination image views and histogram matches the input image using the 
+/// \brief Overload for histogram matching algorithm, takes in both source, reference &
+///        destination image views and histogram matches the input image using the
 ///        reference image.
 ///
 template <typename SrcView, typename ReferenceView, typename DstView>
@@ -155,34 +155,48 @@ void histogram_matching(
             typename color_space_type<SrcView>::type,
             typename color_space_type<DstView>::type>::value,
         "Source and destination view must have same color space");
-    
+
     // Defining channel type
     using source_channel_t = typename channel_type<SrcView>::type;
-    using ref_channel_t    = typename channel_type<ReferenceView>::type;
-    using dst_channel_t    = typename channel_type<DstView>::type;
-    using coord_t          = typename SrcView::x_coord_t;
+    using ref_channel_t = typename channel_type<ReferenceView>::type;
+    using dst_channel_t = typename channel_type<DstView>::type;
+    using coord_t = typename SrcView::x_coord_t;
 
-    std::size_t const channels     = num_channels<SrcView>::value;
-    coord_t const width            = src_view.width();
-    coord_t const height           = src_view.height();
+    std::size_t const channels = num_channels<SrcView>::value;
+    coord_t const width = src_view.width();
+    coord_t const height = src_view.height();
     source_channel_t src_pixel_min = std::numeric_limits<source_channel_t>::min();
     source_channel_t src_pixel_max = std::numeric_limits<source_channel_t>::max();
-    ref_channel_t ref_pixel_min    = std::numeric_limits<ref_channel_t>::min();
-    ref_channel_t ref_pixel_max    = std::numeric_limits<ref_channel_t>::max();
-    dst_channel_t dst_pixel_min    = std::numeric_limits<dst_channel_t>::min();
-    dst_channel_t dst_pixel_max    = std::numeric_limits<dst_channel_t>::max();
+    ref_channel_t ref_pixel_min = std::numeric_limits<ref_channel_t>::min();
+    ref_channel_t ref_pixel_max = std::numeric_limits<ref_channel_t>::max();
+    dst_channel_t dst_pixel_min = std::numeric_limits<dst_channel_t>::min();
+    dst_channel_t dst_pixel_max = std::numeric_limits<dst_channel_t>::max();
 
     for (std::size_t i = 0; i < channels; i++)
     {
         histogram<source_channel_t> src_histogram;
         histogram<ref_channel_t> ref_histogram;
         fill_histogram(
-            nth_channel_view(src_view, i), src_histogram, bin_width, false, false, mask, src_mask,
+            nth_channel_view(src_view, i),
+            src_histogram,
+            bin_width,
+            false,
+            false,
+            mask,
+            src_mask,
             std::tuple<source_channel_t>(src_pixel_min),
-            std::tuple<source_channel_t>(src_pixel_max), true);
+            std::tuple<source_channel_t>(src_pixel_max),
+            true);
         fill_histogram(
-            nth_channel_view(ref_view, i), ref_histogram, bin_width, false, false, mask, ref_mask,
-            std::tuple<ref_channel_t>(ref_pixel_min), std::tuple<ref_channel_t>(ref_pixel_max),
+            nth_channel_view(ref_view, i),
+            ref_histogram,
+            bin_width,
+            false,
+            false,
+            mask,
+            ref_mask,
+            std::tuple<ref_channel_t>(ref_pixel_min),
+            std::tuple<ref_channel_t>(ref_pixel_max),
             true);
         auto inverse_mapping = histogram_matching(src_histogram, ref_histogram);
         for (std::ptrdiff_t src_y = 0; src_y < height; ++src_y)
@@ -194,8 +208,8 @@ void histogram_matching(
                 if (mask && !src_mask[src_y][src_x])
                     dst_it[src_x][0] = src_it[src_x][0];
                 else
-                    dst_it[src_x][0] =
-                        static_cast<dst_channel_t>(inverse_mapping[src_it[src_x][0]]);
+                    dst_it[src_x][0]
+                        = static_cast<dst_channel_t>(inverse_mapping[src_it[src_x][0]]);
             }
         }
     }

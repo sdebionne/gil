@@ -9,9 +9,8 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-#include <type_traits>
-
 #include "test_utility_output_stream.hpp"
+#include <type_traits>
 
 namespace gil = boost::gil;
 
@@ -119,7 +118,7 @@ void test_division_assignment_operator()
         static_assert(std::is_same<decltype((p2 / int{}).x), float>::value, "!float");
         static_assert(std::is_same<decltype((p2 / float{}).x), float>::value, "!float");
         static_assert(std::is_same<decltype((p2 / double{}).x), double>::value, "!double");
-        BOOST_TEST_GE(p2.x, 1.0); // means, but >= avoids compiler warning
+        BOOST_TEST_GE(p2.x, 1.0);  // means, but >= avoids compiler warning
         BOOST_TEST_GE(p2.y, 2.0);
     }
 }
@@ -141,10 +140,10 @@ void test_multiplication_operator()
     }
     // m * point
     {
-        auto p2 = double{2} *p1;
+        auto p2 = double{2} * p1;
         static_assert(std::is_same<decltype(p2.x), double>::value, "!double");
         static_assert(std::is_same<decltype(p2.y), double>::value, "!double");
-        BOOST_TEST_GE(p2.x, 8); // means, but >= avoids compiler warning
+        BOOST_TEST_GE(p2.x, 8);  // means, but >= avoids compiler warning
         BOOST_TEST_GE(p2.y, 16);
     }
 }
@@ -165,7 +164,7 @@ void test_multiplication_assignment_operator()
         auto p2 = double{2} * p1;
         static_assert(std::is_same<decltype(p2.x), double>::value, "!double");
         static_assert(std::is_same<decltype(p2.y), double>::value, "!double");
-        BOOST_TEST_GE(p2.x, 4); // means, but >= avoids compiler warning
+        BOOST_TEST_GE(p2.x, 4);  // means, but >= avoids compiler warning
         BOOST_TEST_GE(p2.y, 8);
     }
 }

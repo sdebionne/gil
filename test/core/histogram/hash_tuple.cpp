@@ -8,15 +8,15 @@
 
 #include <boost/gil/histogram.hpp>
 
-#include <boost/core/lightweight_test.hpp>
 #include <boost/container_hash/hash.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 #include <tuple>
 
 namespace gil = boost::gil;
 namespace mp11 = boost::mp11;
 
-void check_detail_hash_tuple ()
+void check_detail_hash_tuple()
 {
     std::tuple<int, int> t(1, 1);
     std::size_t seed1 = 0;

@@ -26,7 +26,7 @@ struct test_map_fn
 {
     using point_t = gil::point<F>;
     using result_type = point_t;
-    result_type operator()(gil::point<I> const &src) const
+    result_type operator()(gil::point<I> const& src) const
     {
         F x = static_cast<F>(src.x) - 0.5;
         F y = static_cast<F>(src.y) - 0.5;
@@ -48,12 +48,12 @@ struct mapping_traits<test_map_fn<F, I>>
 };
 
 template <class F, class I>
-inline point<F> transform(test_map_fn<F, I> const &mf, point<I> const &src)
+inline point<F> transform(test_map_fn<F, I> const& mf, point<I> const& src)
 {
     return mf(src);
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 void test_bilinear_sampler_test()
 {

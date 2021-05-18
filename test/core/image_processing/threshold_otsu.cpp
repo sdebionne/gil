@@ -7,8 +7,8 @@
 //
 #include <boost/gil/algorithm.hpp>
 #include <boost/gil/gray.hpp>
-#include <boost/gil/image_view.hpp>
 #include <boost/gil/image_processing/threshold.hpp>
+#include <boost/gil/image_view.hpp>
 
 #include <boost/core/lightweight_test.hpp>
 
@@ -18,7 +18,7 @@ int height = 2;
 int width = 2;
 
 gil::gray8_image_t original_gray(width, height), otsu_gray(width, height),
-expected_gray(width, height);
+    expected_gray(width, height);
 
 gil::rgb8_image_t original_rgb(width, height), otsu_rgb(width, height), expected_rgb(width, height);
 
@@ -46,10 +46,7 @@ void test_gray_regular()
     gil::view(expected_gray)(1, 1) = gil::gray8_pixel_t(255);
 
     gil::threshold_optimal(
-        gil::view(original_gray),
-        gil::view(otsu_gray),
-        gil::threshold_optimal_value::otsu
-    );
+        gil::view(original_gray), gil::view(otsu_gray), gil::threshold_optimal_value::otsu);
 
     BOOST_TEST(gil::equal_pixels(gil::view(otsu_gray), gil::view(expected_gray)));
 }
@@ -65,8 +62,7 @@ void test_gray_inverse()
         gil::view(original_gray),
         gil::view(otsu_gray),
         gil::threshold_optimal_value::otsu,
-        gil::threshold_direction::inverse
-    );
+        gil::threshold_direction::inverse);
 
     BOOST_TEST(gil::equal_pixels(gil::view(otsu_gray), gil::view(expected_gray)));
 }
@@ -79,10 +75,7 @@ void test_rgb_regular()
     gil::view(expected_rgb)(1, 1) = gil::rgb8_pixel_t(0, 255, 255);
 
     gil::threshold_optimal(
-        gil::view(original_rgb),
-        gil::view(otsu_rgb),
-        gil::threshold_optimal_value::otsu
-    );
+        gil::view(original_rgb), gil::view(otsu_rgb), gil::threshold_optimal_value::otsu);
 
     BOOST_TEST(gil::equal_pixels(gil::view(otsu_rgb), gil::view(expected_rgb)));
 }
@@ -98,8 +91,7 @@ void test_rgb_inverse()
         gil::view(original_rgb),
         gil::view(otsu_rgb),
         gil::threshold_optimal_value::otsu,
-        gil::threshold_direction::inverse
-    );
+        gil::threshold_direction::inverse);
 
     BOOST_TEST(gil::equal_pixels(gil::view(otsu_rgb), gil::view(expected_rgb)));
 }

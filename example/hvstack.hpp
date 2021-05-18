@@ -1,10 +1,12 @@
-#include "boost/gil/image_view_factory.hpp"
 #include <boost/gil/image.hpp>
 #include <boost/gil/image_view.hpp>
+
 #include <cmath>
 #include <numeric>
 #include <stdexcept>
 #include <vector>
+
+#include "boost/gil/image_view_factory.hpp"
 
 namespace boost { namespace gil {
 template <typename View>
@@ -24,9 +26,10 @@ void hstack(const std::vector<View>& views, const View& output_view)
         }
     }
 
-    std::ptrdiff_t full_width =
-        std::accumulate(views.begin(), views.end(), 0,
-                        [](std::ptrdiff_t old, const View& view) { return old + view.width(); });
+    std::ptrdiff_t full_width
+        = std::accumulate(views.begin(), views.end(), 0, [](std::ptrdiff_t old, const View& view) {
+              return old + view.width();
+          });
     if (output_view.width() != full_width || output_view.height() != height)
     {
         throw std::invalid_argument("the destination view is not of the right dimensions");
@@ -35,8 +38,8 @@ void hstack(const std::vector<View>& views, const View& output_view)
     std::ptrdiff_t current_x = 0;
     for (std::size_t i = 0; i < views.size(); ++i)
     {
-        auto subview =
-            subimage_view(output_view, current_x, 0, views[i].width(), views[i].height());
+        auto subview
+            = subimage_view(output_view, current_x, 0, views[i].width(), views[i].height());
         copy_pixels(views[i], subview);
         current_x += views[i].width();
     }
@@ -50,9 +53,10 @@ image<typename View::value_type> hstack(const std::vector<View>& views)
         throw std::invalid_argument("empty views vector is passed - cannot create stacked image");
     }
 
-    std::ptrdiff_t full_width =
-        std::accumulate(views.begin(), views.end(), 0,
-                        [](std::ptrdiff_t old, const View& view) { return old + view.width(); });
+    std::ptrdiff_t full_width
+        = std::accumulate(views.begin(), views.end(), 0, [](std::ptrdiff_t old, const View& view) {
+              return old + view.width();
+          });
     std::ptrdiff_t height = views.front().height();
     image<typename View::value_type> result_image(full_width, height);
     hstack(views, view(result_image));
@@ -67,9 +71,10 @@ void vstack(const std::vector<View>& views, const View& output_view)
         throw std::invalid_argument("empty views vector is passed - cannot create stacked image");
     }
 
-    auto full_height =
-        std::accumulate(views.begin(), views.end(), 0,
-                        [](std::ptrdiff_t old, const View& view) { return old + view.height(); });
+    auto full_height
+        = std::accumulate(views.begin(), views.end(), 0, [](std::ptrdiff_t old, const View& view) {
+              return old + view.height();
+          });
     std::ptrdiff_t width = views.front().height();
 
     for (const auto& view : views)
@@ -88,8 +93,8 @@ void vstack(const std::vector<View>& views, const View& output_view)
     std::ptrdiff_t current_y = 0;
     for (std::size_t i = 0; i < views.size(); ++i)
     {
-        auto subview =
-            subimage_view(output_view, 0, current_y, views[i].width(), views[i].height());
+        auto subview
+            = subimage_view(output_view, 0, current_y, views[i].width(), views[i].height());
         copy_pixels(views[i], subview);
         current_y += views[i].height();
     }
@@ -103,13 +108,14 @@ image<typename View::value_type> vstack(const std::vector<View>& views)
         throw std::invalid_argument("empty views vector is passed - cannot create stacked image");
     }
 
-    auto full_height =
-        std::accumulate(views.begin(), views.end(), 0,
-                        [](std::ptrdiff_t old, const View& view) { return old + view.height(); });
+    auto full_height
+        = std::accumulate(views.begin(), views.end(), 0, [](std::ptrdiff_t old, const View& view) {
+              return old + view.height();
+          });
     std::ptrdiff_t width = views.front().height();
 
     image<typename View::value_type> result_image(width, full_height);
     hstack(views, view(result_image));
     return result_image;
 }
-}} // namespace boost::gil
+}}  // namespace boost::gil

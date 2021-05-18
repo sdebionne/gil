@@ -11,10 +11,10 @@
 #include <boost/core/lightweight_test.hpp>
 
 #include <tuple>
-#include <type_traits>
 
-#include "test_fixture.hpp"
 #include "core/image/test_fixture.hpp"
+#include "test_fixture.hpp"
+#include <type_traits>
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;

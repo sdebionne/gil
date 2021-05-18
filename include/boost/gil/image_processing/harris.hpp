@@ -8,9 +8,9 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_HARRIS_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_HARRIS_HPP
 
+#include <boost/gil/extension/numeric/kernel.hpp>
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/typedefs.hpp>
-#include <boost/gil/extension/numeric/kernel.hpp>
 
 namespace boost { namespace gil {
 /// \defgroup CornerDetectionAlgorithms
@@ -39,8 +39,10 @@ void compute_harris_responses(
     float k,
     boost::gil::gray32f_view_t harris_response)
 {
-    if (m11.dimensions() != m12_21.dimensions() || m12_21.dimensions() != m22.dimensions()) {
-        throw std::invalid_argument("m prefixed arguments must represent"
+    if (m11.dimensions() != m12_21.dimensions() || m12_21.dimensions() != m22.dimensions())
+    {
+        throw std::invalid_argument(
+            "m prefixed arguments must represent"
             " tensor from the same image");
     }
 
@@ -56,18 +58,20 @@ void compute_harris_responses(
             float ddxx = 0;
             float dxdy = 0;
             float ddyy = 0;
-            for (gil::gray32f_view_t::coord_t y_kernel = 0;
-                y_kernel < window_length;
-                ++y_kernel) {
-                for (gil::gray32f_view_t::coord_t x_kernel = 0;
-                    x_kernel < window_length;
-                    ++x_kernel) {
+            for (gil::gray32f_view_t::coord_t y_kernel = 0; y_kernel < window_length; ++y_kernel)
+            {
+                for (gil::gray32f_view_t::coord_t x_kernel = 0; x_kernel < window_length;
+                     ++x_kernel)
+                {
                     ddxx += m11(x + x_kernel - half_length, y + y_kernel - half_length)
-                        .at(std::integral_constant<int, 0>{}) * weights.at(x_kernel, y_kernel);
+                                .at(std::integral_constant<int, 0>{})
+                          * weights.at(x_kernel, y_kernel);
                     dxdy += m12_21(x + x_kernel - half_length, y + y_kernel - half_length)
-                        .at(std::integral_constant<int, 0>{}) * weights.at(x_kernel, y_kernel);
+                                .at(std::integral_constant<int, 0>{})
+                          * weights.at(x_kernel, y_kernel);
                     ddyy += m22(x + x_kernel - half_length, y + y_kernel - half_length)
-                        .at(std::integral_constant<int, 0>{}) * weights.at(x_kernel, y_kernel);
+                                .at(std::integral_constant<int, 0>{})
+                          * weights.at(x_kernel, y_kernel);
                 }
             }
             auto det = (ddxx * ddyy) - dxdy * dxdy;
@@ -78,5 +82,5 @@ void compute_harris_responses(
     }
 }
 
-}} //namespace boost::gil
+}}  //namespace boost::gil
 #endif

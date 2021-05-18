@@ -58,7 +58,7 @@ void test_at()
         BOOST_TEST_EQ(*view.at(gil::point_t{0, 0}), fixture::gray8_draw_pixel);
         BOOST_TEST_EQ(*view.at(gil::point_t{0, 1}), fixture::gray8_back_pixel);
         // end
-#ifdef NDEBUG // skip assertions
+#ifdef NDEBUG  // skip assertions
         BOOST_TEST(view.at(4) == view.end());
         // convoluted access to end iterator
         BOOST_TEST(view.at(0, 2) == view.end());
@@ -76,7 +76,7 @@ void test_at()
         BOOST_TEST_EQ(*view.at(gil::point_t{0, 0}), fixture::rgb8_draw_pixel);
         BOOST_TEST_EQ(*view.at(gil::point_t{0, 1}), fixture::rgb8_back_pixel);
         // end
-#ifdef NDEBUG // skip assertions
+#ifdef NDEBUG  // skip assertions
         BOOST_TEST(view.at(4) == view.end());
         // convoluted access to end iterator
         BOOST_TEST(view.at(0, 2) == view.end());

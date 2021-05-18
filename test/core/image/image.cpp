@@ -9,9 +9,9 @@
 
 #include <boost/core/lightweight_test.hpp>
 
+#include "core/pixel/test_fixture.hpp"
 #include "test_fixture.hpp"
 #include "test_utility_output_stream.hpp"
-#include "core/pixel/test_fixture.hpp"
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
@@ -19,7 +19,7 @@ namespace fixture = boost::gil::test::fixture;
 struct test_constructor_with_dimensions_pixel
 {
     template <typename Image>
-    void operator()(Image const &)
+    void operator()(Image const&)
     {
         using image_t = Image;
         gil::point_t const dimensions{256, 128};
@@ -29,7 +29,7 @@ struct test_constructor_with_dimensions_pixel
         BOOST_TEST_EQ(image.width(), dimensions.x);
         BOOST_TEST_EQ(image.height(), dimensions.y);
 
-        for (pixel_t const &p : gil::view(image))
+        for (pixel_t const& p : gil::view(image))
             BOOST_TEST_EQ(p, rnd_pixel);
     }
     static void run()
@@ -41,7 +41,7 @@ struct test_constructor_with_dimensions_pixel
 struct test_constructor_from_other_image
 {
     template <typename Image>
-    void operator()(Image const &)
+    void operator()(Image const&)
     {
         using image_t = Image;
         gil::point_t const dimensions{256, 128};
@@ -49,7 +49,7 @@ struct test_constructor_from_other_image
         pixel_t const rnd_pixel = fixture::pixel_generator<pixel_t>::random();
         {
             //constructor interleaved from planar
-            gil::image<pixel_t, true> image1(dimensions, rnd_pixel); 
+            gil::image<pixel_t, true> image1(dimensions, rnd_pixel);
             image_t image2(image1);
             BOOST_TEST_EQ(image2.dimensions(), dimensions);
             auto v1 = gil::const_view(image1);
@@ -68,7 +68,8 @@ struct test_constructor_from_other_image
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::rgb_interleaved_image_types>(test_constructor_from_other_image{});
+        boost::mp11::mp_for_each<fixture::rgb_interleaved_image_types>(
+            test_constructor_from_other_image{});
     }
 };
 
@@ -78,7 +79,7 @@ struct test_constructor_from_view
     void operator()(Image const&)
     {
         using image_t = Image;
-        gil::point_t const dimensions{ 256, 128 };
+        gil::point_t const dimensions{256, 128};
         using pixel_t = typename image_t::view_t::value_type;
         pixel_t const rnd_pixel = fixture::pixel_generator<pixel_t>::random();
         {
@@ -102,7 +103,8 @@ struct test_constructor_from_view
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::rgb_interleaved_image_types>(test_constructor_from_view{});
+        boost::mp11::mp_for_each<fixture::rgb_interleaved_image_types>(
+            test_constructor_from_view{});
     }
 };
 

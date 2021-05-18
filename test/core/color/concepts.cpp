@@ -10,14 +10,14 @@
 // when compiling with concepts check enabled.
 // See https://bugs.llvm.org/show_bug.cgi?id=41759
 #if !defined(BOOST_GIL_USE_CONCEPT_CHECK) && !defined(__clang__)
-#error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
+#    error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
 #endif
+#include <boost/gil/cmyk.hpp>
 #include <boost/gil/concepts.hpp>
 #include <boost/gil/device_n.hpp>
 #include <boost/gil/gray.hpp>
 #include <boost/gil/rgb.hpp>
 #include <boost/gil/rgba.hpp>
-#include <boost/gil/cmyk.hpp>
 
 #include <boost/concept_check.hpp>
 
@@ -42,9 +42,5 @@ int main()
     function_requires<gil::ColorSpacesCompatibleConcept<gil::cmyk_t, gil::cmyk_t>>();
     function_requires<gil::ColorSpacesCompatibleConcept<gil::rgb_t, gil::rgb_t>>();
     function_requires<gil::ColorSpacesCompatibleConcept<gil::rgba_t, gil::rgba_t>>();
-    function_requires<gil::ColorSpacesCompatibleConcept
-        <
-            gil::devicen_t<2>,
-            gil::devicen_t<2>
-        >>();
+    function_requires<gil::ColorSpacesCompatibleConcept<gil::devicen_t<2>, gil::devicen_t<2>>>();
 }

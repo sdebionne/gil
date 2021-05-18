@@ -10,10 +10,11 @@
 
 #include <boost/gil/concepts.hpp>
 #include <boost/gil/dynamic_step.hpp>
-#include <boost/gil/utilities.hpp>
 #include <boost/gil/pixel.hpp>
+#include <boost/gil/utilities.hpp>
 
 #include <iterator>
+
 #include <type_traits>
 
 namespace boost { namespace gil {
@@ -25,7 +26,9 @@ class memory_based_step_iterator;
 /// \brief metafunction predicate determining whether the given iterator is a plain one or an adaptor over another iterator.
 /// Examples of adaptors are the step iterator and the dereference iterator adaptor.
 template <typename It>
-struct is_iterator_adaptor : public std::false_type {};
+struct is_iterator_adaptor : public std::false_type
+{
+};
 
 /// \brief returns the base iterator for a given iterator adaptor. Provide an specialization when introducing new iterator adaptors
 template <typename It>
@@ -40,26 +43,39 @@ template <typename It>
 struct const_iterator_type;
 
 // The default implementation when the iterator is a C pointer is to use the standard constness semantics
-template <typename T> struct const_iterator_type<T*>       { using type = T const*; };
-template <typename T> struct const_iterator_type<T const*> { using type = T const*; };
+template <typename T>
+struct const_iterator_type<T*>
+{
+    using type = T const*;
+};
+template <typename T>
+struct const_iterator_type<T const*>
+{
+    using type = T const*;
+};
 
 /// \brief Metafunction predicate returning whether the given iterator allows for changing its values
 /// \ingroup GILIsMutable
 template <typename It>
-struct iterator_is_mutable{};
+struct iterator_is_mutable
+{
+};
 
 // The default implementation when the iterator is a C pointer is to use the standard constness semantics
 template <typename T>
-struct iterator_is_mutable<T*> : std::true_type {};
+struct iterator_is_mutable<T*> : std::true_type
+{
+};
 
 template <typename T>
-struct iterator_is_mutable<T const*> : std::false_type {};
+struct iterator_is_mutable<T const*> : std::false_type
+{
+};
 
 /// \defgroup PixelIteratorModelInterleavedPtr C pointer to a pixel
 /// \ingroup PixelIteratorModel
 /// \brief Iterators over interleaved pixels.
 /// A C pointer to a model of PixelValueConcept is used as an iterator over interleaved pixels. Models PixelIteratorConcept, HomogeneousPixelBasedConcept, HasDynamicXStepTypeConcept, MemoryBasedIteratorConcept
-
 
 
 /////////////////////////////
@@ -68,14 +84,16 @@ struct iterator_is_mutable<T const*> : std::false_type {};
 
 /// \ingroup PixelIteratorModelInterleavedPtr
 template <typename Pixel>
-struct dynamic_x_step_type<Pixel*> {
-    using type = memory_based_step_iterator<Pixel *>;
+struct dynamic_x_step_type<Pixel*>
+{
+    using type = memory_based_step_iterator<Pixel*>;
 };
 
 /// \ingroup PixelIteratorModelInterleavedPtr
 template <typename Pixel>
-struct dynamic_x_step_type<const Pixel*> {
-    using type = memory_based_step_iterator<const Pixel *>;
+struct dynamic_x_step_type<const Pixel*>
+{
+    using type = memory_based_step_iterator<const Pixel*>;
 };
 
 
@@ -84,32 +102,48 @@ struct dynamic_x_step_type<const Pixel*> {
 /////////////////////////////
 
 template <typename Pixel>
-struct color_space_type<Pixel*> : color_space_type<Pixel> {};
+struct color_space_type<Pixel*> : color_space_type<Pixel>
+{
+};
 
 template <typename Pixel>
-struct color_space_type<Pixel const*> : color_space_type<Pixel> {};
+struct color_space_type<Pixel const*> : color_space_type<Pixel>
+{
+};
 
 template <typename Pixel>
-struct channel_mapping_type<Pixel*> : channel_mapping_type<Pixel> {};
+struct channel_mapping_type<Pixel*> : channel_mapping_type<Pixel>
+{
+};
 
 template <typename Pixel>
-struct channel_mapping_type<Pixel const*> : channel_mapping_type<Pixel> {};
+struct channel_mapping_type<Pixel const*> : channel_mapping_type<Pixel>
+{
+};
 
 template <typename Pixel>
-struct is_planar<Pixel*> : is_planar<Pixel> {};
+struct is_planar<Pixel*> : is_planar<Pixel>
+{
+};
 
 template <typename Pixel>
-struct is_planar<Pixel const*> : is_planar<Pixel> {};
+struct is_planar<Pixel const*> : is_planar<Pixel>
+{
+};
 
 /////////////////////////////
 //  HomogeneousPixelBasedConcept
 /////////////////////////////
 
 template <typename Pixel>
-struct channel_type<Pixel*> : channel_type<Pixel> {};
+struct channel_type<Pixel*> : channel_type<Pixel>
+{
+};
 
 template <typename Pixel>
-struct channel_type<Pixel const*> : channel_type<Pixel> {};
+struct channel_type<Pixel const*> : channel_type<Pixel>
+{
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// Support for pixel iterator movement measured in memory units (bytes or bits) as opposed to pixel type.
@@ -121,39 +155,45 @@ struct channel_type<Pixel const*> : channel_type<Pixel> {};
 /////////////////////////////
 
 template <typename T>
-struct byte_to_memunit : std::integral_constant<int, 1> {};
+struct byte_to_memunit : std::integral_constant<int, 1>
+{
+};
 
 template <typename P>
-inline std::ptrdiff_t memunit_step(P const*) { return sizeof(P); }
+inline std::ptrdiff_t memunit_step(P const*)
+{
+    return sizeof(P);
+}
 
 template <typename P>
 inline std::ptrdiff_t memunit_distance(P const* p1, P const* p2)
 {
     return (
-        gil_reinterpret_cast_c<unsigned char const*>(p2) -
-        gil_reinterpret_cast_c<unsigned char const*>(p1));
+        gil_reinterpret_cast_c<unsigned char const*>(p2)
+        - gil_reinterpret_cast_c<unsigned char const*>(p1));
 }
 
 template <typename P>
-inline void memunit_advance(P* &p, std::ptrdiff_t diff)
+inline void memunit_advance(P*& p, std::ptrdiff_t diff)
 {
-    p = (P*)((unsigned char*)(p)+diff);
+    p = (P*)((unsigned char*)(p) + diff);
 }
 
 template <typename P>
 inline P* memunit_advanced(const P* p, std::ptrdiff_t diff)
 {
-    return (P*)((char*)(p)+diff);
+    return (P*)((char*)(p) + diff);
 }
 
 //  memunit_advanced_ref
 //  (shortcut to advancing a pointer by a given number of memunits and taking the reference in case the compiler is not smart enough)
 
 template <typename P>
-inline P& memunit_advanced_ref(P* p, std::ptrdiff_t diff) {
-    return *memunit_advanced(p,diff);
+inline P& memunit_advanced_ref(P* p, std::ptrdiff_t diff)
+{
+    return *memunit_advanced(p, diff);
 }
 
-} }  // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

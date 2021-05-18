@@ -5,8 +5,8 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#include <boost/gil/pixel.hpp>
 #include <boost/gil/concepts/pixel.hpp>
+#include <boost/gil/pixel.hpp>
 #include <boost/gil/typedefs.hpp>
 
 #include <boost/mp11.hpp>
@@ -38,8 +38,7 @@ void test()
 
 int main()
 {
-    using one = mp_list
-    <
+    using one = mp_list<
         gil::gray8_pixel_t,
         gil::gray8c_pixel_t,
         gil::gray8s_pixel_t,
@@ -54,12 +53,10 @@ int main()
         gil::gray32f_pixel_t,
         gil::gray32fc_pixel_t,
         gil::gray32s_pixel_t,
-        gil::gray32sc_pixel_t
-    >;
+        gil::gray32sc_pixel_t>;
     test<1, one>();
 
-    using three = mp_list
-    <
+    using three = mp_list<
         gil::bgr8_pixel_t,
         gil::bgr8c_pixel_t,
         gil::bgr8s_pixel_t,
@@ -87,12 +84,10 @@ int main()
         gil::rgb32f_pixel_t,
         gil::rgb32fc_pixel_t,
         gil::rgb32s_pixel_t,
-        gil::rgb32sc_pixel_t
-    >;
+        gil::rgb32sc_pixel_t>;
     test<3, three>();
 
-    using four = mp_list
-    <
+    using four = mp_list<
         gil::abgr8_pixel_t,
         gil::abgr8c_pixel_t,
         gil::abgr8s_pixel_t,
@@ -148,7 +143,6 @@ int main()
         gil::rgba32f_pixel_t,
         gil::rgba32fc_pixel_t,
         gil::rgba32s_pixel_t,
-        gil::rgba32sc_pixel_t
-    >;
+        gil::rgba32sc_pixel_t>;
     test<4, four>();
 }

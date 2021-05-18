@@ -9,11 +9,10 @@
 #ifndef BOOST_GIL_EXTENSION_NUMERIC_CONVOLVE_HPP
 #define BOOST_GIL_EXTENSION_NUMERIC_CONVOLVE_HPP
 
+#include <boost/gil/algorithm.hpp>
 #include <boost/gil/extension/numeric/algorithm.hpp>
 #include <boost/gil/extension/numeric/kernel.hpp>
 #include <boost/gil/extension/numeric/pixel_numeric_operations.hpp>
-
-#include <boost/gil/algorithm.hpp>
 #include <boost/gil/image_view_factory.hpp>
 #include <boost/gil/metafunctions.hpp>
 
@@ -22,8 +21,9 @@
 #include <algorithm>
 #include <cstddef>
 #include <functional>
-#include <type_traits>
 #include <vector>
+
+#include <type_traits>
 
 namespace boost { namespace gil {
 
@@ -42,14 +42,7 @@ namespace detail {
 /// \param dst_view Destination where new computed values of pixels are assigned to
 /// \param option - TODO
 /// \param correlator - TODO
-template
-<
-    typename PixelAccum,
-    typename SrcView,
-    typename Kernel,
-    typename DstView,
-    typename Correlator
->
+template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView, typename Correlator>
 void correlate_rows_impl(
     SrcView const& src_view,
     Kernel const& kernel,
@@ -60,7 +53,7 @@ void correlate_rows_impl(
     BOOST_ASSERT(src_view.dimensions() == dst_view.dimensions());
     BOOST_ASSERT(kernel.size() != 0);
 
-    if(kernel.size() == 1)
+    if (kernel.size() == 1)
     {
         // Reduces to a multiplication
         view_multiplies_scalar<PixelAccum>(src_view, *kernel.begin(), dst_view);
@@ -98,8 +91,11 @@ void correlate_rows_impl(
                 if (option == boundary_option::output_zero)
                     std::fill_n(it_dst, kernel.left_size(), dst_zero);
                 it_dst += kernel.left_size();
-                correlator(&buffer.front(), &buffer.front() + width + 1 - kernel.size(),
-                           kernel.begin(), it_dst);
+                correlator(
+                    &buffer.front(),
+                    &buffer.front() + width + 1 - kernel.size(),
+                    kernel.begin(),
+                    it_dst);
                 it_dst += width + 1 - kernel.size();
                 if (option == boundary_option::output_zero)
                     std::fill_n(it_dst, kernel.right_size(), dst_zero);
@@ -111,7 +107,7 @@ void correlate_rows_impl(
         std::vector<PixelAccum> buffer(width + kernel.size() - 1);
         for (y_coord_t y = 0; y < height; ++y)
         {
-            PixelAccum *it_buffer = &buffer.front();
+            PixelAccum* it_buffer = &buffer.front();
             if (option == boundary_option::extend_padded)
             {
                 assign_pixels(
@@ -140,9 +136,7 @@ void correlate_rows_impl(
             }
 
             correlator(
-                &buffer.front(), &buffer.front() + width,
-                kernel.begin(),
-                dst_view.row_begin(y));
+                &buffer.front(), &buffer.front() + width, kernel.begin(), dst_view.row_begin(y));
         }
     }
 }
@@ -151,7 +145,9 @@ template <typename PixelAccum>
 class correlator_n
 {
 public:
-    correlator_n(std::size_t size) : size_(size) {}
+    correlator_n(std::size_t size) : size_(size)
+    {
+    }
 
     template <typename SrcIterator, typename KernelIterator, typename DstIterator>
     void operator()(
@@ -181,7 +177,7 @@ struct correlator_k
     }
 };
 
-} // namespace detail
+}  // namespace detail
 
 /// \ingroup ImageAlgorithms
 /// \brief Correlate 1D variable-size kernel along the rows of image
@@ -190,8 +186,7 @@ struct correlator_k
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void correlate_rows(
+BOOST_FORCEINLINE void correlate_rows(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -208,8 +203,7 @@ void correlate_rows(
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void correlate_cols(
+BOOST_FORCEINLINE void correlate_cols(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -226,8 +220,7 @@ void correlate_cols(
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void convolve_rows(
+BOOST_FORCEINLINE void convolve_rows(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -243,15 +236,13 @@ void convolve_rows(
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void convolve_cols(
+BOOST_FORCEINLINE void convolve_cols(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
     boundary_option option = boundary_option::extend_zero)
 {
-    convolve_rows<PixelAccum>(
-        transposed_view(src_view), kernel, transposed_view(dst_view), option);
+    convolve_rows<PixelAccum>(transposed_view(src_view), kernel, transposed_view(dst_view), option);
 }
 
 /// \ingroup ImageAlgorithms
@@ -261,8 +252,7 @@ void convolve_cols(
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void correlate_rows_fixed(
+BOOST_FORCEINLINE void correlate_rows_fixed(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -278,9 +268,8 @@ void correlate_rows_fixed(
 /// \tparam SrcView Models ImageViewConcept
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
-template <typename PixelAccum,typename SrcView,typename Kernel,typename DstView>
-BOOST_FORCEINLINE
-void correlate_cols_fixed(
+template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
+BOOST_FORCEINLINE void correlate_cols_fixed(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -297,8 +286,7 @@ void correlate_cols_fixed(
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void convolve_rows_fixed(
+BOOST_FORCEINLINE void convolve_rows_fixed(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -314,8 +302,7 @@ void convolve_rows_fixed(
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void convolve_cols_fixed(
+BOOST_FORCEINLINE void convolve_cols_fixed(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -325,8 +312,7 @@ void convolve_cols_fixed(
         transposed_view(src_view), kernel, transposed_view(dst_view), option);
 }
 
-namespace detail
-{
+namespace detail {
 
 /// \ingroup ImageAlgorithms
 /// \brief Convolve 1D variable-size kernel along both rows and columns of image
@@ -335,8 +321,7 @@ namespace detail
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
-BOOST_FORCEINLINE
-void convolve_1d(
+BOOST_FORCEINLINE void convolve_1d(
     SrcView const& src_view,
     Kernel const& kernel,
     DstView const& dst_view,
@@ -358,23 +343,23 @@ void convolve_2d_impl(SrcView const& src_view, DstView const& dst_view, Kernel c
             aux_total = 0.0f;
             for (std::size_t kernel_row = 0; kernel_row < kernel.size(); ++kernel_row)
             {
-                flip_ker_row = kernel.size() - 1 - kernel_row;      // row index of flipped kernel
+                flip_ker_row = kernel.size() - 1 - kernel_row;  // row index of flipped kernel
 
                 for (std::size_t kernel_col = 0; kernel_col < kernel.size(); ++kernel_col)
                 {
-                    flip_ker_col = kernel.size() - 1 - kernel_col; // column index of flipped kernel
+                    flip_ker_col
+                        = kernel.size() - 1 - kernel_col;  // column index of flipped kernel
 
                     // index of input signal, used for checking boundary
                     row_boundary = view_row + (kernel.center_y() - flip_ker_row);
                     col_boundary = view_col + (kernel.center_x() - flip_ker_col);
 
                     // ignore input samples which are out of bound
-                    if (row_boundary >= 0 && row_boundary < src_view.height() &&
-                        col_boundary >= 0 && col_boundary < src_view.width())
+                    if (row_boundary >= 0 && row_boundary < src_view.height() && col_boundary >= 0
+                        && col_boundary < src_view.width())
                     {
-                        aux_total +=
-                            src_view(col_boundary, row_boundary) *
-                            kernel.at(flip_ker_row, flip_ker_col);
+                        aux_total += src_view(col_boundary, row_boundary)
+                                   * kernel.at(flip_ker_row, flip_ker_col);
                     }
                 }
             }
@@ -398,22 +383,20 @@ void convolve_2d(SrcView const& src_view, Kernel const& kernel, DstView const& d
 
     gil_function_requires<ImageViewConcept<SrcView>>();
     gil_function_requires<MutableImageViewConcept<DstView>>();
-    static_assert(color_spaces_are_compatible
-    <
-        typename color_space_type<SrcView>::type,
-        typename color_space_type<DstView>::type
-    >::value, "Source and destination views must have pixels with the same color space");
+    static_assert(
+        color_spaces_are_compatible<
+            typename color_space_type<SrcView>::type,
+            typename color_space_type<DstView>::type>::value,
+        "Source and destination views must have pixels with the same color space");
 
     for (std::size_t i = 0; i < src_view.num_channels(); i++)
     {
         detail::convolve_2d_impl(
-            nth_channel_view(src_view, i),
-            nth_channel_view(dst_view, i),
-            kernel
-        );
+            nth_channel_view(src_view, i), nth_channel_view(dst_view, i), kernel);
     }
 }
 
-}}} // namespace boost::gil::detail
+}  // namespace detail
+}}  // namespace boost::gil
 
 #endif

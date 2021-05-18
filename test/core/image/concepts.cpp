@@ -10,7 +10,7 @@
 // when compiling with concepts check enabled.
 // See https://bugs.llvm.org/show_bug.cgi?id=41759
 #if !defined(BOOST_GIL_USE_CONCEPT_CHECK) && !defined(__clang__)
-#error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
+#    error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
 #endif
 #include <boost/gil.hpp>
 

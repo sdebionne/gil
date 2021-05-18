@@ -5,13 +5,13 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
+#include <boost/gil/color_base.hpp>  // kth_element_type
 #include <boost/gil/dynamic_step.hpp>
-#include <boost/gil/color_base.hpp> // kth_element_type
-#include <boost/gil/pixel.hpp> // kth_element_type
+#include <boost/gil/pixel.hpp>  // kth_element_type
 #include <boost/gil/pixel_iterator.hpp>
 #include <boost/gil/pixel_iterator_adaptor.hpp>
-#include <boost/gil/planar_pixel_iterator.hpp> // kth_element_type
-#include <boost/gil/planar_pixel_reference.hpp> // kth_element_type
+#include <boost/gil/planar_pixel_iterator.hpp>   // kth_element_type
+#include <boost/gil/planar_pixel_reference.hpp>  // kth_element_type
 #include <boost/gil/step_iterator.hpp>
 #include <boost/gil/typedefs.hpp>
 
@@ -25,33 +25,29 @@ namespace gil = boost::gil;
 template <typename Iterator>
 void test_non_step()
 {
-    static_assert(std::is_same
-        <
+    static_assert(
+        std::is_same<
             gil::memory_based_step_iterator<Iterator>,
-            typename gil::dynamic_x_step_type<Iterator>::type
-        >::value, "iterator does not model HasDynamicXStepTypeConcept");
+            typename gil::dynamic_x_step_type<Iterator>::type>::value,
+        "iterator does not model HasDynamicXStepTypeConcept");
 
-    static_assert(!std::is_same
-        <
-            Iterator,
-            typename gil::dynamic_x_step_type<Iterator>::type
-        >::value, "dynamic_x_step_type yields X step iterator, not X iterator");
+    static_assert(
+        !std::is_same<Iterator, typename gil::dynamic_x_step_type<Iterator>::type>::value,
+        "dynamic_x_step_type yields X step iterator, not X iterator");
 }
 
 template <typename Iterator>
 void test_step()
 {
-    static_assert(std::is_same
-        <
-            Iterator,
-            typename gil::dynamic_x_step_type<Iterator>::type
-        >::value, "iterator does not model HasDynamicXStepTypeConcept");
+    static_assert(
+        std::is_same<Iterator, typename gil::dynamic_x_step_type<Iterator>::type>::value,
+        "iterator does not model HasDynamicXStepTypeConcept");
 
-    static_assert(!std::is_same
-        <
+    static_assert(
+        !std::is_same<
             typename Iterator::x_iterator,
-            typename gil::dynamic_x_step_type<gil::gray8_step_ptr_t>::type
-        >::value, "dynamic_x_step_type yields X step iterator, not X iterator");
+            typename gil::dynamic_x_step_type<gil::gray8_step_ptr_t>::type>::value,
+        "dynamic_x_step_type yields X step iterator, not X iterator");
 }
 
 int main()

@@ -7,17 +7,19 @@
 //
 
 #include <boost/gil/extension/histogram/std.hpp>
-#include <boost/gil/image_view.hpp>
 #include <boost/gil/image.hpp>
+#include <boost/gil/image_view.hpp>
+
 #include <boost/core/lightweight_test.hpp>
 
 // Supported Container types for histogram
-#include <vector>
-#include <map>
 #include <array>
+#include <map>
+#include <vector>
+
 #include <unordered_map>
 
-// Basic tests to make sure compatible container types produce 
+// Basic tests to make sure compatible container types produce
 // expected output histogram.
 
 namespace gil = boost::gil;
@@ -31,22 +33,22 @@ gil::rgb8_view_t v2 = view(img2);
 gil::gray16_image_t img3(4, 4, gil::gray16_pixel_t(1));
 gil::gray16_view_t v3 = view(img3);
 
-template<typename T>
-bool check_equal(T &cont1, T &cont2, std::size_t size)
+template <typename T>
+bool check_equal(T& cont1, T& cont2, std::size_t size)
 {
     bool ch = true;
-    for(std::size_t i = 0; i < size; ++i)
+    for (std::size_t i = 0; i < size; ++i)
     {
         ch = ch & (cont1[i] == cont2[i]);
     }
     return ch;
 }
 
-template<typename T>
-bool check_equal(T &cont1, T &cont2)
+template <typename T>
+bool check_equal(T& cont1, T& cont2)
 {
     bool ch = true;
-    for(auto &it : cont1)
+    for (auto& it : cont1)
     {
         ch = ch & (cont1[it.first] == cont2[it.first]);
     }
@@ -55,7 +57,7 @@ bool check_equal(T &cont1, T &cont2)
 
 void check_fill_histogram_vector()
 {
-    std::vector<int> c1, c1_expected(256,0);
+    std::vector<int> c1, c1_expected(256, 0);
     c1_expected[1] = 16;
     gil::fill_histogram(v1, c1);
     BOOST_TEST(check_equal(c1, c1_expected, c1_expected.size()));
@@ -122,7 +124,7 @@ void check_cumulative_histogram_vector()
     bool check = true;
     for (std::size_t i = 0; i < v.size(); i++)
     {
-        if(v1[i] != int(i) + 1)
+        if (v1[i] != int(i) + 1)
             check = false;
     }
     BOOST_TEST(check);
@@ -139,7 +141,7 @@ void check_cumulative_histogram_array()
     bool check = true;
     for (std::size_t i = 0; i < arr.size(); i++)
     {
-        if(arr1[i] != int(i) + 1)
+        if (arr1[i] != int(i) + 1)
             check = false;
     }
     BOOST_TEST(check);
@@ -156,7 +158,7 @@ void check_cumulative_histogram_map()
     bool check = true;
     for (std::size_t i = 0; i < mp.size(); i++)
     {
-        if(mp1[i] != int(i) + 1)
+        if (mp1[i] != int(i) + 1)
             check = false;
     }
     BOOST_TEST(check);
@@ -167,7 +169,7 @@ int main()
     check_fill_histogram_vector();
     check_fill_histogram_array();
     check_fill_histogram_map();
-    
+
     check_cumulative_histogram_vector();
     check_cumulative_histogram_array();
     check_cumulative_histogram_map();

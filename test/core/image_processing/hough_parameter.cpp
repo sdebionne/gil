@@ -6,8 +6,9 @@
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <boost/core/lightweight_test.hpp>
 #include <boost/gil/image_processing/hough_parameter.hpp>
+
+#include <boost/core/lightweight_test.hpp>
 
 namespace gil = boost::gil;
 
@@ -16,8 +17,8 @@ void from_step_count_test()
     const double middle_point = 0.5;
     const std::size_t step_count = 5;
     const double neighborhood = 1.0;
-    auto param =
-        gil::hough_parameter<double>::from_step_count(middle_point, neighborhood, step_count);
+    auto param
+        = gil::hough_parameter<double>::from_step_count(middle_point, neighborhood, step_count);
     BOOST_TEST(param.start_point == middle_point - neighborhood);
     BOOST_TEST(param.step_count == step_count * 2 + 1);
     BOOST_TEST(param.step_size == neighborhood / step_count);
@@ -35,13 +36,15 @@ void from_step_count_test()
     BOOST_TEST(middle_point_occured);
 }
 
-void from_step_size_test(const double middle_point, const double step_size,
-                         const double neighborhood)
+void from_step_size_test(
+    const double middle_point,
+    const double step_size,
+    const double neighborhood)
 {
-    const std::size_t expected_step_count =
-        static_cast<std::size_t>(neighborhood / step_size) * 2 + 1;
-    auto param =
-        gil::hough_parameter<double>::from_step_size(middle_point, neighborhood, step_size);
+    const std::size_t expected_step_count
+        = static_cast<std::size_t>(neighborhood / step_size) * 2 + 1;
+    auto param
+        = gil::hough_parameter<double>::from_step_size(middle_point, neighborhood, step_size);
     BOOST_TEST(param.start_point == middle_point - step_size * std::floor(expected_step_count / 2));
     BOOST_TEST(param.step_count == expected_step_count);
     BOOST_TEST(param.step_size == step_size);

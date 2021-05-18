@@ -5,8 +5,6 @@
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "../test_fixture.hpp"
-#include "boost/gil/algorithm.hpp"
 #include <boost/gil/color_base_algorithm.hpp>
 #include <boost/gil/image.hpp>
 #include <boost/gil/image_processing/diffusion.hpp>
@@ -19,6 +17,9 @@
 #include <cmath>
 #include <limits>
 #include <random>
+
+#include "../test_fixture.hpp"
+#include "boost/gil/algorithm.hpp"
 
 namespace gil = boost::gil;
 
@@ -41,8 +42,10 @@ void diffusion_function_check(DiffusionFunction diffusion)
 void brightness_function_test()
 {
     std::vector<gil::rgb32f_pixel_t> rgb_pixels{
-        gil::rgb32f_pixel_t(0, 11, 14),     gil::rgb32f_pixel_t(2, 117, 200),
-        gil::rgb32f_pixel_t(223, 2, 180),   gil::rgb32f_pixel_t(250, 254, 100),
+        gil::rgb32f_pixel_t(0, 11, 14),
+        gil::rgb32f_pixel_t(2, 117, 200),
+        gil::rgb32f_pixel_t(223, 2, 180),
+        gil::rgb32f_pixel_t(250, 254, 100),
         gil::rgb32f_pixel_t(255, 255, 255),
     };
     for (const auto& pixel : rgb_pixels)
@@ -65,17 +68,21 @@ void brightness_function_test()
         auto brightness_stencil = boost::gil::brightness_function::rgb_luminance{}(stencil);
         for (const auto& brightness_pixel : brightness_stencil)
         {
-            gil::static_for_each(brightness_pixel, [&corresponding_luminance_values,
-                                                    index](boost::gil::float32_t value) {
-                BOOST_TEST(std::abs(value - corresponding_luminance_values[index]) < 1.0f);
-            });
+            gil::static_for_each(
+                brightness_pixel,
+                [&corresponding_luminance_values, index](boost::gil::float32_t value) {
+                    BOOST_TEST(std::abs(value - corresponding_luminance_values[index]) < 1.0f);
+                });
         }
         ++index;
     }
 
     std::vector<gil::gray32f_pixel_t> gray_pixels{
-        gil::gray32f_pixel_t(11),  gil::gray32f_pixel_t(0),  gil::gray32f_pixel_t(255),
-        gil::gray32f_pixel_t(123), gil::gray32f_pixel_t(17),
+        gil::gray32f_pixel_t(11),
+        gil::gray32f_pixel_t(0),
+        gil::gray32f_pixel_t(255),
+        gil::gray32f_pixel_t(123),
+        gil::gray32f_pixel_t(17),
     };
     for (const auto& pixel : gray_pixels)
     {
@@ -92,8 +99,8 @@ void brightness_function_test()
 template <typename ImageType, typename OutputImageType>
 void heat_conservation_test(std::uint32_t seed)
 {
-    gil::test::fixture::random_value<std::uint32_t> dist(seed, 0,
-                                                         std::numeric_limits<gil::uint8_t>::max());
+    gil::test::fixture::random_value<std::uint32_t> dist(
+        seed, 0, std::numeric_limits<gil::uint8_t>::max());
 
     ImageType image(32, 32);
     auto view = gil::view(image);
@@ -122,12 +129,12 @@ void heat_conservation_test(std::uint32_t seed)
 
     for (std::ptrdiff_t channel_index = 0; channel_index < num_channels; ++channel_index)
     {
-        const auto percentage =
-            before_diffusion[channel_index] != 0
-                ? std::abs(after_diffusion[channel_index] - before_diffusion[channel_index]) /
-                      after_diffusion[channel_index] * 100.0
-                : std::abs(after_diffusion[channel_index] - before_diffusion[channel_index]) /
-                      after_diffusion[channel_index] * 100.0;
+        const auto percentage
+            = before_diffusion[channel_index] != 0
+                ? std::abs(after_diffusion[channel_index] - before_diffusion[channel_index])
+                      / after_diffusion[channel_index] * 100.0
+                : std::abs(after_diffusion[channel_index] - before_diffusion[channel_index])
+                      / after_diffusion[channel_index] * 100.0;
 #ifdef BOOST_GIL_TEST_DEBUG
         std::cout << percentage << ' ';
 #endif
@@ -139,8 +146,9 @@ void heat_conservation_test(std::uint32_t seed)
 }
 
 template <typename PixelType>
-void test_stencil_pixels(const gil::laplace_function::stencil_type<PixelType>& stencil,
-                         const PixelType& reference)
+void test_stencil_pixels(
+    const gil::laplace_function::stencil_type<PixelType>& stencil,
+    const PixelType& reference)
 {
     for (const auto& stencil_entry : stencil)
     {
@@ -149,8 +157,9 @@ void test_stencil_pixels(const gil::laplace_function::stencil_type<PixelType>& s
 }
 
 template <typename PixelType>
-void test_stencil(const gil::laplace_function::stencil_type<PixelType>& stencil,
-                  const std::array<float, 8>& expected_values)
+void test_stencil(
+    const gil::laplace_function::stencil_type<PixelType>& stencil,
+    const std::array<float, 8>& expected_values)
 {
     for (std::size_t i = 0; i < 8; ++i)
     {
@@ -251,20 +260,24 @@ void laplace_functions_test()
 
     // reduce result for 4 way should be (-14 - 8 + 6 + 33) * 0.25 = 4.25
     auto rgb_reduced_4way = s4way.reduce(rgb_4way);
-    gil::static_for_each(rgb_reduced_4way,
-                         [](gil::float32_t value) { BOOST_TEST(value == 4.25f); });
+    gil::static_for_each(rgb_reduced_4way, [](gil::float32_t value) {
+        BOOST_TEST(value == 4.25f);
+    });
     auto gray_reduced_4way = s4way.reduce(gray_4way);
-    gil::static_for_each(gray_reduced_4way,
-                         [](gil::float32_t value) { BOOST_TEST(value == 4.25f); });
+    gil::static_for_each(gray_reduced_4way, [](gil::float32_t value) {
+        BOOST_TEST(value == 4.25f);
+    });
 
     // reduce result for 8 way should be ((-20-23+15+65)*0.5+(-14+33+6-8)) * 0.125 = (18.5+17) *
     // 0.125 = 4.4375
     auto rgb_reduced_8way = s8way.reduce(rgb_8way);
-    gil::static_for_each(rgb_reduced_8way,
-                         [](gil::float32_t value) { BOOST_TEST(value == 4.4375); });
+    gil::static_for_each(rgb_reduced_8way, [](gil::float32_t value) {
+        BOOST_TEST(value == 4.4375);
+    });
     auto gray_reduced_8way = s8way.reduce(gray_8way);
-    gil::static_for_each(gray_reduced_8way,
-                         [](gil::float32_t value) { BOOST_TEST(value == 4.4375); });
+    gil::static_for_each(gray_reduced_8way, [](gil::float32_t value) {
+        BOOST_TEST(value == 4.4375);
+    });
 }
 
 int main()

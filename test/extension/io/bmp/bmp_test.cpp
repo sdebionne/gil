@@ -10,8 +10,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/bmp.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -43,8 +43,8 @@ void test_read_image_info_using_string()
         BOOST_TEST_EQ(backend._info._height, 600);
     }
     {
-        FILE *file = fopen(bmp_filename.c_str(), "rb");
-        using backend_t = gil::get_reader_backend<FILE *, gil::bmp_tag>::type;
+        FILE* file = fopen(bmp_filename.c_str(), "rb");
+        using backend_t = gil::get_reader_backend<FILE*, gil::bmp_tag>::type;
         backend_t backend = read_image_info(file, gil::bmp_tag());
 
         BOOST_TEST_EQ(backend._info._width, 1000);
@@ -79,7 +79,7 @@ void test_read_image()
         BOOST_TEST_EQ(img.height(), 600);
     }
     {
-        FILE *file = fopen(bmp_filename.c_str(), "rb");
+        FILE* file = fopen(bmp_filename.c_str(), "rb");
 
         gil::rgb8_image_t img;
         read_image(file, img, gil::bmp_tag());
@@ -117,7 +117,7 @@ void test_read_and_convert_image()
         BOOST_TEST_EQ(img.height(), 600);
     }
     {
-        FILE *file = fopen(bmp_filename.c_str(), "rb");
+        FILE* file = fopen(bmp_filename.c_str(), "rb");
 
         gil::rgb8_image_t img;
         read_and_convert_image(file, img, gil::bmp_tag());
@@ -140,7 +140,7 @@ void test_read_view()
         read_view(in, gil::view(img), gil::bmp_tag());
     }
     {
-        FILE *file = fopen(bmp_filename.c_str(), "rb");
+        FILE* file = fopen(bmp_filename.c_str(), "rb");
 
         gil::rgb8_image_t img(1000, 600);
         read_view(file, gil::view(img), gil::bmp_tag());
@@ -160,7 +160,7 @@ void test_read_and_convert_view()
         read_and_convert_view(in, gil::view(img), gil::bmp_tag());
     }
     {
-        FILE *file = fopen(bmp_filename.c_str(), "rb");
+        FILE* file = fopen(bmp_filename.c_str(), "rb");
 
         gil::rgb8_image_t img(1000, 600);
         read_and_convert_view(file, gil::view(img), gil::bmp_tag());
@@ -184,14 +184,14 @@ void test_write_view()
     {
         std::string filename(bmp_out + "write_test_file.bmp");
 
-        FILE *file = fopen(filename.c_str(), "wb");
+        FILE* file = fopen(filename.c_str(), "wb");
         gil::write_view(file, create_mandel_view(1000, 600, b, g), gil::bmp_tag());
     }
     {
         std::string filename(bmp_out + "write_test_info.bmp");
 
         gil::image_write_info<gil::bmp_tag> info;
-        FILE *file = fopen(filename.c_str(), "wb");
+        FILE* file = fopen(filename.c_str(), "wb");
         gil::write_view(file, create_mandel_view(1000, 600, b, g), info);
     }
 }
@@ -220,7 +220,7 @@ void test_stream()
     std::string filename(bmp_out + "stream_test.bmp");
     std::ofstream out(filename.c_str(), std::ios_base::binary);
 
-    gil::write_view( out, gil::view( dst ), gil::bmp_tag() );
+    gil::write_view(out, gil::view(dst), gil::bmp_tag());
 }
 
 void test_stream_2()
@@ -247,19 +247,14 @@ void test_subimage()
 
 void test_dynamic_image()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::rgba8_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::rgba8_image_t>
+        image;
     gil::read_image(bmp_filename.c_str(), image, gil::bmp_tag());
 
     gil::write_view(bmp_out + "dynamic_image_test.bmp", gil::view(image), gil::bmp_tag());
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     try
     {

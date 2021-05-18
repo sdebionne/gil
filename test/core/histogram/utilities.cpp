@@ -12,6 +12,7 @@
 #include <boost/gil/typedefs.hpp>
 
 #include <boost/core/lightweight_test.hpp>
+
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -19,17 +20,9 @@
 namespace gil = boost::gil;
 namespace mp11 = boost::mp11;
 
-std::uint8_t big_matrix[] = 
-{
-    1, 2, 3, 4, 5, 6, 7, 8,
-    1, 2, 1, 2, 1, 2, 1, 2,
-    1, 2, 3, 4, 5, 6, 7, 8,
-    3, 4, 3, 4, 3, 4, 3, 4,
-    1, 2, 3, 4, 5, 6, 7, 8,
-    5, 6, 5, 6, 5, 6, 5, 6,
-    1, 2, 3, 4, 5, 6, 7, 8,
-    7, 8, 7, 8, 7, 8, 7, 8
-};
+std::uint8_t big_matrix[] = {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 4, 5, 6,
+                             7, 8, 3, 4, 3, 4, 3, 4, 3, 4, 1, 2, 3, 4, 5, 6, 7, 8, 5, 6, 5, 6,
+                             5, 6, 5, 6, 1, 2, 3, 4, 5, 6, 7, 8, 7, 8, 7, 8, 7, 8, 7, 8};
 
 void check_normalize()
 {
@@ -52,7 +45,7 @@ void check_normalize()
     bool check = true;
     for (std::size_t i = 0; i < 64; i++)
     {
-        check = check & (std::abs(expected[i] - h1(i)) < epsilon); 
+        check = check & (std::abs(expected[i] - h1(i)) < epsilon);
     }
     BOOST_TEST(check);
 
@@ -62,19 +55,19 @@ void check_normalize()
     int sum2 = 0;
     for (std::size_t i = 0; i < 64; i++)
     {
-        h2(i/8, i%8) = big_matrix[i];
+        h2(i / 8, i % 8) = big_matrix[i];
         sum2 += big_matrix[i];
     }
     for (std::size_t i = 0; i < 64; i++)
     {
-        expected2[i/8][i%8] = double(big_matrix[i]) / sum2;
+        expected2[i / 8][i % 8] = double(big_matrix[i]) / sum2;
     }
     h2.normalize();
 
     bool check2 = true;
     for (std::size_t i = 0; i < 64; i++)
     {
-        check2 = check2 & (std::abs(expected2[i/8][i%8] - h2(i/8,i%8)) < epsilon); 
+        check2 = check2 & (std::abs(expected2[i / 8][i % 8] - h2(i / 8, i % 8)) < epsilon);
     }
     BOOST_TEST(check2);
 }
@@ -108,7 +101,6 @@ void check_nearest_key()
         BOOST_TEST(k4_exp == h2.nearest_key(k4));
         BOOST_TEST(k5_exp == h2.nearest_key(k5));
     }
-
 }
 
 void check_equals()
@@ -201,8 +193,8 @@ void check_sorted_keys()
     BOOST_TEST(v == h.sorted_keys());
 }
 
-int main() {
-
+int main()
+{
     check_normalize();
     check_nearest_key();
     check_equals();
@@ -212,4 +204,4 @@ int main() {
     check_sorted_keys();
 
     return boost::report_errors();
-}   
+}

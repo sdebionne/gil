@@ -14,7 +14,7 @@
 
 #include "paths.hpp"
 
-namespace gil  = boost::gil;
+namespace gil = boost::gil;
 
 #ifdef BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
 
@@ -106,6 +106,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
-
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES

@@ -8,26 +8,22 @@
 #ifdef BOOST_GIL_USE_CONCEPT_CHECK
 // FIXME: Range as pixel does not seem to fulfill pixel concepts due to no specializations required:
 //        pixel.hpp(50) : error C2039 : 'type' : is not a member of 'boost::gil::color_space_type<P>
-#undef BOOST_GIL_USE_CONCEPT_CHECK
+#    undef BOOST_GIL_USE_CONCEPT_CHECK
 #endif
 #include <boost/gil/algorithm.hpp>
 #include <boost/gil/image.hpp>
 #include <boost/gil/image_view.hpp>
 
 #include <boost/array.hpp>
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <array>
 #include <cstdint>
 
 namespace gil = boost::gil;
 
-using array_pixel_types = ::boost::mp11::mp_list
-<
-    boost::array<int, 2>,
-    std::array<int, 2>
->;
+using array_pixel_types = ::boost::mp11::mp_list<boost::array<int, 2>, std::array<int, 2>>;
 
 struct test_array_as_pixel
 {

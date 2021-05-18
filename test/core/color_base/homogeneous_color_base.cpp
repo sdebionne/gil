@@ -31,7 +31,7 @@ std::integral_constant<int, 2> e2;
 std::integral_constant<int, 3> e3;
 std::integral_constant<int, 4> e4;
 
-} // unnamed namespace
+}  // unnamed namespace
 
 void test_homogeneous_color_base_1_default_constructor()
 {

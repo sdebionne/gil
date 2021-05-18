@@ -6,7 +6,7 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#define BOOST_DISABLE_ASSERTS 1 // kernel_1d_adaptor assertions are too strict
+#define BOOST_DISABLE_ASSERTS 1  // kernel_1d_adaptor assertions are too strict
 #include <boost/gil.hpp>
 #include <boost/gil/extension/numeric/kernel.hpp>
 
@@ -177,7 +177,7 @@ void test_kernel_2d_reverse_kernel()
 
     for (size_t i = 0; i < k.size() * k.size(); i++)
     {
-        BOOST_TEST_EQ(d[i], k[(k.size()*k.size()) - 1 - i]);
+        BOOST_TEST_EQ(d[i], k[(k.size() * k.size()) - 1 - i]);
     }
 }
 

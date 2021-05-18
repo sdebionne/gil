@@ -24,35 +24,68 @@ struct channel_archetype
 {
     // equality comparable
     friend bool operator==(channel_archetype const&, channel_archetype const&)
-    { return true; }
+    {
+        return true;
+    }
     // inequality comparable
     friend bool operator!=(channel_archetype const&, channel_archetype const&)
-    { return false; }
+    {
+        return false;
+    }
     // less-than comparable
     friend bool operator<(channel_archetype const&, channel_archetype const&)
-    { return false; }
+    {
+        return false;
+    }
     // convertible to a scalar
-    operator std::uint8_t() const { return 0; }
+    operator std::uint8_t() const
+    {
+        return 0;
+    }
 
-    channel_archetype& operator++() { return *this; }
-    channel_archetype& operator--() { return *this; }
-    channel_archetype  operator++(int) { return *this; }
-    channel_archetype  operator--(int) { return *this; }
+    channel_archetype& operator++()
+    {
+        return *this;
+    }
+    channel_archetype& operator--()
+    {
+        return *this;
+    }
+    channel_archetype operator++(int)
+    {
+        return *this;
+    }
+    channel_archetype operator--(int)
+    {
+        return *this;
+    }
 
     template <typename Scalar>
-    channel_archetype operator+=(Scalar) { return *this; }
+    channel_archetype operator+=(Scalar)
+    {
+        return *this;
+    }
     template <typename Scalar>
-    channel_archetype operator-=(Scalar) { return *this; }
+    channel_archetype operator-=(Scalar)
+    {
+        return *this;
+    }
     template <typename Scalar>
-    channel_archetype operator*=(Scalar) { return *this; }
+    channel_archetype operator*=(Scalar)
+    {
+        return *this;
+    }
     template <typename Scalar>
-    channel_archetype operator/=(Scalar) { return *this; }
+    channel_archetype operator/=(Scalar)
+    {
+        return *this;
+    }
 
-    using value_type        = channel_value_archetype;
-    using reference         = channel_archetype;
-    using const_reference   = channel_archetype const;
-    using pointer           = channel_value_archetype*;
-    using const_pointer     = channel_value_archetype const*;
+    using value_type = channel_value_archetype;
+    using reference = channel_archetype;
+    using const_reference = channel_archetype const;
+    using pointer = channel_value_archetype*;
+    using const_pointer = channel_value_archetype const*;
     static constexpr bool is_mutable = true;
 
     static value_type min_value();
@@ -62,13 +95,19 @@ struct channel_archetype
 struct channel_value_archetype : public channel_archetype
 {
     // default constructible
-    channel_value_archetype() {}
+    channel_value_archetype()
+    {
+    }
     // copy constructible
     channel_value_archetype(channel_value_archetype const&) = default;
     // assignable
     channel_value_archetype& operator=(channel_value_archetype const&)
-    {return *this;}
-    channel_value_archetype(std::uint8_t) {}
+    {
+        return *this;
+    }
+    channel_value_archetype(std::uint8_t)
+    {
+    }
 };
 
 channel_value_archetype channel_archetype::min_value()

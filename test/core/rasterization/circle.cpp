@@ -7,8 +7,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <boost/core/lightweight_test.hpp>
 #include <boost/gil/rasterization/circle.hpp>
+
+#include <boost/core/lightweight_test.hpp>
+
 #include <cstddef>
 #include <vector>
 
@@ -17,7 +19,6 @@ namespace gil = boost::gil;
 template <typename Rasterizer>
 void test_rasterizer_follows_equation(std::ptrdiff_t radius, Rasterizer rasterizer)
 {
-
     std::vector<gil::point_t> circle_points(rasterizer.point_count(radius));
     std::ptrdiff_t r_squared = radius * radius;
     rasterizer(radius, {0, 0}, circle_points.begin());

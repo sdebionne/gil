@@ -12,9 +12,12 @@
 using namespace boost::gil;
 
 template <typename Out>
-struct halfdiff_cast_channels {
-    template <typename T> Out operator()(const T& in1, const T& in2) const {
-        return Out((in2-in1)/2);
+struct halfdiff_cast_channels
+{
+    template <typename T>
+    Out operator()(const T& in1, const T& in2) const
+    {
+        return Out((in2 - in1) / 2);
     }
 };
 
@@ -31,8 +34,8 @@ void x_gradient(SrcView const& src, DstView const& dst)
 
         for (int x = 1; x < src.width() - 1; ++x)
         {
-            static_transform(src_it[x - 1], src_it[x + 1], dst_it[x],
-                halfdiff_cast_channels<dst_channel_t>());
+            static_transform(
+                src_it[x - 1], src_it[x + 1], dst_it[x], halfdiff_cast_channels<dst_channel_t>());
         }
     }
 }
@@ -47,13 +50,14 @@ void x_luminosity_gradient(SrcView const& src, DstView const& dst)
 int main()
 {
     rgb8_image_t img;
-    read_image("test.jpg",img, jpeg_tag{});
+    read_image("test.jpg", img, jpeg_tag{});
 
     gray8s_image_t img_out(img.dimensions());
-    fill_pixels(view(img_out),int8_t(0));
+    fill_pixels(view(img_out), int8_t(0));
 
     x_luminosity_gradient(const_view(img), view(img_out));
-    write_view("out-x_gradient.jpg",color_converted_view<gray8_pixel_t>(const_view(img_out)), jpeg_tag{});
+    write_view(
+        "out-x_gradient.jpg", color_converted_view<gray8_pixel_t>(const_view(img_out)), jpeg_tag{});
 
     return 0;
 }

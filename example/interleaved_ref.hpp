@@ -44,38 +44,76 @@ private:
     using channel_const_reference_t = typename channel_traits<ChannelReference>::const_reference;
 
 public:
-    using layout_t = Layout; // Required by ColorBaseConcept
+    using layout_t = Layout;  // Required by ColorBaseConcept
 
     // Copy construction from a compatible type. The copy constructor of references is shallow. The channels themselves are not copied.
-    interleaved_ref(const interleaved_ref& p) : _channels(p._channels) {}
-    template <typename P> interleaved_ref(const P& p) : _channels(p._channels) { check_compatible<P>(); }
+    interleaved_ref(const interleaved_ref& p) : _channels(p._channels)
+    {
+    }
+    template <typename P>
+    interleaved_ref(const P& p) : _channels(p._channels)
+    {
+        check_compatible<P>();
+    }
 
-    template <typename P> bool operator==(const P& p)    const { check_compatible<P>(); return static_equal(*this,p); }
-    template <typename P> bool operator!=(const P& p)    const { return !(*this==p); }
+    template <typename P>
+    bool operator==(const P& p) const
+    {
+        check_compatible<P>();
+        return static_equal(*this, p);
+    }
+    template <typename P>
+    bool operator!=(const P& p) const
+    {
+        return !(*this == p);
+    }
 
-// Required by MutableColorBaseConcept
+    // Required by MutableColorBaseConcept
 
     // Assignment from a compatible type
-    const interleaved_ref&  operator=(const interleaved_ref& p)  const { static_copy(p,*this); return *this; }
-    template <typename P> const interleaved_ref& operator=(const P& p) const { check_compatible<P>(); static_copy(p,*this); return *this; }
+    const interleaved_ref& operator=(const interleaved_ref& p) const
+    {
+        static_copy(p, *this);
+        return *this;
+    }
+    template <typename P>
+    const interleaved_ref& operator=(const P& p) const
+    {
+        check_compatible<P>();
+        static_copy(p, *this);
+        return *this;
+    }
 
-// Required by PixelConcept
+    // Required by PixelConcept
     using value_type = pixel<channel_t, layout_t>;
     using reference = interleaved_ref;
     using const_reference = interleaved_ref<channel_const_reference_t, layout_t>;
     static const bool is_mutable = channel_traits<ChannelReference>::is_mutable;
 
-// Required by HomogeneousPixelConcept
-    ChannelReference                   operator[](std::size_t i) const { return _channels[i]; }
+    // Required by HomogeneousPixelConcept
+    ChannelReference operator[](std::size_t i) const
+    {
+        return _channels[i];
+    }
 
-// Custom constructor (not part of any concept)
-    explicit interleaved_ref(channel_pointer_t channels) : _channels(channels) {}
-// This is needed for the reference proxy to work properly
-    const interleaved_ref*             operator->()              const { return this; }
+    // Custom constructor (not part of any concept)
+    explicit interleaved_ref(channel_pointer_t channels) : _channels(channels)
+    {
+    }
+    // This is needed for the reference proxy to work properly
+    const interleaved_ref* operator->() const
+    {
+        return this;
+    }
+
 private:
     channel_pointer_t _channels;
 
-    template <typename Pixel> static void check_compatible() { gil_function_requires<PixelsCompatibleConcept<Pixel,interleaved_ref>>(); }
+    template <typename Pixel>
+    static void check_compatible()
+    {
+        gil_function_requires<PixelsCompatibleConcept<Pixel, interleaved_ref>>();
+    }
 };
 
 // Required by ColorBaseConcept
@@ -100,32 +138,47 @@ struct kth_element_const_reference_type<interleaved_ref<ChannelReference, Layout
 
 // Required by ColorBaseConcept
 template <int K, typename ChannelReference, typename Layout>
-typename element_reference_type<interleaved_ref<ChannelReference,Layout>>::type
-at_c(const interleaved_ref<ChannelReference,Layout>& p) { return p[K]; };
+typename element_reference_type<interleaved_ref<ChannelReference, Layout>>::type at_c(
+    const interleaved_ref<ChannelReference, Layout>& p)
+{
+    return p[K];
+};
 
 // Required by HomogeneousColorBaseConcept
 template <typename ChannelReference, typename Layout>
-typename element_reference_type<interleaved_ref<ChannelReference,Layout>>::type
-dynamic_at_c(const interleaved_ref<ChannelReference,Layout>& p, std::size_t n) { return p[n]; };
+typename element_reference_type<interleaved_ref<ChannelReference, Layout>>::type dynamic_at_c(
+    const interleaved_ref<ChannelReference, Layout>& p,
+    std::size_t n)
+{
+    return p[n];
+};
 
 namespace detail {
-    struct swap_fn_t {
-        template <typename T> void operator()(T& x, T& y) const {
-            using std::swap;
-            swap(x,y);
-        }
-    };
-}
+struct swap_fn_t
+{
+    template <typename T>
+    void operator()(T& x, T& y) const
+    {
+        using std::swap;
+        swap(x, y);
+    }
+};
+}  // namespace detail
 
 // Required by MutableColorBaseConcept. The default std::swap does not do the right thing for proxy references - it swaps the references, not the values
 template <typename ChannelReference, typename Layout>
-void swap(const interleaved_ref<ChannelReference,Layout>& x, const interleaved_ref<ChannelReference,Layout>& y) {
-    static_for_each(x,y,detail::swap_fn_t());
+void swap(
+    const interleaved_ref<ChannelReference, Layout>& x,
+    const interleaved_ref<ChannelReference, Layout>& y)
+{
+    static_for_each(x, y, detail::swap_fn_t());
 };
 
 // Required by PixelConcept
 template <typename ChannelReference, typename Layout>
-struct is_pixel<interleaved_ref<ChannelReference,Layout>> : public std::true_type {};
+struct is_pixel<interleaved_ref<ChannelReference, Layout>> : public std::true_type
+{
+};
 
 
 // Required by PixelBasedConcept
@@ -144,7 +197,9 @@ struct channel_mapping_type<interleaved_ref<ChannelReference, Layout>>
 
 // Required by PixelBasedConcept
 template <typename ChannelReference, typename Layout>
-struct is_planar<interleaved_ref<ChannelReference,Layout>> : std::false_type {};
+struct is_planar<interleaved_ref<ChannelReference, Layout>> : std::false_type
+{
+};
 
 // Required by HomogeneousPixelBasedConcept
 template <typename ChannelReference, typename Layout>
@@ -153,6 +208,6 @@ struct channel_type<interleaved_ref<ChannelReference, Layout>>
     using type = typename channel_traits<ChannelReference>::value_type;
 };
 
-} }  // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

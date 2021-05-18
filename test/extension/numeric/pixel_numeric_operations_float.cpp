@@ -46,9 +46,7 @@ void test_multiply()
     gil::rgb32f_pixel_t a(1.f, 2.f, 3.f);
     gil::bgr32f_pixel_t b(2.f, 2.f, 2.f);
 
-    gil::pixel_multiply_t<
-        gil::rgb32f_pixel_t, gil::bgr32f_pixel_t, gil::rgb32f_pixel_t>
-        op;
+    gil::pixel_multiply_t<gil::rgb32f_pixel_t, gil::bgr32f_pixel_t, gil::rgb32f_pixel_t> op;
     gil::rgb32f_pixel_t c = op(a, b);
 
     float epsilon = 1e-6f;

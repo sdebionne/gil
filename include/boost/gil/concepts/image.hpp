@@ -18,14 +18,14 @@
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 namespace boost { namespace gil {
@@ -117,15 +117,15 @@ struct RandomAccess2DImageConcept
 
         gil_function_requires<MutableRandomAccess2DImageViewConcept<typename Image::view_t>>();
 
-        x_coord_t w=image.width();
-        y_coord_t h=image.height();
+        x_coord_t w = image.width();
+        y_coord_t h = image.height();
         value_t fill_value;
-        Image im1(w,h);
-        Image im2(w,h,1);
-        Image im3(w,h,fill_value,1);
-        image.recreate(w,h);
-        image.recreate(w,h,1);
-        image.recreate(w,h,fill_value,1);
+        Image im1(w, h);
+        Image im2(w, h, 1);
+        Image im3(w, h, fill_value, 1);
+        image.recreate(w, h);
+        image.recreate(w, h, 1);
+        image.recreate(w, h, fill_value, 1);
     }
     Image image;
 };
@@ -148,7 +148,10 @@ struct ImageConcept
         gil_function_requires<RandomAccess2DImageConcept<Image>>();
         gil_function_requires<MutableImageViewConcept<typename Image::view_t>>();
         using coord_t = typename Image::coord_t;
-        static_assert(num_channels<Image>::value == mp11::mp_size<typename color_space_type<Image>::type>::value, "");
+        static_assert(
+            num_channels<Image>::value
+                == mp11::mp_size<typename color_space_type<Image>::type>::value,
+            "");
 
         static_assert(std::is_same<coord_t, typename Image::x_coord_t>::value, "");
         static_assert(std::is_same<coord_t, typename Image::y_coord_t>::value, "");
@@ -156,14 +159,14 @@ struct ImageConcept
     Image image;
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

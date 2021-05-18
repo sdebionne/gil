@@ -15,63 +15,39 @@
 
 #include <cstdint>
 #include <tuple>
-#include <type_traits>
 
 #include "test_utility_output_stream.hpp"
+#include <type_traits>
 
 namespace boost { namespace gil { namespace test { namespace fixture {
 
-using channel_byte_types = std::tuple
-    <
-        std::uint8_t,
-        std::int8_t,
-        std::uint16_t,
-        std::int16_t,
-        std::uint32_t,
-        std::int32_t,
-        gil::float32_t,
-        gil::float64_t
-    >;
+using channel_byte_types = std::tuple<
+    std::uint8_t,
+    std::int8_t,
+    std::uint16_t,
+    std::int16_t,
+    std::uint32_t,
+    std::int32_t,
+    gil::float32_t,
+    gil::float64_t>;
 
-using channel_integer_types = std::tuple
-    <
-        std::uint8_t,
-        std::int8_t,
-        std::uint16_t,
-        std::int16_t,
-        std::uint32_t,
-        std::int32_t
-    >;
+using channel_integer_types
+    = std::tuple<std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t, std::int32_t>;
 
-using channel_integer_signed_types = std::tuple
-    <
-        std::int8_t,
-        std::int16_t,
-        std::int32_t
-    >;
+using channel_integer_signed_types = std::tuple<std::int8_t, std::int16_t, std::int32_t>;
 
-using channel_integer_unsigned_types = std::tuple
-    <
-        std::uint8_t,
-        std::uint16_t,
-        std::uint32_t
-    >;
+using channel_integer_unsigned_types = std::tuple<std::uint8_t, std::uint16_t, std::uint32_t>;
 
 // FIXME: If float types are convertible between each other,
 // currently they are not, then move to channel_byte_types and
 // remove channel_integer_types as redundant.
-using channel_float_types = std::tuple
-    <
-        gil::float32_t,
-        gil::float64_t
-    >;
+using channel_float_types = std::tuple<gil::float32_t, gil::float64_t>;
 
-using channel_bitfield_types = std::tuple
-    <
-        std::uint16_t,
-        std::uint32_t,
-        std::uint64_t
-        // TODO: Shall we test signed types for unexpected conversions, etc.?
+using channel_bitfield_types = std::tuple<
+    std::uint16_t,
+    std::uint32_t,
+    std::uint64_t
+    // TODO: Shall we test signed types for unexpected conversions, etc.?
     >;
 
 
@@ -84,7 +60,8 @@ struct channel_minmax_value
     channel_minmax_value()
         : min_v_(gil::channel_traits<ChannelValue>::min_value())
         , max_v_(gil::channel_traits<ChannelValue>::max_value())
-    {}
+    {
+    }
 };
 
 template <typename ChannelFixtureBase>
@@ -133,10 +110,7 @@ struct channel_reference
     channel_t min_v_;
     channel_t max_v_;
 
-    channel_reference()
-        : parent_t()
-        , min_v_(parent_t::min_v_)
-        , max_v_(parent_t::max_v_)
+    channel_reference() : parent_t(), min_v_(parent_t::min_v_), max_v_(parent_t::max_v_)
     {
         boost::function_requires<ChannelConcept<ChannelRef>>();
     }
@@ -193,9 +167,9 @@ template <typename BitField>
 struct packed_channels565
 {
     static_assert(sizeof(BitField) >= sizeof(std::uint16_t), "16-bit or more required");
-    using channel_0_5_t = gil::packed_channel_reference<BitField, 0, 5,true>;
-    using channel_5_6_t = gil::packed_channel_reference<BitField, 5, 6,true>;
-    using channel_11_5_t = gil::packed_channel_reference<BitField, 11, 5,true>;
+    using channel_0_5_t = gil::packed_channel_reference<BitField, 0, 5, true>;
+    using channel_5_6_t = gil::packed_channel_reference<BitField, 5, 6, true>;
+    using channel_11_5_t = gil::packed_channel_reference<BitField, 11, 5, true>;
 
     using fixture_0_5_t = fixture::packed_channel_reference<channel_0_5_t>;
     using fixture_5_6_t = fixture::packed_channel_reference<channel_5_6_t>;
@@ -222,8 +196,8 @@ template <typename BitField>
 struct packed_dynamic_channels565
 {
     static_assert(sizeof(BitField) >= sizeof(std::uint16_t), "16-bit or more required");
-    using channel_5_t = gil::packed_dynamic_channel_reference<BitField,5,true>;
-    using channel_6_t = gil::packed_dynamic_channel_reference<BitField,6,true>;
+    using channel_5_t = gil::packed_dynamic_channel_reference<BitField, 5, true>;
+    using channel_6_t = gil::packed_dynamic_channel_reference<BitField, 6, true>;
 
     using fixture_5_t = fixture::packed_dynamic_channel_reference<channel_5_t>;
     using fixture_6_t = fixture::packed_dynamic_channel_reference<channel_6_t>;
@@ -233,10 +207,7 @@ struct packed_dynamic_channels565
     channel_6_t channel2_;
     channel_5_t channel3_;
 
-    packed_dynamic_channels565()
-        : channel1_(&data_, 0)
-        , channel2_(&data_, 5)
-        , channel3_(&data_, 11)
+    packed_dynamic_channels565() : channel1_(&data_, 0), channel2_(&data_, 5), channel3_(&data_, 11)
     {
         channel1_ = gil::channel_traits<channel_5_t>::max_value();
         channel2_ = gil::channel_traits<channel_6_t>::max_value();
@@ -247,6 +218,6 @@ struct packed_dynamic_channels565
     }
 };
 
-}}}} // namespace boost::gil::test::fixture
+}}}}  // namespace boost::gil::test::fixture
 
 #endif

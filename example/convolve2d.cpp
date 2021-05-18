@@ -1,10 +1,10 @@
-#include <vector>
-#include <iostream>
-#include <boost/gil/extension/numeric/kernel.hpp>
-#include <boost/gil/extension/numeric/convolve.hpp>
-#include <boost/gil/extension/io/png.hpp>
-
 #include <boost/gil/extension/io/jpeg.hpp>
+#include <boost/gil/extension/io/png.hpp>
+#include <boost/gil/extension/numeric/convolve.hpp>
+#include <boost/gil/extension/numeric/kernel.hpp>
+
+#include <iostream>
+#include <vector>
 using namespace boost::gil;
 using namespace std;
 int main()
@@ -29,10 +29,12 @@ int main()
     std::vector<float> v1(3, 1.0f / 3.0f);
     kernel_1d<float> kernel1(v1.begin(), v1.size(), 1);
 
-    detail::convolve_1d<gray32f_pixel_t>(const_view(img), kernel1, view(img_out), boundary_option::extend_zero);
+    detail::convolve_1d<gray32f_pixel_t>(
+        const_view(img), kernel1, view(img_out), boundary_option::extend_zero);
     write_view("out-convolve_option_extend_zero.png", view(img_out), png_tag{});
 
-    if (equal_pixels(view(img_out1), view(img_out)))cout << "convolve_option_extend_zero" << endl;
+    if (equal_pixels(view(img_out1), view(img_out)))
+        cout << "convolve_option_extend_zero" << endl;
 
     cout << "done\n";
     cin.get();

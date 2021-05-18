@@ -5,10 +5,10 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
+#include <boost/gil/color_base.hpp>  // kth_element_type
 #include <boost/gil/dynamic_step.hpp>
-#include <boost/gil/color_base.hpp> // kth_element_type
-#include <boost/gil/pixel.hpp> // kth_element_type
 #include <boost/gil/locator.hpp>
+#include <boost/gil/pixel.hpp>  // kth_element_type
 #include <boost/gil/pixel_iterator.hpp>
 #include <boost/gil/typedefs.hpp>
 
@@ -21,16 +21,11 @@ void test_locator_from_iterator()
 {
     // The `memory_based_2d_locator` for X-step is calculated based on adapted iterator
     // Only verify `type` member is available (i.e. specialization defined).
-    static_assert(std::is_class
-        <
-            typename gil::dynamic_x_step_type<Locator>::type
-        >::value, "");
+    static_assert(std::is_class<typename gil::dynamic_x_step_type<Locator>::type>::value, "");
 
-    static_assert(std::is_same
-        <
-            Locator,
-            typename gil::dynamic_y_step_type<Locator>::type
-        >::value, "locator does not model HasDynamicYStepTypeConcept");
+    static_assert(
+        std::is_same<Locator, typename gil::dynamic_y_step_type<Locator>::type>::value,
+        "locator does not model HasDynamicYStepTypeConcept");
 }
 
 int main()

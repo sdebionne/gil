@@ -6,16 +6,18 @@
 // http://www.boost.org/LICENSE_1_0.txt
 //
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wconversion"
-#pragma clang diagnostic ignored "-Wfloat-equal"
-#pragma clang diagnostic ignored "-Wsign-conversion"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wconversion"
+#    pragma clang diagnostic ignored "-Wfloat-equal"
+#    pragma clang diagnostic ignored "-Wsign-conversion"
 #elif BOOST_GCC >= 40700
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wfloat-equal"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wconversion"
+#    pragma GCC diagnostic ignored "-Wfloat-equal"
+#    pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
+
+#include "test_fixture.hpp"
 
 #include <boost/gil/channel.hpp>
 
@@ -24,7 +26,6 @@
 #include <limits>
 #include <ostream>
 
-#include "test_fixture.hpp"
 #include "test_utility_output_stream.hpp"
 
 namespace gil = boost::gil;
@@ -33,7 +34,7 @@ namespace fixture = boost::gil::test::fixture;
 struct test_pixel_value_default_constructor
 {
     template <typename Pixel>
-    void operator()(Pixel const &)
+    void operator()(Pixel const&)
     {
         using pixel_t = Pixel;
         fixture::pixel_value<pixel_t> fix;
@@ -49,7 +50,7 @@ struct test_pixel_value_default_constructor
 struct test_pixel_value_parameterized_constructor
 {
     template <typename Pixel>
-    void operator()(Pixel const &)
+    void operator()(Pixel const&)
     {
         using pixel_t = Pixel;
         using channel_t = typename gil::channel_type<pixel_t>::type;
@@ -62,14 +63,15 @@ struct test_pixel_value_parameterized_constructor
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_types>(test_pixel_value_parameterized_constructor{});
+        boost::mp11::mp_for_each<fixture::pixel_types>(
+            test_pixel_value_parameterized_constructor{});
     }
 };
 
 struct test_pixel_reference_default_constructor
 {
-        template <typename Pixel>
-    void operator()(Pixel const &)
+    template <typename Pixel>
+    void operator()(Pixel const&)
     {
         using pixel_t = Pixel;
         fixture::pixel_reference<pixel_t&> fix;
@@ -85,7 +87,7 @@ struct test_pixel_reference_default_constructor
 struct test_pixel_reference_parameterized_constructor
 {
     template <typename Pixel>
-    void operator()(Pixel const &)
+    void operator()(Pixel const&)
     {
         using pixel_t = Pixel;
         using channel_t = typename gil::channel_type<pixel_t>::type;
@@ -98,7 +100,8 @@ struct test_pixel_reference_parameterized_constructor
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_types>(test_pixel_reference_parameterized_constructor{});
+        boost::mp11::mp_for_each<fixture::pixel_types>(
+            test_pixel_reference_parameterized_constructor{});
     }
 };
 

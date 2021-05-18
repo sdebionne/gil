@@ -14,18 +14,19 @@
 
 #include <boost/concept_check.hpp>
 
-#include <utility> // std::swap
+#include <utility>  // std::swap
+
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 namespace boost { namespace gil {
@@ -35,8 +36,7 @@ template <typename T>
 struct channel_traits;
 
 template <typename DstT, typename SrcT>
-auto channel_convert(SrcT const& val)
-    -> typename channel_traits<DstT>::value_type;
+auto channel_convert(SrcT const& val) -> typename channel_traits<DstT>::value_type;
 
 /// \ingroup ChannelConcept
 /// \brief A channel is the building block of a color.
@@ -87,11 +87,10 @@ struct ChannelConcept
         channel_traits<T>::max_value();
     }
 
-     T c;
+    T c;
 };
 
-namespace detail
-{
+namespace detail {
 
 /// \tparam T models ChannelConcept
 template <typename T>
@@ -107,7 +106,7 @@ struct ChannelIsMutableConcept
     T c2;
 };
 
-} // namespace detail
+}  // namespace detail
 
 /// \brief A channel that allows for modifying its value
 /// \code
@@ -152,11 +151,7 @@ struct ChannelValueConcept
 /// \ingroup ChannelAlgorithm
 template <typename T1, typename T2>  // Models GIL Pixel
 struct channels_are_compatible
-    : std::is_same
-        <
-            typename channel_traits<T1>::value_type,
-            typename channel_traits<T2>::value_type
-        >
+    : std::is_same<typename channel_traits<T1>::value_type, typename channel_traits<T2>::value_type>
 {
 };
 
@@ -203,14 +198,14 @@ struct ChannelConvertibleConcept
     DstChannel dst;
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

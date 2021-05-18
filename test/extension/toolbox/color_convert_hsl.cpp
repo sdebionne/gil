@@ -23,9 +23,9 @@ void test_rgb_to_hsl()
     gil::hsl32f_pixel_t h;
     gil::color_convert(p, h);
 
-    BOOST_TEST_GT(gil::get_color(h, gil::hsl_color_space::hue_t()), 0.8);        // 0.83333331
-    BOOST_TEST_EQ(gil::get_color(h, gil::hsl_color_space::saturation_t()), 1.0); // 1.00000000
-    BOOST_TEST_GT(gil::get_color(h, gil::hsl_color_space::lightness_t()), 0.25); // 0.25098040
+    BOOST_TEST_GT(gil::get_color(h, gil::hsl_color_space::hue_t()), 0.8);         // 0.83333331
+    BOOST_TEST_EQ(gil::get_color(h, gil::hsl_color_space::saturation_t()), 1.0);  // 1.00000000
+    BOOST_TEST_GT(gil::get_color(h, gil::hsl_color_space::lightness_t()), 0.25);  // 0.25098040
 }
 
 void test_hsl_to_rgb()

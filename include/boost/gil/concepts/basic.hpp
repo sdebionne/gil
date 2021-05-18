@@ -11,22 +11,23 @@
 #include <boost/config.hpp>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
-#pragma clang diagnostic ignored "-Wuninitialized"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic ignored "-Wuninitialized"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#pragma GCC diagnostic ignored "-Wuninitialized"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
 
 #include <boost/gil/concepts/concept_check.hpp>
 
+#include <utility>  // std::swap
+
 #include <type_traits>
-#include <utility> // std::swap
 
 namespace boost { namespace gil {
 
@@ -120,9 +121,9 @@ struct Swappable
     void constraints()
     {
         using std::swap;
-        swap(x,y);
+        swap(x, y);
     }
-    T x,y;
+    T x, y;
 };
 
 /// \brief Concept for type regularity requirement.
@@ -142,11 +143,11 @@ struct Regular
 {
     void constraints()
     {
-        gil_function_requires< boost::DefaultConstructibleConcept<T>>();
-        gil_function_requires< boost::CopyConstructibleConcept<T>>();
-        gil_function_requires< boost::EqualityComparableConcept<T>>(); // ==, !=
-        gil_function_requires< boost::AssignableConcept<T>>();
-        gil_function_requires< Swappable<T>>();
+        gil_function_requires<boost::DefaultConstructibleConcept<T>>();
+        gil_function_requires<boost::CopyConstructibleConcept<T>>();
+        gil_function_requires<boost::EqualityComparableConcept<T>>();  // ==, !=
+        gil_function_requires<boost::AssignableConcept<T>>();
+        gil_function_requires<Swappable<T>>();
     }
 };
 
@@ -183,14 +184,14 @@ struct SameType
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

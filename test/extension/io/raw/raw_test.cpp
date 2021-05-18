@@ -10,8 +10,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/raw.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <fstream>
 
@@ -30,9 +30,9 @@ void test_read_image_info_using_string()
     {
         /// raw_tag reader's can only constructed with char*, std::string, and LibRaw object
 
-        using backend_t = gil::get_reader_backend<char const *, gil::raw_tag>::type;
-        backend_t b = gil::make_reader_backend(raw_filename.c_str(),
-            gil::image_read_settings<gil::raw_tag>());
+        using backend_t = gil::get_reader_backend<char const*, gil::raw_tag>::type;
+        backend_t b = gil::make_reader_backend(
+            raw_filename.c_str(), gil::image_read_settings<gil::raw_tag>());
         backend_t backend = gil::read_image_info(raw_filename, gil::raw_tag());
 
         BOOST_TEST_EQ(backend._info._width, 2176);
@@ -91,19 +91,16 @@ void test_read_and_convert_view()
 
 void test_subimage()
 {
-    run_subimage_test<gil::rgb8_image_t, gil::raw_tag>(raw_filename, gil::point_t(0, 0), gil::point_t(127, 1));
-    run_subimage_test<gil::rgb8_image_t, gil::raw_tag>(raw_filename, gil::point_t(39, 7), gil::point_t(50, 50));
+    run_subimage_test<gil::rgb8_image_t, gil::raw_tag>(
+        raw_filename, gil::point_t(0, 0), gil::point_t(127, 1));
+    run_subimage_test<gil::rgb8_image_t, gil::raw_tag>(
+        raw_filename, gil::point_t(39, 7), gil::point_t(50, 50));
 }
 
 void test_dynamic_image()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::rgba8_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::rgba8_image_t>
+        image;
     gil::read_image(raw_filename.c_str(), image, gil::raw_tag());
 }
 
@@ -121,5 +118,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

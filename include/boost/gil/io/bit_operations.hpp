@@ -12,6 +12,7 @@
 
 #include <array>
 #include <cstddef>
+
 #include <type_traits>
 
 namespace boost { namespace gil { namespace detail {
@@ -20,10 +21,14 @@ namespace boost { namespace gil { namespace detail {
 template <typename Buffer, typename IsBitAligned>
 struct mirror_bits
 {
-    mirror_bits(bool) {};
+    mirror_bits(bool){};
 
-    void operator()(Buffer&) {}
-    void operator()(byte_t*, std::size_t){}
+    void operator()(Buffer&)
+    {
+    }
+    void operator()(byte_t*, std::size_t)
+    {
+    }
 };
 
 // The functor will generate a lookup table since the
@@ -31,19 +36,17 @@ struct mirror_bits
 template <typename Buffer>
 struct mirror_bits<Buffer, std::true_type>
 {
-    mirror_bits(bool apply_operation = true)
-        : apply_operation_(apply_operation)
+    mirror_bits(bool apply_operation = true) : apply_operation_(apply_operation)
     {
-        if(apply_operation_)
+        if (apply_operation_)
         {
             byte_t i = 0;
             do
             {
                 lookup_[i] = mirror(i);
-            }
-            while (i++ != 255);
+            } while (i++ != 255);
         }
-   }
+    }
 
     void operator()(Buffer& buffer)
     {
@@ -51,7 +54,7 @@ struct mirror_bits<Buffer, std::true_type>
             for_each(buffer.begin(), buffer.end(), [this](byte_t& c) { lookup(c); });
     }
 
-    void operator()(byte_t *dst, std::size_t size)
+    void operator()(byte_t* dst, std::size_t size)
     {
         for (std::size_t i = 0; i < size; ++i)
         {
@@ -61,7 +64,6 @@ struct mirror_bits<Buffer, std::true_type>
     }
 
 private:
-
     void lookup(byte_t& c)
     {
         c = lookup_[c];
@@ -82,14 +84,13 @@ private:
 
     std::array<byte_t, 256> lookup_;
     bool apply_operation_;
-
 };
 
 // 0011 1111 -> 1100 0000
 template <typename Buffer, typename IsBitAligned>
 struct negate_bits
 {
-    void operator()(Buffer&) {};
+    void operator()(Buffer&){};
 };
 
 template <typename Buffer>
@@ -97,8 +98,7 @@ struct negate_bits<Buffer, std::true_type>
 {
     void operator()(Buffer& buffer)
     {
-        for_each(buffer.begin(), buffer.end(),
-            negate_bits<Buffer, std::true_type>::negate);
+        for_each(buffer.begin(), buffer.end(), negate_bits<Buffer, std::true_type>::negate);
     }
 
     void operator()(byte_t* dst, std::size_t size)
@@ -111,7 +111,6 @@ struct negate_bits<Buffer, std::true_type>
     }
 
 private:
-
     static void negate(byte_t& b)
     {
         b = ~b;
@@ -122,7 +121,7 @@ private:
 template <typename Buffer, typename IsBitAligned>
 struct swap_half_bytes
 {
-    void operator()(Buffer&) {};
+    void operator()(Buffer&){};
 };
 
 template <typename Buffer>
@@ -130,8 +129,7 @@ struct swap_half_bytes<Buffer, std::true_type>
 {
     void operator()(Buffer& buffer)
     {
-        for_each(buffer.begin(), buffer.end(),
-            swap_half_bytes<Buffer, std::true_type>::swap);
+        for_each(buffer.begin(), buffer.end(), swap_half_bytes<Buffer, std::true_type>::swap);
     }
 
     void operator()(byte_t* dst, std::size_t size)
@@ -144,7 +142,6 @@ struct swap_half_bytes<Buffer, std::true_type>
     }
 
 private:
-
     static void swap(byte_t& c)
     {
         c = ((c << 4) & 0xF0) | ((c >> 4) & 0x0F);
@@ -154,9 +151,11 @@ private:
 template <typename Buffer>
 struct do_nothing
 {
-   do_nothing() = default;
+    do_nothing() = default;
 
-   void operator()(Buffer&) {}
+    void operator()(Buffer&)
+    {
+    }
 };
 
 /// Count consecutive zeros on the right
@@ -177,8 +176,7 @@ inline unsigned int trailing_zeros(T x) noexcept
 
 /// Counts ones in a bit-set
 template <typename T>
-inline
-unsigned int count_ones(T x) noexcept
+inline unsigned int count_ones(T x) noexcept
 {
     unsigned int n = 0;
 
@@ -192,6 +190,6 @@ unsigned int count_ones(T x) noexcept
     return n;
 }
 
-}}} // namespace boost::gil::detail
+}}}  // namespace boost::gil::detail
 
 #endif

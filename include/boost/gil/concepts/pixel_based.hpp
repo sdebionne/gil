@@ -17,14 +17,14 @@
 #include <cstddef>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 namespace boost { namespace gil {
@@ -57,7 +57,7 @@ struct PixelBasedConcept
         using color_space_t = typename color_space_type<P>::type;
         gil_function_requires<ColorSpaceConcept<color_space_t>>();
 
-        using channel_mapping_t = typename channel_mapping_type<P>::type ;
+        using channel_mapping_t = typename channel_mapping_type<P>::type;
         gil_function_requires<ChannelMappingConcept<channel_mapping_t>>();
 
         static const bool planar = is_planar<P>::value;
@@ -91,14 +91,14 @@ struct HomogeneousPixelBasedConcept
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

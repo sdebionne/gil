@@ -5,11 +5,11 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
+#include <boost/gil/cmyk.hpp>
 #include <boost/gil/color_convert.hpp>
 #include <boost/gil/gray.hpp>
 #include <boost/gil/rgb.hpp>
 #include <boost/gil/rgba.hpp>
-#include <boost/gil/cmyk.hpp>
 
 #include <boost/core/ignore_unused.hpp>
 #include <boost/mp11.hpp>
@@ -18,7 +18,9 @@
 
 namespace gil = boost::gil;
 
-struct unknown_color_space {};
+struct unknown_color_space
+{
+};
 
 int main()
 {

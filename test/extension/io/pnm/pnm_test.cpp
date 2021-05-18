@@ -8,8 +8,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/pnm.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -26,7 +26,7 @@ namespace mp11 = boost::mp11;
 void test_read_image_info_using_string()
 {
     {
-        using backend_t   = gil::get_reader_backend<std::string const, gil::pnm_tag>::type;
+        using backend_t = gil::get_reader_backend<std::string const, gil::pnm_tag>::type;
         backend_t backend = gil::read_image_info(pnm_filename, gil::pnm_tag());
 
         BOOST_TEST_EQ(backend._info._width, 256u);
@@ -35,7 +35,7 @@ void test_read_image_info_using_string()
     {
         std::ifstream in(pnm_filename.c_str(), std::ios::binary);
 
-        using backend_t   = gil::get_reader_backend<std::ifstream, gil::pnm_tag>::type;
+        using backend_t = gil::get_reader_backend<std::ifstream, gil::pnm_tag>::type;
         backend_t backend = gil::read_image_info(in, gil::pnm_tag());
 
         BOOST_TEST_EQ(backend._info._width, 256u);
@@ -44,7 +44,7 @@ void test_read_image_info_using_string()
     {
         FILE* file = fopen(pnm_filename.c_str(), "rb");
 
-        using backend_t   = gil::get_reader_backend<FILE*, gil::pnm_tag>::type;
+        using backend_t = gil::get_reader_backend<FILE*, gil::pnm_tag>::type;
         backend_t backend = gil::read_image_info(file, gil::pnm_tag());
 
         BOOST_TEST_EQ(backend._info._width, 256u);
@@ -174,9 +174,9 @@ void test_stream()
     // 5. Write out image.
     std::string filename(pnm_out + "stream_test.pnm");
     std::ofstream out(filename.c_str(), std::ios_base::binary);
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(out, gil::view(dst), gil::pnm_tag());
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_stream_2()
@@ -204,19 +204,14 @@ void test_subimage()
 
 void test_dynamic_image_test()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::gray1_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::gray1_image_t>
+        image;
 
     gil::read_image(pnm_filename.c_str(), image, gil::pnm_tag());
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(pnm_out + "dynamic_image_test.pnm", gil::view(image), gil::pnm_tag());
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -234,5 +229,7 @@ int main()
     return boost::report_errors();
 }
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

@@ -23,12 +23,12 @@ void check_cumulative()
     bool check1 = true;
     for (int i = 0; i < 8; i++)
     {
-        if(h2(i) != i+1)
+        if (h2(i) != i + 1)
             check1 = false;
-    }    
+    }
     BOOST_TEST(check1);
 
-    gil::histogram<int , int> h3;
+    gil::histogram<int, int> h3;
     h3(1, 3) = 1;
     h3(1, 4) = 2;
     h3(2, 1) = 3;
@@ -46,8 +46,8 @@ void check_cumulative()
     BOOST_TEST(h4(3, 9) == 13);
 }
 
-int main() {
-
+int main()
+{
     check_cumulative();
 
     return boost::report_errors();

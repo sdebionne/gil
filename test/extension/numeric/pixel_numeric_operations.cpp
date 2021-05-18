@@ -11,11 +11,11 @@
 #include <boost/core/lightweight_test.hpp>
 
 #include <tuple>
-#include <type_traits>
 
-#include "test_utility_output_stream.hpp"
-#include "core/test_fixture.hpp" // random_value
 #include "core/pixel/test_fixture.hpp"
+#include "core/test_fixture.hpp"  // random_value
+#include "test_utility_output_stream.hpp"
+#include <type_traits>
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
@@ -123,7 +123,8 @@ struct test_pixel_multiplies_scalar_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_pixel_multiplies_scalar_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_pixel_multiplies_scalar_integer_same_types{});
     }
 };
 
@@ -150,7 +151,8 @@ struct test_pixel_multiply_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_pixel_multiply_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_pixel_multiply_integer_same_types{});
     }
 };
 
@@ -177,7 +179,8 @@ struct test_pixel_divides_scalar_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_pixel_divides_scalar_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_pixel_divides_scalar_integer_same_types{});
     }
 };
 
@@ -203,7 +206,8 @@ struct test_pixel_divide_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_pixel_divide_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_pixel_divide_integer_same_types{});
     }
 };
 
@@ -227,7 +231,7 @@ struct test_pixel_halves_integer_same_types
         }
         {
             auto p = p1;
-            BOOST_TEST_EQ(f(p), p0); // truncates toward Zero
+            BOOST_TEST_EQ(f(p), p0);  // truncates toward Zero
         }
         {
             pixel_t p2;
@@ -237,7 +241,8 @@ struct test_pixel_halves_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_pixel_halves_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_pixel_halves_integer_same_types{});
     }
 };
 
@@ -265,7 +270,8 @@ struct test_pixel_zeros_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_pixel_zeros_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_pixel_zeros_integer_same_types{});
     }
 };
 
@@ -294,7 +300,8 @@ struct test_zero_channels_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_zero_channels_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_zero_channels_integer_same_types{});
     }
 };
 
@@ -323,7 +330,8 @@ struct test_pixel_assigns_integer_same_types
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::pixel_integer_types>(test_pixel_assigns_integer_same_types{});
+        boost::mp11::mp_for_each<fixture::pixel_integer_types>(
+            test_pixel_assigns_integer_same_types{});
     }
 };
 int main()

@@ -11,43 +11,45 @@
 
 namespace gil = boost::gil;
 
-struct Interleaved : std::false_type {};
-struct Planar : std::true_type {};
-struct NotStepX : std::false_type {};
-struct StepX : std::true_type {};
-struct Immutable : std::false_type {};
-struct Mutable : std::true_type {};
+struct Interleaved : std::false_type
+{
+};
+struct Planar : std::true_type
+{
+};
+struct NotStepX : std::false_type
+{
+};
+struct StepX : std::true_type
+{
+};
+struct Immutable : std::false_type
+{
+};
+struct Mutable : std::true_type
+{
+};
 
 template <typename ResultView, typename Pixel, typename IsPlanar, typename IsStepX, typename IsMutable>
 void test()
 {
-    static_assert(std::is_same
-    <
-        typename gil::view_type_from_pixel
-        <
-            Pixel,
-            IsPlanar::value,
-            IsStepX::value,
-            IsMutable::value
-        >::type,
-        ResultView
-    >::value, "view_type_from_pixel yields unexpected view");
+    static_assert(
+        std::is_same<
+            typename gil::
+                view_type_from_pixel<Pixel, IsPlanar::value, IsStepX::value, IsMutable::value>::type,
+            ResultView>::value,
+        "view_type_from_pixel yields unexpected view");
 }
 
 template <typename ResultView, typename Pixel, typename IsPlanar, typename IsStepX, typename IsMutable>
 void test_not()
 {
-    static_assert(!std::is_same
-    <
-        typename gil::view_type_from_pixel
-        <
-            Pixel,
-            IsPlanar::value,
-            IsStepX::value,
-            IsMutable::value
-        >::type,
-        ResultView
-    >::value, "view_type_from_pixel yields unexpected view");
+    static_assert(
+        !std::is_same<
+            typename gil::
+                view_type_from_pixel<Pixel, IsPlanar::value, IsStepX::value, IsMutable::value>::type,
+            ResultView>::value,
+        "view_type_from_pixel yields unexpected view");
 }
 
 int main()

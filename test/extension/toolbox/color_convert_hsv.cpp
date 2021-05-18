@@ -23,11 +23,11 @@ void test_rgb_to_hsv()
     gil::hsv32f_pixel_t h;
     gil::color_convert(p, h);
 
-    BOOST_TEST_GT(gil::get_color(h, gil::hsv_color_space::hue_t()), 0.80);       // 0.83333331
+    BOOST_TEST_GT(gil::get_color(h, gil::hsv_color_space::hue_t()), 0.80);  // 0.83333331
     BOOST_TEST_LT(gil::get_color(h, gil::hsv_color_space::hue_t()), 0.85);
-    BOOST_TEST_GE(gil::get_color(h, gil::hsv_color_space::saturation_t()), 1.0); // 1.00000000
+    BOOST_TEST_GE(gil::get_color(h, gil::hsv_color_space::saturation_t()), 1.0);  // 1.00000000
     BOOST_TEST_LT(gil::get_color(h, gil::hsv_color_space::saturation_t()), 1.1);
-    BOOST_TEST_GE(gil::get_color(h, gil::hsv_color_space::value_t()), 0.50);     // 0.50196081
+    BOOST_TEST_GE(gil::get_color(h, gil::hsv_color_space::value_t()), 0.50);  // 0.50196081
     BOOST_TEST_LT(gil::get_color(h, gil::hsv_color_space::value_t()), 0.51);
 }
 
@@ -75,11 +75,11 @@ void test_copy_pixels_rgb_to_hsv()
     for (auto it = view.begin(), end = view.end(); it != end; ++it)
     {
         auto h = *it;
-        BOOST_TEST_GT(gil::get_color(h, gil::hsv_color_space::hue_t()), 0.80);       // 0.8333333
+        BOOST_TEST_GT(gil::get_color(h, gil::hsv_color_space::hue_t()), 0.80);  // 0.8333333
         BOOST_TEST_LT(gil::get_color(h, gil::hsv_color_space::hue_t()), 0.85);
-        BOOST_TEST_GE(gil::get_color(h, gil::hsv_color_space::saturation_t()), 0.5); // 0.5000000
-        BOOST_TEST_LT(gil::get_color(h, gil::hsv_color_space::saturation_t()),  0.51);
-        BOOST_TEST_GT(gil::get_color(h, gil::hsv_color_space::value_t()), 0.25);     // 0.25
+        BOOST_TEST_GE(gil::get_color(h, gil::hsv_color_space::saturation_t()), 0.5);  // 0.5000000
+        BOOST_TEST_LT(gil::get_color(h, gil::hsv_color_space::saturation_t()), 0.51);
+        BOOST_TEST_GT(gil::get_color(h, gil::hsv_color_space::value_t()), 0.25);  // 0.25
         BOOST_TEST_LT(gil::get_color(h, gil::hsv_color_space::value_t()), 0.26);
     }
 }

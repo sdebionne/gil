@@ -14,17 +14,18 @@
 #include <boost/gil/concepts/fwd.hpp>
 
 #include <boost/core/ignore_unused.hpp>
+
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 namespace boost { namespace gil {
@@ -35,50 +36,43 @@ namespace detail {
 template <typename Element, typename Layout, int K>
 struct homogeneous_color_base;
 
-} // namespace detail
+}  // namespace detail
 
 template <int K, typename E, typename L, int N>
-auto at_c(detail::homogeneous_color_base<E, L, N>& p)
-    -> typename std::add_lvalue_reference<E>::type;
+auto at_c(detail::homogeneous_color_base<E, L, N>& p) ->
+    typename std::add_lvalue_reference<E>::type;
 
 template <int K, typename E, typename L, int N>
-auto at_c(detail::homogeneous_color_base<E, L, N> const& p)
-    -> typename std::add_lvalue_reference<typename std::add_const<E>::type>::type;
+auto at_c(detail::homogeneous_color_base<E, L, N> const& p) ->
+    typename std::add_lvalue_reference<typename std::add_const<E>::type>::type;
 
 template <typename P, typename C, typename L>
 struct packed_pixel;
 
 template <int K, typename P, typename C, typename L>
-auto at_c(packed_pixel<P, C, L>& p)
-    -> typename kth_element_reference_type<packed_pixel<P, C, L>, K>::type;
+auto at_c(packed_pixel<P, C, L>& p) ->
+    typename kth_element_reference_type<packed_pixel<P, C, L>, K>::type;
 
 template <int K, typename P, typename C, typename L>
-auto at_c(packed_pixel<P, C, L> const& p)
-    -> typename kth_element_const_reference_type<packed_pixel<P, C, L>, K>::type;
+auto at_c(packed_pixel<P, C, L> const& p) ->
+    typename kth_element_const_reference_type<packed_pixel<P, C, L>, K>::type;
 
 template <typename B, typename C, typename L, bool M>
 struct bit_aligned_pixel_reference;
 
 template <int K, typename B, typename C, typename L, bool M>
-inline auto at_c(bit_aligned_pixel_reference<B, C, L, M> const& p)
-    -> typename kth_element_reference_type
-        <
-            bit_aligned_pixel_reference<B, C, L, M>,
-            K
-        >::type;
+inline auto at_c(bit_aligned_pixel_reference<B, C, L, M> const& p) ->
+    typename kth_element_reference_type<bit_aligned_pixel_reference<B, C, L, M>, K>::type;
 
 // Forward declarations of semantic_at_c
 template <int K, typename ColorBase>
-auto semantic_at_c(ColorBase& p)
-    -> typename std::enable_if
-        <
-            !std::is_const<ColorBase>::value,
-            typename kth_semantic_element_reference_type<ColorBase, K>::type
-        >::type;
+auto semantic_at_c(ColorBase& p) -> typename std::enable_if<
+    !std::is_const<ColorBase>::value,
+    typename kth_semantic_element_reference_type<ColorBase, K>::type>::type;
 
 template <int K, typename ColorBase>
-auto semantic_at_c(ColorBase const& p)
-    -> typename kth_semantic_element_const_reference_type<ColorBase, K>::type;
+auto semantic_at_c(ColorBase const& p) ->
+    typename kth_semantic_element_const_reference_type<ColorBase, K>::type;
 
 /// \ingroup ColorBaseConcept
 /// \brief A color base is a container of color elements (such as channels, channel references or channel pointers).
@@ -157,7 +151,7 @@ struct ColorBaseConcept
 
         // functions that work for every pixel (no need to require them)
         semantic_at_c<0>(cb);
-        semantic_at_c<num_elements-1>(cb);
+        semantic_at_c<num_elements - 1>(cb);
         // also static_max(cb), static_min(cb), static_fill(cb,value),
         // and all variations of static_for_each(), static_generate(), static_transform()
     }
@@ -235,7 +229,7 @@ struct HomogeneousColorBaseConcept
         using T0 = typename kth_element_type<ColorBase, 0>::type;
         using TN = typename kth_element_type<ColorBase, num_elements - 1>::type;
 
-        static_assert(std::is_same<T0, TN>::value, "");   // better than nothing
+        static_assert(std::is_same<T0, TN>::value, "");  // better than nothing
 
         using R0 = typename kth_element_const_reference_type<ColorBase, 0>::type;
         R0 r = dynamic_at_c(cb, 0);
@@ -304,26 +298,26 @@ struct ColorBasesCompatibleConcept
 {
     void constraints()
     {
-        static_assert(std::is_same
-            <
+        static_assert(
+            std::is_same<
                 typename ColorBase1::layout_t::color_space_t,
-                typename ColorBase2::layout_t::color_space_t
-            >::value, "");
+                typename ColorBase2::layout_t::color_space_t>::value,
+            "");
 
-//        using e1 = typename kth_semantic_element_type<ColorBase1,0>::type;
-//        using e2 = typename kth_semantic_element_type<ColorBase2,0>::type;
-//        "e1 is convertible to e2"
+        //        using e1 = typename kth_semantic_element_type<ColorBase1,0>::type;
+        //        using e2 = typename kth_semantic_element_type<ColorBase2,0>::type;
+        //        "e1 is convertible to e2"
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

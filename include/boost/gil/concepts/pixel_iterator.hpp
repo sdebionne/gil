@@ -19,27 +19,33 @@
 
 #include <cstddef>
 #include <iterator>
+
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 namespace boost { namespace gil {
 
 // Forward declarations
-template <typename It> struct const_iterator_type;
-template <typename It> struct iterator_is_mutable;
-template <typename It> struct is_iterator_adaptor;
-template <typename It, typename NewBaseIt> struct iterator_adaptor_rebind;
-template <typename It> struct iterator_adaptor_get_base;
+template <typename It>
+struct const_iterator_type;
+template <typename It>
+struct iterator_is_mutable;
+template <typename It>
+struct is_iterator_adaptor;
+template <typename It, typename NewBaseIt>
+struct iterator_adaptor_rebind;
+template <typename It>
+struct iterator_adaptor_get_base;
 
 // These iterator mutability concepts are taken from Boost concept_check.hpp.
 // Isolating mutability to result in faster compile time
@@ -52,7 +58,7 @@ struct ForwardIteratorIsMutableConcept
     void constraints()
     {
         auto const tmp = *i;
-        *i++ = tmp; // require postincrement and assignment
+        *i++ = tmp;  // require postincrement and assignment
     }
     TT i;
 };
@@ -63,9 +69,9 @@ struct BidirectionalIteratorIsMutableConcept
 {
     void constraints()
     {
-        gil_function_requires< ForwardIteratorIsMutableConcept<TT>>();
+        gil_function_requires<ForwardIteratorIsMutableConcept<TT>>();
         auto const tmp = *i;
-        *i-- = tmp; // require postdecrement and assignment
+        *i-- = tmp;  // require postdecrement and assignment
     }
     TT i;
 };
@@ -80,7 +86,7 @@ struct RandomAccessIteratorIsMutableConcept
 
         typename std::iterator_traits<TT>::difference_type n = 0;
         ignore_unused_variable_warning(n);
-        i[n] = *i; // require element access and assignment
+        i[n] = *i;  // require element access and assignment
     }
     TT i;
 };
@@ -99,7 +105,7 @@ struct RandomAccessIteratorIsMemoryBasedConcept
         std::ptrdiff_t bd = memunit_distance(it, it);
         ignore_unused_variable_warning(bd);
 
-        memunit_advance(it,3);
+        memunit_advance(it, 3);
         // for performace you may also provide a customized implementation of memunit_advanced_ref
     }
     Iterator it;
@@ -113,16 +119,14 @@ struct PixelIteratorIsMutableConcept
     {
         gil_function_requires<detail::RandomAccessIteratorIsMutableConcept<Iterator>>();
 
-        using ref_t = typename std::remove_reference
-            <
-                typename std::iterator_traits<Iterator>::reference
-            >::type;
+        using ref_t =
+            typename std::remove_reference<typename std::iterator_traits<Iterator>::reference>::type;
         using channel_t = typename element_type<ref_t>::type;
         gil_function_requires<detail::ChannelIsMutableConcept<channel_t>>();
     }
 };
 
-} // namespace detail
+}  // namespace detail
 
 /// \ingroup PixelLocatorConcept
 /// \brief Concept for locators and views that can define a type just like the given locator or view, except X and Y is swapped
@@ -188,7 +192,9 @@ struct PixelIteratorConcept
         check_base(typename is_iterator_adaptor<Iterator>::type());
     }
 
-    void check_base(std::false_type) {}
+    void check_base(std::false_type)
+    {
+    }
 
     void check_base(std::true_type)
     {
@@ -348,14 +354,14 @@ struct MutableIteratorAdaptorConcept
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

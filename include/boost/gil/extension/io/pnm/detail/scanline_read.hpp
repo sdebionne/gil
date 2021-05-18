@@ -8,10 +8,9 @@
 #ifndef BOOST_GIL_EXTENSION_IO_PNM_DETAIL_SCANLINE_READ_HPP
 #define BOOST_GIL_EXTENSION_IO_PNM_DETAIL_SCANLINE_READ_HPP
 
+#include <boost/gil.hpp>  // FIXME: Include what you use!
 #include <boost/gil/extension/io/pnm/detail/is_allowed.hpp>
 #include <boost/gil/extension/io/pnm/detail/reader_backend.hpp>
-
-#include <boost/gil.hpp> // FIXME: Include what you use!
 #include <boost/gil/io/base.hpp>
 #include <boost/gil/io/bit_operations.hpp>
 #include <boost/gil/io/conversion_policies.hpp>
@@ -22,179 +21,175 @@
 #include <boost/gil/io/typedefs.hpp>
 
 #include <functional>
-#include <type_traits>
 #include <vector>
+
+#include <type_traits>
 
 namespace boost { namespace gil {
 
 ///
 /// PNM Reader
 ///
-template< typename Device >
-class scanline_reader< Device
-                     , pnm_tag
-                     >
-    : public reader_backend< Device
-                           , pnm_tag
-                           >
+template <typename Device>
+class scanline_reader<Device, pnm_tag> : public reader_backend<Device, pnm_tag>
 {
 public:
-
     using tag_t = pnm_tag;
     using backend_t = reader_backend<Device, tag_t>;
     using this_t = scanline_reader<Device, tag_t>;
     using iterator_t = scanline_read_iterator<this_t>;
 
 public:
-    scanline_reader( Device&                                device
-                   , const image_read_settings< pnm_tag >& settings
-                   )
-    : backend_t( device
-               , settings
-               )
+    scanline_reader(Device& device, const image_read_settings<pnm_tag>& settings)
+        : backend_t(device, settings)
     {
         initialize();
     }
 
     /// Read part of image defined by View and return the data.
-    void read( byte_t* dst
-             , int
-             )
+    void read(byte_t* dst, int)
     {
-        _read_function( this, dst );
+        _read_function(this, dst);
     }
 
     /// Skip over a scanline.
-    void skip( byte_t*, int )
+    void skip(byte_t*, int)
     {
-        _skip_function( this );
+        _skip_function(this);
     }
 
-    iterator_t begin() { return iterator_t( *this ); }
-    iterator_t end()   { return iterator_t( *this, this->_info._height ); }
+    iterator_t begin()
+    {
+        return iterator_t(*this);
+    }
+    iterator_t end()
+    {
+        return iterator_t(*this, this->_info._height);
+    }
 
 private:
-
     void initialize()
     {
-        switch( this->_info._type )
+        switch (this->_info._type)
         {
-            // reading mono text is reading grayscale but with only two values
-            case pnm_image_type::mono_asc_t::value:
-            case pnm_image_type::gray_asc_t::value:
-            {
-                this->_scanline_length = this->_info._width;
+        // reading mono text is reading grayscale but with only two values
+        case pnm_image_type::mono_asc_t::value:
+        case pnm_image_type::gray_asc_t::value:
+        {
+            this->_scanline_length = this->_info._width;
 
-                _read_function = std::mem_fn(&this_t::read_text_row);
-                _skip_function = std::mem_fn(&this_t::skip_text_row);
+            _read_function = std::mem_fn(&this_t::read_text_row);
+            _skip_function = std::mem_fn(&this_t::skip_text_row);
 
-                break;
-            }
+            break;
+        }
 
-            case pnm_image_type::color_asc_t::value:
-            {
-                this->_scanline_length = this->_info._width * num_channels< rgb8_view_t >::value;
+        case pnm_image_type::color_asc_t::value:
+        {
+            this->_scanline_length = this->_info._width * num_channels<rgb8_view_t>::value;
 
-                _read_function = std::mem_fn(&this_t::read_text_row);
-                _skip_function = std::mem_fn(&this_t::skip_text_row);
+            _read_function = std::mem_fn(&this_t::read_text_row);
+            _skip_function = std::mem_fn(&this_t::skip_text_row);
 
-                break;
-            }
+            break;
+        }
 
 
-            case pnm_image_type::mono_bin_t::value:
-            {
-                //gray1_image_t
-                this->_scanline_length = ( this->_info._width + 7 ) >> 3;
+        case pnm_image_type::mono_bin_t::value:
+        {
+            //gray1_image_t
+            this->_scanline_length = (this->_info._width + 7) >> 3;
 
-                _read_function = std::mem_fn(&this_t::read_binary_bit_row);
-                _skip_function = std::mem_fn(&this_t::skip_binary_row);
+            _read_function = std::mem_fn(&this_t::read_binary_bit_row);
+            _skip_function = std::mem_fn(&this_t::skip_binary_row);
 
-                break;
-            }
+            break;
+        }
 
-            case pnm_image_type::gray_bin_t::value:
-            {
-                // gray8_image_t
-                this->_scanline_length = this->_info._width;
+        case pnm_image_type::gray_bin_t::value:
+        {
+            // gray8_image_t
+            this->_scanline_length = this->_info._width;
 
-                _read_function = std::mem_fn(&this_t::read_binary_byte_row);
-                _skip_function = std::mem_fn(&this_t::skip_binary_row);
+            _read_function = std::mem_fn(&this_t::read_binary_byte_row);
+            _skip_function = std::mem_fn(&this_t::skip_binary_row);
 
-                break;
-            }
+            break;
+        }
 
-            case pnm_image_type::color_bin_t::value:
-            {
-                // rgb8_image_t
-                this->_scanline_length = this->_info._width * num_channels< rgb8_view_t >::value;
+        case pnm_image_type::color_bin_t::value:
+        {
+            // rgb8_image_t
+            this->_scanline_length = this->_info._width * num_channels<rgb8_view_t>::value;
 
-                _read_function = std::mem_fn(&this_t::read_binary_byte_row);
-                _skip_function = std::mem_fn(&this_t::skip_binary_row);
+            _read_function = std::mem_fn(&this_t::read_binary_byte_row);
+            _skip_function = std::mem_fn(&this_t::skip_binary_row);
 
-                break;
-            }
+            break;
+        }
 
-            default: { io_error( "Unsupported pnm file." ); break; }
+        default:
+        {
+            io_error("Unsupported pnm file.");
+            break;
+        }
         }
     }
 
-    void read_text_row( byte_t* dst )
+    void read_text_row(byte_t* dst)
     {
-        for( std::size_t x = 0; x < this->_scanline_length; ++x )
+        for (std::size_t x = 0; x < this->_scanline_length; ++x)
         {
-            for( uint32_t k = 0; ; )
+            for (uint32_t k = 0;;)
             {
                 int ch = this->_io_dev.getc_unchecked();
 
-                if( isdigit( ch ))
+                if (isdigit(ch))
                 {
-                    _text_buffer[ k++ ] = static_cast< char >( ch );
+                    _text_buffer[k++] = static_cast<char>(ch);
                 }
-                else if( k )
+                else if (k)
                 {
-                    _text_buffer[ k ] = 0;
+                    _text_buffer[k] = 0;
                     break;
                 }
-                else if( ch == EOF || !isspace( ch ))
+                else if (ch == EOF || !isspace(ch))
                 {
                     return;
                 }
             }
 
-            int value = atoi( _text_buffer );
+            int value = atoi(_text_buffer);
 
-            if( this->_info._max_value == 1 )
+            if (this->_info._max_value == 1)
             {
                 // for pnm format 0 is white
-                dst[x] = ( value != 0 )
-                            ? 0
-                            : 255;
+                dst[x] = (value != 0) ? 0 : 255;
             }
             else
             {
-                dst[x] = static_cast< byte_t >( value );
+                dst[x] = static_cast<byte_t>(value);
             }
         }
     }
 
     void skip_text_row()
     {
-        for( std::size_t x = 0; x < this->_scanline_length; ++x )
+        for (std::size_t x = 0; x < this->_scanline_length; ++x)
         {
-            for( uint32_t k = 0; ; )
+            for (uint32_t k = 0;;)
             {
                 int ch = this->_io_dev.getc_unchecked();
 
-                if( isdigit( ch ))
+                if (isdigit(ch))
                 {
                     k++;
                 }
-                else if( k )
+                else if (k)
                 {
                     break;
                 }
-                else if( ch == EOF || !isspace( ch ))
+                else if (ch == EOF || !isspace(ch))
                 {
                     return;
                 }
@@ -203,31 +198,25 @@ private:
     }
 
 
-    void read_binary_bit_row( byte_t* dst )
+    void read_binary_bit_row(byte_t* dst)
     {
-        this->_io_dev.read( dst
-                    , this->_scanline_length
-                    );
+        this->_io_dev.read(dst, this->_scanline_length);
 
-        _negate_bits    ( dst, this->_scanline_length );
-        _swap_half_bytes( dst, this->_scanline_length );
-
+        _negate_bits(dst, this->_scanline_length);
+        _swap_half_bytes(dst, this->_scanline_length);
     }
 
-    void read_binary_byte_row( byte_t* dst )
+    void read_binary_byte_row(byte_t* dst)
     {
-        this->_io_dev.read( dst
-                    , this->_scanline_length
-                    );
+        this->_io_dev.read(dst, this->_scanline_length);
     }
 
     void skip_binary_row()
     {
-        this->_io_dev.seek( static_cast<long>( this->_scanline_length ), SEEK_CUR );
+        this->_io_dev.seek(static_cast<long>(this->_scanline_length), SEEK_CUR);
     }
 
 private:
-
     char _text_buffer[16];
 
     // For bit_aligned images we need to negate all bytes in the row_buffer
@@ -240,7 +229,6 @@ private:
 };
 
 
-} // namespace gil
-} // namespace boost
+}}  // namespace boost::gil
 
 #endif

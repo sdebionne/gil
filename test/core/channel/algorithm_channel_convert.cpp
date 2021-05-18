@@ -64,84 +64,90 @@ void test_channel_value_convert_from_integral()
 struct test_channel_value_convert_from_uint8_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         test_channel_value_convert_from_integral<std::uint8_t, channel_t>();
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_byte_types>(test_channel_value_convert_from_uint8_t{});
+        boost::mp11::mp_for_each<fixture::channel_byte_types>(
+            test_channel_value_convert_from_uint8_t{});
     }
 };
 
 struct test_channel_value_convert_from_int8_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         test_channel_value_convert_from_integral<std::int8_t, channel_t>();
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_byte_types>(test_channel_value_convert_from_int8_t{});
+        boost::mp11::mp_for_each<fixture::channel_byte_types>(
+            test_channel_value_convert_from_int8_t{});
     }
 };
 
 struct test_channel_value_convert_from_uint16_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         test_channel_value_convert_from_integral<std::uint16_t, channel_t>();
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_byte_types>(test_channel_value_convert_from_uint16_t{});
+        boost::mp11::mp_for_each<fixture::channel_byte_types>(
+            test_channel_value_convert_from_uint16_t{});
     }
 };
 
 struct test_channel_value_convert_from_int16_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         test_channel_value_convert_from_integral<std::int16_t, channel_t>();
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_byte_types>(test_channel_value_convert_from_int16_t{});
+        boost::mp11::mp_for_each<fixture::channel_byte_types>(
+            test_channel_value_convert_from_int16_t{});
     }
 };
 
 struct test_channel_value_convert_from_uint32_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         test_channel_value_convert_from_integral<std::uint32_t, channel_t>();
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_byte_types>(test_channel_value_convert_from_uint32_t{});
+        boost::mp11::mp_for_each<fixture::channel_byte_types>(
+            test_channel_value_convert_from_uint32_t{});
     }
 };
 
 struct test_channel_value_convert_from_int32_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         test_channel_value_convert_from_integral<std::int32_t, channel_t>();
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_byte_types>(test_channel_value_convert_from_int32_t{});
+        boost::mp11::mp_for_each<fixture::channel_byte_types>(
+            test_channel_value_convert_from_int32_t{});
     }
 };
 
@@ -151,7 +157,7 @@ struct test_channel_value_convert_from_int32_t
 struct test_channel_value_convert_from_float32_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         fixture::channel_minmax_value<gil::float32_t> f;
@@ -159,14 +165,15 @@ struct test_channel_value_convert_from_float32_t
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_integer_types>(test_channel_value_convert_from_float32_t{});
+        boost::mp11::mp_for_each<fixture::channel_integer_types>(
+            test_channel_value_convert_from_float32_t{});
     }
 };
 
 struct test_channel_reference_convert_from_float32_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         fixture::channel_minmax_value<gil::float32_t> f;
@@ -174,22 +181,24 @@ struct test_channel_reference_convert_from_float32_t
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_integer_types>(test_channel_reference_convert_from_float32_t{});
+        boost::mp11::mp_for_each<fixture::channel_integer_types>(
+            test_channel_reference_convert_from_float32_t{});
     }
 };
 
 struct test_channel_reference_const_from_float32_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         fixture::channel_minmax_value<gil::float32_t> f;
-        test_convert_to<fixture::channel_reference<channel_t const &>>::from(f.min_v_, f.max_v_);
+        test_convert_to<fixture::channel_reference<channel_t const&>>::from(f.min_v_, f.max_v_);
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_integer_types>(test_channel_reference_const_from_float32_t{});
+        boost::mp11::mp_for_each<fixture::channel_integer_types>(
+            test_channel_reference_const_from_float32_t{});
     }
 };
 
@@ -198,7 +207,7 @@ struct test_channel_reference_const_from_float32_t
 struct test_channel_value_convert_from_float64_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         fixture::channel_minmax_value<gil::float64_t> f;
@@ -206,37 +215,40 @@ struct test_channel_value_convert_from_float64_t
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_integer_types>(test_channel_value_convert_from_float64_t{});
+        boost::mp11::mp_for_each<fixture::channel_integer_types>(
+            test_channel_value_convert_from_float64_t{});
     }
 };
 
 struct test_channel_reference_convert_from_float64_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         fixture::channel_minmax_value<gil::float64_t> f;
-        test_convert_to<fixture::channel_reference<channel_t &>>::from(f.min_v_, f.max_v_);
+        test_convert_to<fixture::channel_reference<channel_t&>>::from(f.min_v_, f.max_v_);
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_integer_types>(test_channel_reference_convert_from_float64_t{});
+        boost::mp11::mp_for_each<fixture::channel_integer_types>(
+            test_channel_reference_convert_from_float64_t{});
     }
 };
 
 struct test_channel_reference_const_convert_from_float64_t
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         fixture::channel_minmax_value<gil::float64_t> f;
-        test_convert_to<fixture::channel_reference<channel_t const &>>::from(f.min_v_, f.max_v_);
+        test_convert_to<fixture::channel_reference<channel_t const&>>::from(f.min_v_, f.max_v_);
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_integer_types>(test_channel_reference_const_convert_from_float64_t{});
+        boost::mp11::mp_for_each<fixture::channel_integer_types>(
+            test_channel_reference_const_convert_from_float64_t{});
     }
 };
 

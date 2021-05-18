@@ -21,11 +21,11 @@ int main()
 
     // RGB (wider space) transformation to Gray (narrower space) takes only R channel value
     {
-        gil::rgb8_pixel_t src{ 32, 64, 128 };
-        gil::gray8_pixel_t dst{ 0 };
+        gil::rgb8_pixel_t src{32, 64, 128};
+        gil::gray8_pixel_t dst{0};
         gil::static_transform(src, dst, [](std::uint8_t src_channel) {
-            return src_channel; // copy
-            });
+            return src_channel;  // copy
+        });
         assert(gil::at_c<0>(dst) == std::uint16_t{32});
     }
 
@@ -34,7 +34,7 @@ int main()
         gil::gray8_pixel_t src{32};
         gil::rgb8_pixel_t dst{0, 0, 0};
         gil::static_transform(src, dst, [](std::uint8_t src_channel) {
-            return src_channel; // copy
+            return src_channel;  // copy
         });
     }
 }

@@ -13,16 +13,17 @@
 #include <boost/gil/metafunctions.hpp>
 #include <boost/gil/pixel.hpp>
 
+#include <boost/functional/hash.hpp>
 #include <boost/mp11.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/functional/hash.hpp>
 
 #include <iostream>
+#include <map>
 #include <tuple>
 #include <utility>
 #include <vector>
+
 #include <type_traits>
-#include <map>
 #include <unordered_map>
 
 namespace boost { namespace gil {
@@ -44,28 +45,30 @@ namespace detail {
 /// \ingroup Histogram-Helpers
 ///
 template <std::size_t Index, typename... T>
-inline typename std::enable_if<Index == sizeof...(T), void>::type
-    hash_tuple_impl(std::size_t&, std::tuple<T...> const&)
+inline typename std::enable_if<Index == sizeof...(T), void>::type hash_tuple_impl(
+    std::size_t&,
+    std::tuple<T...> const&)
 {
 }
 
 /// \ingroup Histogram-Helpers
 ///
 template <std::size_t Index, typename... T>
-inline typename std::enable_if<Index != sizeof...(T), void>::type
-    hash_tuple_impl(std::size_t& seed, std::tuple<T...> const& t)
+inline typename std::enable_if<Index != sizeof...(T), void>::type hash_tuple_impl(
+    std::size_t& seed,
+    std::tuple<T...> const& t)
 {
     boost::hash_combine(seed, std::get<Index>(t));
     hash_tuple_impl<Index + 1>(seed, t);
 }
 
 /// \ingroup Histogram-Helpers
-/// \brief Functor provided for the hashing of tuples. 
-///        The following approach makes use hash_combine from 
-///        boost::container_hash. Although there is a direct hashing 
+/// \brief Functor provided for the hashing of tuples.
+///        The following approach makes use hash_combine from
+///        boost::container_hash. Although there is a direct hashing
 ///        available for tuples, this approach will ease adopting in
 ///        future to a std::hash_combine. In case std::hash extends
-///        support to tuples this functor as well as the helper 
+///        support to tuples this functor as well as the helper
 ///        implementation hash_tuple_impl can be removed.
 ///
 template <typename... T>
@@ -115,7 +118,7 @@ bool tuple_compare(Tuple const& t1, Tuple const& t2, boost::mp11::index_sequence
 }
 
 /// \ingroup Histogram-Helpers
-/// \brief Compares 2 tuples and outputs t1 <= t2 
+/// \brief Compares 2 tuples and outputs t1 <= t2
 ///        Comparison is not in a lexicographic manner but on every element of the tuple hence
 ///        (2, 2) > (1, 3) evaluates to false
 ///
@@ -123,7 +126,7 @@ template <typename Tuple>
 bool tuple_compare(Tuple const& t1, Tuple const& t2)
 {
     std::size_t const tuple_size = std::tuple_size<Tuple>::value;
-    auto index_list              = boost::mp11::make_index_sequence<tuple_size>{};
+    auto index_list = boost::mp11::make_index_sequence<tuple_size>{};
     return tuple_compare(t1, t2, index_list);
 }
 
@@ -183,7 +186,9 @@ struct filler<1>
     template <typename Container, typename Tuple>
     void operator()(Container& hist, Tuple& lower, Tuple& upper, std::size_t bin_width = 1)
     {
-        for (auto i = std::get<0>(lower); static_cast<std::size_t>(std::get<0>(upper) - i) >= bin_width; i += bin_width)
+        for (auto i = std::get<0>(lower);
+             static_cast<std::size_t>(std::get<0>(upper) - i) >= bin_width;
+             i += bin_width)
         {
             hist(i / bin_width) = 0;
         }
@@ -199,23 +204,23 @@ struct filler<1>
 /// \brief Default histogram class provided by boost::gil.
 ///
 /// The class inherits over the std::unordered_map provided by STL. A complete example/tutorial
-/// of how to use the class resides in the docs. 
+/// of how to use the class resides in the docs.
 /// Simple calling syntax for a 3D dimensional histogram :
 /// \code
 /// histogram<int, int , int> h;
 /// h(1, 1, 1) = 0;
 /// \endcode
-/// This is just a starter to what all can be achieved with it, refer to the docs for the 
+/// This is just a starter to what all can be achieved with it, refer to the docs for the
 /// full demo.
 ///
 template <typename... T>
 class histogram : public std::unordered_map<std::tuple<T...>, double, detail::hash_tuple<T...>>
 {
-    using base_t   = std::unordered_map<std::tuple<T...>, double, detail::hash_tuple<T...>>;
-    using bin_t    = boost::mp11::mp_list<T...>;
-    using key_t    = typename base_t::key_type;
+    using base_t = std::unordered_map<std::tuple<T...>, double, detail::hash_tuple<T...>>;
+    using bin_t = boost::mp11::mp_list<T...>;
+    using key_t = typename base_t::key_type;
     using mapped_t = typename base_t::mapped_type;
-    using value_t  = typename base_t::value_type;
+    using value_t = typename base_t::value_type;
 
 public:
     histogram() = default;
@@ -229,15 +234,15 @@ public:
     /// \brief Returns bin value corresponding to specified tuple
     mapped_t& operator()(T... indices)
     {
-        auto key                              = std::make_tuple(indices...);
-        std::size_t const index_dimension     = std::tuple_size<std::tuple<T...>>::value;
+        auto key = std::make_tuple(indices...);
+        std::size_t const index_dimension = std::tuple_size<std::tuple<T...>>::value;
         std::size_t const histogram_dimension = dimension();
         static_assert(histogram_dimension == index_dimension, "Dimensions do not match.");
 
         return base_t::operator[](key);
     }
 
-    /// \brief Checks if 2 histograms are equal. Ignores type, and checks if 
+    /// \brief Checks if 2 histograms are equal. Ignores type, and checks if
     ///        the keys (after type casting) match.
     template <typename OtherType>
     bool equals(OtherType const& otherhist) const
@@ -258,7 +263,7 @@ public:
         });
         return check;
     }
-    
+
     /// \brief Checks if the histogram class is compatible to be used with
     ///        a GIL image type
     static constexpr bool is_pixel_compatible()
@@ -272,15 +277,13 @@ public:
     template <typename Tuple>
     bool is_tuple_compatible(Tuple const&)
     {
-        std::size_t const tuple_size     = std::tuple_size<Tuple>::value;
+        std::size_t const tuple_size = std::tuple_size<Tuple>::value;
         std::size_t const histogram_size = dimension();
         // TODO : Explore consequence of using if-constexpr
-        using sequence_type = typename std::conditional
-        <
+        using sequence_type = typename std::conditional<
             tuple_size >= histogram_size,
             boost::mp11::make_index_sequence<histogram_size>,
-            boost::mp11::make_index_sequence<tuple_size>
-        >::type;
+            boost::mp11::make_index_sequence<tuple_size>>::type;
 
         if (is_tuple_size_compatible<Tuple>())
             return is_tuple_type_compatible<Tuple>(sequence_type{});
@@ -293,28 +296,26 @@ public:
     template <std::size_t... Dimensions, typename Tuple>
     key_t key_from_tuple(Tuple const& t) const
     {
-        using index_list                      = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
-        std::size_t const index_list_size     = boost::mp11::mp_size<index_list>::value;
-        std::size_t const tuple_size          = std::tuple_size<Tuple>::value;
+        using index_list = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
+        std::size_t const index_list_size = boost::mp11::mp_size<index_list>::value;
+        std::size_t const tuple_size = std::tuple_size<Tuple>::value;
         std::size_t const histogram_dimension = dimension();
 
         static_assert(
-            ((index_list_size != 0 && index_list_size == histogram_dimension) ||
-             (tuple_size == histogram_dimension)),
+            ((index_list_size != 0 && index_list_size == histogram_dimension)
+             || (tuple_size == histogram_dimension)),
             "Tuple and histogram key of different sizes");
 
-        using new_index_list = typename std::conditional
-        <
+        using new_index_list = typename std::conditional<
             index_list_size == 0,
             boost::mp11::mp_list_c<std::size_t, 0>,
-            index_list
-        >::type;
+            index_list>::type;
 
-        std::size_t const min =
-            boost::mp11::mp_min_element<new_index_list, boost::mp11::mp_less>::value;
+        std::size_t const min
+            = boost::mp11::mp_min_element<new_index_list, boost::mp11::mp_less>::value;
 
-        std::size_t const max =
-            boost::mp11::mp_max_element<new_index_list, boost::mp11::mp_less>::value;
+        std::size_t const max
+            = boost::mp11::mp_max_element<new_index_list, boost::mp11::mp_less>::value;
 
         static_assert((0 <= min && max < tuple_size) || index_list_size == 0, "Index out of Range");
 
@@ -336,35 +337,33 @@ public:
     template <std::size_t... Dimensions, typename Pixel>
     key_t key_from_pixel(Pixel const& p) const
     {
-        using index_list                      = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
-        std::size_t const index_list_size     = boost::mp11::mp_size<index_list>::value;
-        std::size_t const pixel_dimension     = num_channels<Pixel>::value;
+        using index_list = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
+        std::size_t const index_list_size = boost::mp11::mp_size<index_list>::value;
+        std::size_t const pixel_dimension = num_channels<Pixel>::value;
         std::size_t const histogram_dimension = dimension();
 
         static_assert(
-            ((index_list_size != 0 && index_list_size == histogram_dimension) ||
-            (index_list_size == 0 && pixel_dimension == histogram_dimension)) &&
-            is_pixel_compatible(),
+            ((index_list_size != 0 && index_list_size == histogram_dimension)
+             || (index_list_size == 0 && pixel_dimension == histogram_dimension))
+                && is_pixel_compatible(),
             "Pixels and histogram key are not compatible.");
 
-        using  new_index_list = typename std::conditional
-        <
+        using new_index_list = typename std::conditional<
             index_list_size == 0,
             boost::mp11::mp_list_c<std::size_t, 0>,
-            index_list
-        >::type;
+            index_list>::type;
 
-        std::size_t const min =
-            boost::mp11::mp_min_element<new_index_list, boost::mp11::mp_less>::value;
+        std::size_t const min
+            = boost::mp11::mp_min_element<new_index_list, boost::mp11::mp_less>::value;
 
-        std::size_t const max =
-            boost::mp11::mp_max_element<new_index_list, boost::mp11::mp_less>::value;
+        std::size_t const max
+            = boost::mp11::mp_max_element<new_index_list, boost::mp11::mp_less>::value;
 
         static_assert(
             (0 <= min && max < pixel_dimension) || index_list_size == 0, "Index out of Range");
 
-        using seq1          = boost::mp11::make_index_sequence<histogram_dimension>;
-        using seq2          = boost::mp11::index_sequence<Dimensions...>;
+        using seq1 = boost::mp11::make_index_sequence<histogram_dimension>;
+        using seq2 = boost::mp11::index_sequence<Dimensions...>;
         using sequence_type = typename std::conditional<index_list_size == 0, seq1, seq2>::type;
 
         auto key = detail::pixel_to_tuple(p, sequence_type{});
@@ -391,7 +390,7 @@ public:
                 {
                     if (once)
                     {
-                        once      = !once;
+                        once = !once;
                         nearest_k = v.first;
                     }
                     else if (nearest_k < v.first)
@@ -406,12 +405,12 @@ public:
     template <std::size_t... Dimensions, typename SrcView>
     void fill(
         SrcView const& srcview,
-        std::size_t bin_width               = 1,
-        bool applymask                      = false,
+        std::size_t bin_width = 1,
+        bool applymask = false,
         std::vector<std::vector<bool>> mask = {},
-        key_t lower                         = key_t(),
-        key_t upper                         = key_t(),
-        bool setlimits                      = false)
+        key_t lower = key_t(),
+        key_t upper = key_t(),
+        bool setlimits = false)
     {
         gil_function_requires<ImageViewConcept<SrcView>>();
         using channel_t = typename channel_type<SrcView>::type;
@@ -424,12 +423,10 @@ public:
                 if (applymask && !mask[src_y][src_x])
                     continue;
                 auto scaled_px = src_it[src_x];
-                static_for_each(scaled_px, [&](channel_t& ch) {
-                    ch = ch / bin_width;
-                });
+                static_for_each(scaled_px, [&](channel_t& ch) { ch = ch / bin_width; });
                 auto key = key_from_pixel<Dimensions...>(scaled_px);
-                if (!setlimits ||
-                    (detail::tuple_compare(lower, key) && detail::tuple_compare(key, upper)))
+                if (!setlimits
+                    || (detail::tuple_compare(lower, key) && detail::tuple_compare(key, upper)))
                     base_t::operator[](key)++;
             }
         }
@@ -439,15 +436,15 @@ public:
     template <std::size_t... Dimensions, typename Tuple>
     histogram sub_histogram(Tuple const& t1, Tuple const& t2)
     {
-        using index_list                      = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
-        std::size_t const index_list_size     = boost::mp11::mp_size<index_list>::value;
+        using index_list = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
+        std::size_t const index_list_size = boost::mp11::mp_size<index_list>::value;
         std::size_t const histogram_dimension = dimension();
 
-        std::size_t const min =
-            boost::mp11::mp_min_element<index_list, boost::mp11::mp_less>::value;
+        std::size_t const min
+            = boost::mp11::mp_min_element<index_list, boost::mp11::mp_less>::value;
 
-        std::size_t const max =
-            boost::mp11::mp_max_element<index_list, boost::mp11::mp_less>::value;
+        std::size_t const max
+            = boost::mp11::mp_max_element<index_list, boost::mp11::mp_less>::value;
 
         static_assert(
             (0 <= min && max < histogram_dimension) && index_list_size < histogram_dimension,
@@ -460,9 +457,9 @@ public:
             is_tuple_type_compatible<Tuple>(seq1{}),
             "Tuple type and histogram type not compatible.");
 
-        auto low      = make_histogram_key(t1, seq1{});
-        auto low_key  = detail::tuple_to_tuple(low, seq2{});
-        auto high     = make_histogram_key(t2, seq1{});
+        auto low = make_histogram_key(t1, seq1{});
+        auto low_key = detail::tuple_to_tuple(low, seq2{});
+        auto high = make_histogram_key(t2, seq1{});
         auto high_key = detail::tuple_to_tuple(high, seq2{});
 
         histogram sub_h;
@@ -478,15 +475,15 @@ public:
     template <std::size_t... Dimensions>
     histogram<boost::mp11::mp_at<bin_t, boost::mp11::mp_size_t<Dimensions>>...> sub_histogram()
     {
-        using index_list                      = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
-        std::size_t const index_list_size     = boost::mp11::mp_size<index_list>::value;
+        using index_list = boost::mp11::mp_list_c<std::size_t, Dimensions...>;
+        std::size_t const index_list_size = boost::mp11::mp_size<index_list>::value;
         std::size_t const histogram_dimension = dimension();
 
-        std::size_t const min =
-            boost::mp11::mp_min_element<index_list, boost::mp11::mp_less>::value;
+        std::size_t const min
+            = boost::mp11::mp_min_element<index_list, boost::mp11::mp_less>::value;
 
-        std::size_t const max =
-            boost::mp11::mp_max_element<index_list, boost::mp11::mp_less>::value;
+        std::size_t const max
+            = boost::mp11::mp_max_element<index_list, boost::mp11::mp_less>::value;
 
         static_assert(
             (0 <= min && max < histogram_dimension) && index_list_size < histogram_dimension,
@@ -495,20 +492,18 @@ public:
         histogram<boost::mp11::mp_at<bin_t, boost::mp11::mp_size_t<Dimensions>>...> sub_h;
 
         std::for_each(base_t::begin(), base_t::end(), [&](value_t const& v) {
-            auto sub_key =
-                detail::tuple_to_tuple(v.first, boost::mp11::index_sequence<Dimensions...>{});
+            auto sub_key
+                = detail::tuple_to_tuple(v.first, boost::mp11::index_sequence<Dimensions...>{});
             sub_h[sub_key] += base_t::operator[](v.first);
         });
         return sub_h;
     }
 
-    /// \brief Normalize this histogram class 
+    /// \brief Normalize this histogram class
     void normalize()
     {
         double sum = 0.0;
-        std::for_each(base_t::begin(), base_t::end(), [&](value_t const& v) {
-            sum += v.second;
-        });
+        std::for_each(base_t::begin(), base_t::end(), [&](value_t const& v) { sum += v.second; });
         // std::cout<<(long int)sum<<"asfe";
         std::for_each(base_t::begin(), base_t::end(), [&](value_t const& v) {
             base_t::operator[](v.first) = v.second / sum;
@@ -519,9 +514,7 @@ public:
     double sum() const
     {
         double sum = 0.0;
-        std::for_each(base_t::begin(), base_t::end(), [&](value_t const& v) {
-            sum += v.second;
-        });
+        std::for_each(base_t::begin(), base_t::end(), [&](value_t const& v) { sum += v.second; });
         return sum;
     }
 
@@ -570,14 +563,9 @@ private:
     template <typename Tuple, std::size_t... I>
     static constexpr bool is_tuple_type_compatible(boost::mp11::index_sequence<I...>)
     {
-        using tp = boost::mp11::mp_list
-        <
-            typename std::is_convertible
-            <
-                boost::mp11::mp_at<bin_t, boost::mp11::mp_size_t<I>>,
-                typename std::tuple_element<I, Tuple>::type
-            >::type...
-        >;
+        using tp = boost::mp11::mp_list<typename std::is_convertible<
+            boost::mp11::mp_at<bin_t, boost::mp11::mp_size_t<I>>,
+            typename std::tuple_element<I, Tuple>::type>::type...>;
         return boost::mp11::mp_all_of<tp, boost::mp11::mp_to_bool>::value;
     }
 
@@ -593,7 +581,7 @@ private:
 /// \ingroup Histogram Algorithms
 /// \tparam SrcView Input image view
 /// \tparam Container Input histogram container
-/// \brief Overload this function to provide support for boost::gil::histogram or 
+/// \brief Overload this function to provide support for boost::gil::histogram or
 /// any other external histogram
 ///
 /// Example :
@@ -618,7 +606,7 @@ void fill_histogram(SrcView const&, Container&);
 /// @param lower       Input  Lower limit on the values in histogram (default numeric_limit::min() on axes)
 /// @param upper       Input  Upper limit on the values in histogram (default numeric_limit::max() on axes)
 /// @param setlimits   Input  Use specified limits if this is true (default is false)
-/// \brief Overload version of fill_histogram 
+/// \brief Overload version of fill_histogram
 ///
 /// Takes a third argument to determine whether to clear container before filling.
 /// For eg, when there is a need to accumulate the histograms do
@@ -630,24 +618,24 @@ template <std::size_t... Dimensions, typename SrcView, typename... T>
 void fill_histogram(
     SrcView const& srcview,
     histogram<T...>& hist,
-    std::size_t bin_width               = 1,
-    bool accumulate                     = false,
-    bool sparsefill                     = true,
-    bool applymask                      = false,
+    std::size_t bin_width = 1,
+    bool accumulate = false,
+    bool sparsefill = true,
+    bool applymask = false,
     std::vector<std::vector<bool>> mask = {},
-    typename histogram<T...>::key_type lower =
-        detail::tuple_limit<typename histogram<T...>::key_type>::min(),
-    typename histogram<T...>::key_type upper =
-        detail::tuple_limit<typename histogram<T...>::key_type>::max(),
+    typename histogram<T...>::key_type lower
+    = detail::tuple_limit<typename histogram<T...>::key_type>::min(),
+    typename histogram<T...>::key_type upper
+    = detail::tuple_limit<typename histogram<T...>::key_type>::max(),
     bool setlimits = false)
 {
     if (!accumulate)
         hist.clear();
-    
+
     detail::filler<histogram<T...>::dimension()> f;
     if (!sparsefill)
         f(hist, lower, upper, bin_width);
-    
+
     hist.template fill<Dimensions...>(srcview, bin_width, applymask, mask, lower, upper, setlimits);
 }
 
@@ -673,9 +661,9 @@ histogram<T...> cumulative_histogram(histogram<T...> const& hist)
     static_assert(
         boost::mp11::mp_all_of<check_list, boost::mp11::mp_to_bool>::value,
         "Cumulative histogram not possible of this type");
-    
+
     using histogram_t = histogram<T...>;
-    using pair_t  = std::pair<typename histogram_t::key_type, typename histogram_t::mapped_type>;
+    using pair_t = std::pair<typename histogram_t::key_type, typename histogram_t::mapped_type>;
     using value_t = typename histogram_t::value_type;
 
     histogram_t cumulative_hist;
@@ -701,7 +689,8 @@ histogram<T...> cumulative_histogram(histogram<T...> const& hist)
             auto cumulative_counter = static_cast<typename histogram_t::mapped_type>(0);
             std::for_each(hist.begin(), hist.end(), [&](value_t const& v2) {
                 bool comp = detail::tuple_compare(
-                    v2.first, v1.first,
+                    v2.first,
+                    v1.first,
                     boost::mp11::make_index_sequence<histogram_t::dimension()>{});
                 if (comp)
                     cumulative_counter += hist.at(v2.first);

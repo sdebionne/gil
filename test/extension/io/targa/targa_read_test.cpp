@@ -30,7 +30,7 @@ void write(Image& img, std::string const& file_name)
 
 void test_read_header()
 {
-    using backend_t   = gil::get_reader_backend<std::string const, gil::targa_tag>::type;
+    using backend_t = gil::get_reader_backend<std::string const, gil::targa_tag>::type;
     backend_t backend = gil::read_image_info(targa_filename, gil::targa_tag());
 
     BOOST_TEST_EQ(backend._info._header_size, 18);
@@ -55,7 +55,7 @@ void test_read_reference_images()
         gil::rgb8_image_t img;
         gil::read_image(targa_in + "24BPP_compressed.tga", img, gil::targa_tag());
 
-        typename gil::rgb8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgb8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgb8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -72,7 +72,7 @@ void test_read_reference_images()
         gil::rgb8_image_t img;
         gil::read_image(targa_in + "24BPP_uncompressed.tga", img, gil::targa_tag());
 
-        typename gil::rgb8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgb8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgb8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -91,7 +91,7 @@ void test_read_reference_images()
         gil::rgba8_image_t img;
         gil::read_image(targa_in + "32BPP_compressed.tga", img, gil::targa_tag());
 
-        typename gil::rgba8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgba8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgba8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -108,7 +108,7 @@ void test_read_reference_images()
         gil::rgba8_image_t img;
         gil::read_image(targa_in + "32BPP_uncompressed.tga", img, gil::targa_tag());
 
-        typename gil::rgba8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgba8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgba8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -127,7 +127,7 @@ void test_read_reference_images()
         gil::rgb8_image_t img;
         gil::read_image(targa_in + "24BPP_compressed_ul_origin.tga", img, gil::targa_tag());
 
-        typename gil::rgb8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgb8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgb8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -144,7 +144,7 @@ void test_read_reference_images()
         gil::rgb8_image_t img;
         gil::read_image(targa_in + "24BPP_uncompressed_ul_origin.tga", img, gil::targa_tag());
 
-        typename gil::rgb8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgb8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgb8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -161,7 +161,7 @@ void test_read_reference_images()
         gil::rgba8_image_t img;
         gil::read_image(targa_in + "32BPP_compressed_ul_origin.tga", img, gil::targa_tag());
 
-        typename gil::rgba8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgba8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgba8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -178,7 +178,7 @@ void test_read_reference_images()
         gil::rgba8_image_t img;
         gil::read_image(targa_in + "32BPP_uncompressed_ul_origin.tga", img, gil::targa_tag());
 
-        typename gil::rgba8_image_t::x_coord_t width  = gil::view(img).width();
+        typename gil::rgba8_image_t::x_coord_t width = gil::view(img).width();
         typename gil::rgba8_image_t::y_coord_t height = gil::view(img).height();
 
         BOOST_TEST_EQ(width, 124);
@@ -198,7 +198,8 @@ void test_partial_image()
 
     gil::rgb8_image_t img;
     gil::read_image(
-        filename, img,
+        filename,
+        img,
         gil::image_read_settings<gil::targa_tag>(gil::point_t(0, 0), gil::point_t(50, 50)));
 
     gil::write_view(targa_out + "targa_partial.tga", gil::view(img), gil::targa_tag());

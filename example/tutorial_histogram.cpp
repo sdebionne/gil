@@ -28,20 +28,22 @@ void gray_image_hist(GrayView const& img_view, R& hist)
 }
 
 template <typename V, typename R>
-void get_hist(const V& img_view, R& hist) {
+void get_hist(const V& img_view, R& hist)
+{
     gray_image_hist(color_converted_view<gray8_pixel_t>(img_view), hist);
 }
 
-int main() {
+int main()
+{
     rgb8_image_t img;
     read_image("test.jpg", img, jpeg_tag());
 
     int histogram[256];
-    std::fill(histogram,histogram + 256, 0);
+    std::fill(histogram, histogram + 256, 0);
     get_hist(const_view(img), histogram);
 
     std::fstream histo_file("out-histogram.txt", std::ios::out);
-    for(std::size_t ii = 0; ii < 256; ++ii)
+    for (std::size_t ii = 0; ii < 256; ++ii)
         histo_file << histogram[ii] << std::endl;
     histo_file.close();
 

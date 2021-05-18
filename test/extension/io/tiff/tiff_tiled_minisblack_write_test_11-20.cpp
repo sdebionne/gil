@@ -29,15 +29,17 @@ void test_write_minisblack_tile_and_compare_with_16()
     gil::read_image(filename_strip, img_strip, gil::tiff_tag());
 
     gil::image_write_info<gil::tiff_tag> info;
-    info._is_tiled   = true;
+    info._is_tiled = true;
     info._tile_width = info._tile_length = 16;
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
-    gil::write_view(tiff_out + "write_minisblack_tile_and_compare_with_16.tif", gil::view(img_strip), info);
-    gil::read_image(tiff_out + "write_minisblack_tile_and_compare_with_16.tif", img_saved, gil::tiff_tag());
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+    gil::write_view(
+        tiff_out + "write_minisblack_tile_and_compare_with_16.tif", gil::view(img_strip), info);
+    gil::read_image(
+        tiff_out + "write_minisblack_tile_and_compare_with_16.tif", img_saved, gil::tiff_tag());
 
     BOOST_TEST_EQ(gil::equal_pixels(gil::const_view(img_strip), gil::const_view(img_saved)), true);
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -50,5 +52,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES

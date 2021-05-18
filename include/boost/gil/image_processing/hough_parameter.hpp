@@ -10,13 +10,11 @@
 #define BOOST_GIL_IMAGE_PROCESSING_HOUGH_PARAMETER_HPP
 
 #include <boost/gil/point.hpp>
+
 #include <cmath>
 #include <cstddef>
 
-namespace boost
-{
-namespace gil
-{
+namespace boost { namespace gil {
 /// \ingroup HoughTransform
 /// \brief A type to encapsulate Hough transform parameter range
 ///
@@ -35,8 +33,10 @@ struct hough_parameter
     /// This function will take start_point as middle point, and in both
     /// directions will try to walk half_step_count times until distance of
     /// neighborhood is reached
-    static hough_parameter<T> from_step_count(T start_point, T neighborhood,
-                                              std::size_t half_step_count)
+    static hough_parameter<T> from_step_count(
+        T start_point,
+        T neighborhood,
+        std::size_t half_step_count)
     {
         T step_size = neighborhood / half_step_count;
         std::size_t step_count = half_step_count * 2 + 1;
@@ -56,8 +56,8 @@ struct hough_parameter
     /// neighborhood is reached
     static hough_parameter<T> from_step_size(T start_point, T neighborhood, T step_size)
     {
-        std::size_t step_count =
-            2 * static_cast<std::size_t>(std::floor(neighborhood / step_size)) + 1;
+        std::size_t step_count
+            = 2 * static_cast<std::size_t>(std::floor(neighborhood / step_size)) + 1;
         // do not use step_size - neighborhood, as step_size might not allow
         // landing exactly on that value when starting from start_point
         // also use parentheses on step_count / 2 because flooring is exactly
@@ -98,8 +98,10 @@ inline double minimum_angle_step(point_t dimensions)
 /// WARNING: do keep in mind IEEE 754 quirks, e.g. no-associativity,
 /// no-commutativity and precision. Do not expect expressions that are
 /// mathematically the same to produce the same values
-inline hough_parameter<double> make_theta_parameter(double approx_angle, double neighborhood,
-                                                    point_t dimensions)
+inline hough_parameter<double> make_theta_parameter(
+    double approx_angle,
+    double neighborhood,
+    point_t dimensions)
 {
     auto angle_step = minimum_angle_step(dimensions);
 
@@ -108,5 +110,5 @@ inline hough_parameter<double> make_theta_parameter(double approx_angle, double 
     // return {approx_angle - angle_step * (step_count / 2), angle_step, step_count};
     return hough_parameter<double>::from_step_size(approx_angle, neighborhood, angle_step);
 }
-}} // namespace boost::gil
+}}  // namespace boost::gil
 #endif

@@ -10,7 +10,7 @@
 // when compiling with concepts check enabled.
 // See https://bugs.llvm.org/show_bug.cgi?id=41759
 #if !defined(BOOST_GIL_USE_CONCEPT_CHECK) && !defined(__clang__)
-#error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
+#    error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
 #endif
 #include <boost/gil/concepts.hpp>
 #include <boost/gil/point.hpp>
@@ -27,8 +27,7 @@ void test_members()
 
     using value_t = typename Point::value_type;
     using coord_t = typename Point::template axis<0>::coord_t;
-    static_assert(std::is_same<value_t, coord_t>::value,
-                  "point and axis type mismatch");
+    static_assert(std::is_same<value_t, coord_t>::value, "point and axis type mismatch");
 }
 
 int main()

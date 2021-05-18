@@ -8,7 +8,7 @@
 #ifndef BOOST_GIL_TEST_TEST_UTILITY_HPP
 #define BOOST_GIL_TEST_TEST_UTILITY_HPP
 
-#include <boost/gil/color_base_algorithm.hpp> // static_for_each
+#include <boost/gil/color_base_algorithm.hpp>  // static_for_each
 #include <boost/gil/packed_pixel.hpp>
 #include <boost/gil/pixel.hpp>
 #include <boost/gil/planar_pixel_reference.hpp>
@@ -19,6 +19,7 @@
 
 #include <cstdint>
 #include <ostream>
+
 #include <type_traits>
 
 // Utilities to make GIL primitives printable for BOOST_TEST_EQ and other macros
@@ -30,12 +31,10 @@ namespace test { namespace utility {
 template <typename T>
 struct printable_numeric
 {
-    using type = typename std::conditional
-    <
+    using type = typename std::conditional<
         std::is_integral<T>::value,
         typename ::boost::gil::promote_integral<T>::type,
-        typename std::common_type<T, double>::type
-    >::type;
+        typename std::common_type<T, double>::type>::type;
 
     static_assert(std::is_arithmetic<T>::value, "T must be numeric type");
     static_assert(sizeof(T) <= sizeof(type), "bit-size narrowing conversion");
@@ -48,13 +47,16 @@ struct print_color_base
 {
     std::ostream& os_;
     std::size_t element_index_{0};
-    print_color_base(std::ostream& os) : os_(os) {}
+    print_color_base(std::ostream& os) : os_(os)
+    {
+    }
 
     template <typename Element>
     void operator()(Element const& c)
     {
         printable_numeric_t<Element> n{c};
-        if (element_index_ > 0) os_ << ", ";
+        if (element_index_ > 0)
+            os_ << ", ";
         os_ << "v" << element_index_ << "=" << n;
         ++element_index_;
     }
@@ -63,7 +65,8 @@ struct print_color_base
     void operator()(gil::packed_channel_reference<BitField, FirstBit, NumBits, IsMutable> const& c)
     {
         printable_numeric_t<BitField> n{c.get()};
-        if (element_index_ > 0) os_ << ", ";
+        if (element_index_ > 0)
+            os_ << ", ";
         os_ << "v" << element_index_ << "=" << n;
         ++element_index_;
     }
@@ -72,13 +75,14 @@ struct print_color_base
     void operator()(gil::scoped_channel_value<BaseChannelValue, MinVal, MaxVal> const& c)
     {
         printable_numeric_t<BaseChannelValue> n{c};
-        if (element_index_ > 0) os_ << ", ";
+        if (element_index_ > 0)
+            os_ << ", ";
         os_ << "v" << element_index_ << "=" << n;
         ++element_index_;
     }
 };
 
-}} // namespace test::utility
+}}  // namespace test::utility
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, point<T> const& p)
@@ -93,8 +97,7 @@ std::ostream& operator<<(std::ostream& os, pixel<ChannelValue, Layout> const& p)
 {
     os << "pixel<"
        << "\n\tChannel=" << boost::core::demangled_name(typeid(ChannelValue))
-       << ",\n\tLayout=" << boost::core::demangled_name(typeid(Layout))
-       << "\n>(";
+       << ",\n\tLayout=" << boost::core::demangled_name(typeid(Layout)) << "\n>(";
 
     static_for_each(p, test::utility::print_color_base{os});
     os << ")" << std::endl;
@@ -107,8 +110,7 @@ std::ostream& operator<<(std::ostream& os, packed_pixel<BitField, ChannelRefs, L
     os << "packed_pixel<"
        << "\n\tBitField=" << boost::core::demangled_name(typeid(BitField))
        << ",\n\tChannelRefs=" << boost::core::demangled_name(typeid(ChannelRefs))
-       << ",\n\tLayout=" << boost::core::demangled_name(typeid(Layout))
-       << ">(";
+       << ",\n\tLayout=" << boost::core::demangled_name(typeid(Layout)) << ">(";
 
     static_for_each(p, test::utility::print_color_base{os});
     os << ")" << std::endl;
@@ -116,18 +118,19 @@ std::ostream& operator<<(std::ostream& os, packed_pixel<BitField, ChannelRefs, L
 }
 
 template <typename ChannelReference, typename ColorSpace>
-std::ostream& operator<<(std::ostream& os, planar_pixel_reference<ChannelReference, ColorSpace> const& p)
+std::ostream& operator<<(
+    std::ostream& os,
+    planar_pixel_reference<ChannelReference, ColorSpace> const& p)
 {
     os << "planar_pixel_reference<"
        << "\nChannelReference=" << boost::core::demangled_name(typeid(ChannelReference))
-       << ",\nColorSpace=" << boost::core::demangled_name(typeid(ColorSpace))
-       << ">(";
+       << ",\nColorSpace=" << boost::core::demangled_name(typeid(ColorSpace)) << ">(";
 
     static_for_each(p, test::utility::print_color_base{os});
     os << ")" << std::endl;
     return os;
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

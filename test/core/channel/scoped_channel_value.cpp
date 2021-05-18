@@ -21,12 +21,21 @@ namespace gil = boost::gil;
 // FIXME: Remove when https://github.com/boostorg/core/issues/38 happens
 #define BOOST_GIL_TEST_IS_CLOSE(a, b, epsilon) BOOST_TEST_LT(std::fabs((a) - (b)), (epsilon))
 
-struct int_minus_value  { static std::int8_t apply() { return -64; } };
-struct int_plus_value   { static std::int8_t apply() { return  64; } };
-using fixture = gil::scoped_channel_value
-    <
-        std::uint8_t, int_minus_value, int_plus_value
-    >;
+struct int_minus_value
+{
+    static std::int8_t apply()
+    {
+        return -64;
+    }
+};
+struct int_plus_value
+{
+    static std::int8_t apply()
+    {
+        return 64;
+    }
+};
+using fixture = gil::scoped_channel_value<std::uint8_t, int_minus_value, int_plus_value>;
 
 void test_scoped_channel_value_default_constructor()
 {
@@ -84,16 +93,30 @@ void test_scoped_channel_value_float64_t()
 void test_scoped_channel_value_halfs()
 {
     // Create a double channel with range [-0.5 .. 0.5]
-    struct minus_half { static double apply() { return -0.5; } };
-    struct plus_half { static double apply() { return 0.5; } };
+    struct minus_half
+    {
+        static double apply()
+        {
+            return -0.5;
+        }
+    };
+    struct plus_half
+    {
+        static double apply()
+        {
+            return 0.5;
+        }
+    };
     using halfs = gil::scoped_channel_value<double, minus_half, plus_half>;
 
     auto const epsilon = std::numeric_limits<double>::epsilon();
     BOOST_GIL_TEST_IS_CLOSE(gil::channel_traits<halfs>::min_value(), minus_half::apply(), epsilon);
     BOOST_GIL_TEST_IS_CLOSE(gil::channel_traits<halfs>::max_value(), plus_half::apply(), epsilon);
     // scoped channel maximum should map to the maximum
-    BOOST_GIL_TEST_IS_CLOSE(gil::channel_convert<std::uint16_t>(
-        gil::channel_traits<halfs>::max_value()), 65535, epsilon);
+    BOOST_GIL_TEST_IS_CLOSE(
+        gil::channel_convert<std::uint16_t>(gil::channel_traits<halfs>::max_value()),
+        65535,
+        epsilon);
 }
 
 int main()

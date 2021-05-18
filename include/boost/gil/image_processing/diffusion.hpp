@@ -10,7 +10,6 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_DIFFUSION_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_DIFFUSION_HPP
 
-#include "boost/gil/detail/math.hpp"
 #include <boost/gil/algorithm.hpp>
 #include <boost/gil/color_base_algorithm.hpp>
 #include <boost/gil/image.hpp>
@@ -19,9 +18,12 @@
 #include <boost/gil/pixel.hpp>
 #include <boost/gil/point.hpp>
 #include <boost/gil/typedefs.hpp>
+
 #include <functional>
 #include <numeric>
 #include <vector>
+
+#include "boost/gil/detail/math.hpp"
 
 namespace boost { namespace gil {
 namespace conductivity {
@@ -92,7 +94,7 @@ struct more_wide_regions_conductivity
         return input;
     }
 };
-} // namespace diffusion
+}  // namespace conductivity
 
 /**
     \brief contains discrete approximations of 2D Laplacian operator
@@ -113,8 +115,15 @@ namespace laplace_function {
 */
 inline std::array<gil::point_t, 8> get_directed_offsets()
 {
-    return {point_t{-1, -1}, point_t{0, -1}, point_t{+1, -1}, point_t{+1, 0},
-            point_t{+1, +1}, point_t{0, +1}, point_t{-1, +1}, point_t{-1, 0}};
+    return {
+        point_t{-1, -1},
+        point_t{0, -1},
+        point_t{+1, -1},
+        point_t{+1, 0},
+        point_t{+1, +1},
+        point_t{0, +1},
+        point_t{-1, +1},
+        point_t{-1, 0}};
 }
 
 template <typename PixelType>
@@ -130,8 +139,9 @@ struct stencil_5points
     double delta_t = 0.25;
 
     template <typename SubImageView>
-    stencil_type<typename SubImageView::value_type> compute_laplace(SubImageView view,
-                                                                    point_t origin)
+    stencil_type<typename SubImageView::value_type> compute_laplace(
+        SubImageView view,
+        point_t origin)
     {
         auto current = view(origin);
         stencil_type<typename SubImageView::value_type> stencil;
@@ -143,8 +153,11 @@ struct stencil_5points
         {
             if (index % 2 != 0)
             {
-                static_transform(view(origin.x + offsets[index].x, origin.y + offsets[index].y),
-                                 current, stencil[index], std::minus<channel_type>{});
+                static_transform(
+                    view(origin.x + offsets[index].x, origin.y + offsets[index].y),
+                    current,
+                    stencil[index],
+                    std::minus<channel_type>{});
             }
             else
             {
@@ -189,8 +202,9 @@ struct stencil_9points_standard
     double delta_t = 0.125;
 
     template <typename SubImageView>
-    stencil_type<typename SubImageView::value_type> compute_laplace(SubImageView view,
-                                                                    point_t origin)
+    stencil_type<typename SubImageView::value_type> compute_laplace(
+        SubImageView view,
+        point_t origin)
     {
         stencil_type<typename SubImageView::value_type> stencil;
         auto out = stencil.begin();
@@ -199,8 +213,11 @@ struct stencil_9points_standard
         std::array<gil::point_t, 8> offsets(get_directed_offsets());
         for (auto offset : offsets)
         {
-            static_transform(view(origin.x + offset.x, origin.y + offset.y), current, *out++,
-                             std::minus<channel_type>{});
+            static_transform(
+                view(origin.x + offset.x, origin.y + offset.y),
+                current,
+                *out++,
+                std::minus<channel_type>{});
         }
 
         return stencil;
@@ -224,8 +241,8 @@ struct stencil_9points_standard
         {
             Pixel half_pixel;
             static_fill(half_pixel, channel_type(1 / 2.0));
-            static_transform(stencil[index], half_pixel, half_pixel,
-                             std::multiplies<channel_type>{});
+            static_transform(
+                stencil[index], half_pixel, half_pixel, std::multiplies<channel_type>{});
             static_transform(result, half_pixel, result, std::plus<channel_type>{});
         }
 
@@ -236,7 +253,7 @@ struct stencil_9points_standard
         return result;
     }
 };
-} // namespace laplace_function
+}  // namespace laplace_function
 
 namespace brightness_function {
 using laplace_function::stencil_type;
@@ -268,7 +285,7 @@ struct rgb_luminance
     }
 };
 
-} // namespace brightness_function
+}  // namespace brightness_function
 
 enum class matlab_connectivity
 {
@@ -283,33 +300,51 @@ enum class matlab_conduction_method
 };
 
 template <typename InputView, typename OutputView>
-void classic_anisotropic_diffusion(const InputView& input, const OutputView& output,
-                                   unsigned int num_iter, double kappa)
+void classic_anisotropic_diffusion(
+    const InputView& input,
+    const OutputView& output,
+    unsigned int num_iter,
+    double kappa)
 {
-    anisotropic_diffusion(input, output, num_iter, laplace_function::stencil_5points{},
-                          brightness_function::identity{},
-                          conductivity::perona_malik_conductivity{kappa});
+    anisotropic_diffusion(
+        input,
+        output,
+        num_iter,
+        laplace_function::stencil_5points{},
+        brightness_function::identity{},
+        conductivity::perona_malik_conductivity{kappa});
 }
 
 template <typename InputView, typename OutputView>
-void matlab_anisotropic_diffusion(const InputView& input, const OutputView& output,
-                                  unsigned int num_iter, double kappa,
-                                  matlab_connectivity connectivity,
-                                  matlab_conduction_method conduction_method)
+void matlab_anisotropic_diffusion(
+    const InputView& input,
+    const OutputView& output,
+    unsigned int num_iter,
+    double kappa,
+    matlab_connectivity connectivity,
+    matlab_conduction_method conduction_method)
 {
     if (connectivity == matlab_connectivity::minimal)
     {
         if (conduction_method == matlab_conduction_method::exponential)
         {
-            anisotropic_diffusion(input, output, num_iter, laplace_function::stencil_5points{},
-                                  brightness_function::identity{},
-                                  conductivity::gaussian_conductivity{kappa});
+            anisotropic_diffusion(
+                input,
+                output,
+                num_iter,
+                laplace_function::stencil_5points{},
+                brightness_function::identity{},
+                conductivity::gaussian_conductivity{kappa});
         }
         else if (conduction_method == matlab_conduction_method::quadratic)
         {
-            anisotropic_diffusion(input, output, num_iter, laplace_function::stencil_5points{},
-                                  brightness_function::identity{},
-                                  conductivity::gaussian_conductivity{kappa});
+            anisotropic_diffusion(
+                input,
+                output,
+                num_iter,
+                laplace_function::stencil_5points{},
+                brightness_function::identity{},
+                conductivity::gaussian_conductivity{kappa});
         }
         else
         {
@@ -320,15 +355,23 @@ void matlab_anisotropic_diffusion(const InputView& input, const OutputView& outp
     {
         if (conduction_method == matlab_conduction_method::exponential)
         {
-            anisotropic_diffusion(input, output, num_iter, laplace_function::stencil_5points{},
-                                  brightness_function::identity{},
-                                  conductivity::gaussian_conductivity{kappa});
+            anisotropic_diffusion(
+                input,
+                output,
+                num_iter,
+                laplace_function::stencil_5points{},
+                brightness_function::identity{},
+                conductivity::gaussian_conductivity{kappa});
         }
         else if (conduction_method == matlab_conduction_method::quadratic)
         {
-            anisotropic_diffusion(input, output, num_iter, laplace_function::stencil_5points{},
-                                  brightness_function::identity{},
-                                  conductivity::gaussian_conductivity{kappa});
+            anisotropic_diffusion(
+                input,
+                output,
+                num_iter,
+                laplace_function::stencil_5points{},
+                brightness_function::identity{},
+                conductivity::gaussian_conductivity{kappa});
         }
         else
         {
@@ -342,11 +385,19 @@ void matlab_anisotropic_diffusion(const InputView& input, const OutputView& outp
 }
 
 template <typename InputView, typename OutputView>
-void default_anisotropic_diffusion(const InputView& input, const OutputView& output,
-                                   unsigned int num_iter, double kappa)
+void default_anisotropic_diffusion(
+    const InputView& input,
+    const OutputView& output,
+    unsigned int num_iter,
+    double kappa)
 {
-    anisotropic_diffusion(input, output, num_iter, laplace_function::stencil_9points_standard{},
-                          brightness_function::identity{}, conductivity::gaussian_conductivity{kappa});
+    anisotropic_diffusion(
+        input,
+        output,
+        num_iter,
+        laplace_function::stencil_9points_standard{},
+        brightness_function::identity{},
+        conductivity::gaussian_conductivity{kappa});
 }
 
 /// \brief Performs diffusion according to Perona-Malik equation
@@ -358,13 +409,19 @@ void default_anisotropic_diffusion(const InputView& input, const OutputView& out
 /// edge boundaries and can work as an edge detector if suitable
 /// iteration count is set and grayscale image view is used
 /// as an input
-template <typename InputView, typename OutputView,
-          typename LaplaceStrategy = laplace_function::stencil_9points_standard,
-          typename BrightnessFunction = brightness_function::identity,
-          typename DiffusivityFunction = conductivity::gaussian_conductivity>
-void anisotropic_diffusion(const InputView& input, const OutputView& output, unsigned int num_iter,
-                           LaplaceStrategy laplace, BrightnessFunction brightness,
-                           DiffusivityFunction diffusivity)
+template <
+    typename InputView,
+    typename OutputView,
+    typename LaplaceStrategy = laplace_function::stencil_9points_standard,
+    typename BrightnessFunction = brightness_function::identity,
+    typename DiffusivityFunction = conductivity::gaussian_conductivity>
+void anisotropic_diffusion(
+    const InputView& input,
+    const OutputView& output,
+    unsigned int num_iter,
+    LaplaceStrategy laplace,
+    BrightnessFunction brightness,
+    DiffusivityFunction diffusivity)
 {
     using input_pixel_type = typename InputView::value_type;
     using pixel_type = typename OutputView::value_type;
@@ -383,15 +440,15 @@ void anisotropic_diffusion(const InputView& input, const OutputView& output, uns
     auto result = view(result_image);
     computation_image scratch_result_image(width + 2, height + 2, zero_pixel);
     auto scratch_result = view(scratch_result_image);
-    transform_pixels(input, subimage_view(result, 1, 1, width, height),
-                     [](const input_pixel_type& pixel) {
-                         pixel_type converted;
-                         for (std::size_t i = 0; i < num_channels<pixel_type>{}; ++i)
-                         {
-                             converted[i] = pixel[i];
-                         }
-                         return converted;
-                     });
+    transform_pixels(
+        input, subimage_view(result, 1, 1, width, height), [](const input_pixel_type& pixel) {
+            pixel_type converted;
+            for (std::size_t i = 0; i < num_channels<pixel_type>{}; ++i)
+            {
+                converted[i] = pixel[i];
+            }
+            return converted;
+        });
 
     for (unsigned int iteration = 0; iteration < num_iter; ++iteration)
     {
@@ -404,16 +461,26 @@ void anisotropic_diffusion(const InputView& input, const OutputView& output, uns
                 auto stencil = laplace.compute_laplace(result, point_t(x, y));
                 auto brightness_stencil = brightness(stencil);
                 laplace_function::stencil_type<pixel_type> diffusivity_stencil;
-                std::transform(brightness_stencil.begin(), brightness_stencil.end(),
-                               diffusivity_stencil.begin(), diffusivity);
+                std::transform(
+                    brightness_stencil.begin(),
+                    brightness_stencil.end(),
+                    diffusivity_stencil.begin(),
+                    diffusivity);
                 laplace_function::stencil_type<pixel_type> product_stencil;
-                std::transform(stencil.begin(), stencil.end(), diffusivity_stencil.begin(),
-                               product_stencil.begin(), [](pixel_type lhs, pixel_type rhs) {
-                                   static_transform(lhs, rhs, lhs, std::multiplies<channel_type>{});
-                                   return lhs;
-                               });
-                static_transform(result(x, y), laplace.reduce(product_stencil),
-                                 scratch_result(x, y), std::plus<channel_type>{});
+                std::transform(
+                    stencil.begin(),
+                    stencil.end(),
+                    diffusivity_stencil.begin(),
+                    product_stencil.begin(),
+                    [](pixel_type lhs, pixel_type rhs) {
+                        static_transform(lhs, rhs, lhs, std::multiplies<channel_type>{});
+                        return lhs;
+                    });
+                static_transform(
+                    result(x, y),
+                    laplace.reduce(product_stencil),
+                    scratch_result(x, y),
+                    std::plus<channel_type>{});
             }
         }
         using std::swap;
@@ -423,6 +490,6 @@ void anisotropic_diffusion(const InputView& input, const OutputView& output, uns
     copy_pixels(subimage_view(result, 1, 1, width, height), output);
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

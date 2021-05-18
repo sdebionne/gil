@@ -6,12 +6,12 @@
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <boost/core/lightweight_test.hpp>
-
 #include <boost/gil/image.hpp>
 #include <boost/gil/image_processing/hough_transform.hpp>
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/typedefs.hpp>
+
+#include <boost/core/lightweight_test.hpp>
 
 #include <cstddef>
 #include <iostream>
@@ -47,13 +47,13 @@ void exact_fit_test(std::ptrdiff_t radius, gil::point_t offset, Rasterizer raste
         radius_parameter.step_count,
         gil::gray16_image_t(x_parameter.step_count, y_parameter.step_count));
     std::vector<gil::gray16_view_t> output_views(radius_parameter.step_count);
-    std::transform(output_images.begin(), output_images.end(), output_views.begin(),
-                   [](gil::gray16_image_t& img)
-                   {
-                       return gil::view(img);
-                   });
-    gil::hough_circle_transform_brute(input, radius_parameter, x_parameter, y_parameter,
-                                      output_views.begin(), rasterizer);
+    std::transform(
+        output_images.begin(),
+        output_images.end(),
+        output_views.begin(),
+        [](gil::gray16_image_t& img) { return gil::view(img); });
+    gil::hough_circle_transform_brute(
+        input, radius_parameter, x_parameter, y_parameter, output_views.begin(), rasterizer);
     if (output_views[0](0, 0) != rasterizer.point_count(radius))
     {
         std::cout << "accumulated value: " << static_cast<int>(output_views[0](0, 0))
@@ -71,10 +71,9 @@ int main()
         {
             for (std::ptrdiff_t y_offset = radius; y_offset < radius + test_dim_length; ++y_offset)
             {
-
                 exact_fit_test(radius, {x_offset, y_offset}, gil::midpoint_circle_rasterizer{});
-                exact_fit_test(radius, {x_offset, y_offset},
-                               gil::trigonometric_circle_rasterizer{});
+                exact_fit_test(
+                    radius, {x_offset, y_offset}, gil::trigonometric_circle_rasterizer{});
             }
         }
     }

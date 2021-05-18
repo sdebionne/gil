@@ -8,10 +8,10 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_SCALING_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_SCALING_HPP
 
-#include <boost/gil/image_view.hpp>
-#include <boost/gil/rgb.hpp>
-#include <boost/gil/pixel.hpp>
 #include <boost/gil/image_processing/numeric.hpp>
+#include <boost/gil/image_view.hpp>
+#include <boost/gil/pixel.hpp>
+#include <boost/gil/rgb.hpp>
 
 namespace boost { namespace gil {
 
@@ -48,10 +48,8 @@ void lanczos_at(
     using pixel_t = typename std::remove_reference<decltype(std::declval<ImageView>()(0, 0))>::type;
 
     // C++11 doesn't allow auto in lambdas
-    using channel_t = typename std::remove_reference
-        <
-            decltype(std::declval<pixel_t>().at(std::integral_constant<int, 0>{}))
-        >::type;
+    using channel_t = typename std::remove_reference<decltype(std::declval<pixel_t>().at(
+        std::integral_constant<int, 0>{}))>::type;
 
     pixel_t result_pixel;
     static_transform(result_pixel, result_pixel, [](channel_t) {
@@ -71,8 +69,7 @@ void lanczos_at(
              ++x_i)
         {
             double lanczos_response = lanczos(source_x - x_i, a) * lanczos(source_y - y_i, a);
-            auto op = [lanczos_response](channel_t prev, channel_t next)
-            {
+            auto op = [lanczos_response](channel_t prev, channel_t next) {
                 return static_cast<channel_t>(prev + next * lanczos_response);
             };
             static_transform(result_pixel, input_view(source_x, source_y), result_pixel, op);
@@ -94,10 +91,10 @@ void lanczos_at(
 template <typename ImageView>
 void scale_lanczos(ImageView input_view, ImageView output_view, std::ptrdiff_t a)
 {
-    double scale_x = (static_cast<double>(output_view.width()))
-                     / static_cast<double>(input_view.width());
-    double scale_y = (static_cast<double>(output_view.height()))
-                     / static_cast<double>(input_view.height());
+    double scale_x
+        = (static_cast<double>(output_view.width())) / static_cast<double>(input_view.width());
+    double scale_y
+        = (static_cast<double>(output_view.height())) / static_cast<double>(input_view.height());
 
     using x_coord_t = typename ImageView::x_coord_t;
     using y_coord_t = typename ImageView::y_coord_t;
@@ -110,6 +107,6 @@ void scale_lanczos(ImageView input_view, ImageView output_view, std::ptrdiff_t a
     }
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

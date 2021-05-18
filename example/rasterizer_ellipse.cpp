@@ -5,19 +5,19 @@
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <boost/gil/extension/io/jpeg.hpp>
 #include <boost/gil.hpp>
+#include <boost/gil/extension/io/jpeg.hpp>
 
 namespace gil = boost::gil;
 
 int main()
 {
-    // Syntax for usage :- 
+    // Syntax for usage :-
     // auto rasterizer = gil::midpoint_elliptical_rasterizer{};
     // rasterizer(img_view, colour, center, semi-axes_length);
     // Where
     // img_view : gil view of the image on which ellipse is to be drawn.
-    // colour : Vector containing channel intensity values for img_view. Number of colours 
+    // colour : Vector containing channel intensity values for img_view. Number of colours
     // provided must be equal to the number of channels present in img_view.
     // center : Array containing positive integer x co-ordinate and y co-ordinate of the center
     // respectively.
@@ -34,11 +34,13 @@ int main()
 
     gil::rgb8_image_t rgb_buffer_image_out_of_bound(256, 256);
     auto rgb_elliptical_rasterizer_out_of_bound = gil::midpoint_elliptical_rasterizer{};
-    rgb_elliptical_rasterizer_out_of_bound(view(rgb_buffer_image_out_of_bound), {255, 0, 0},
-        {100, 100}, {160, 160});
+    rgb_elliptical_rasterizer_out_of_bound(
+        view(rgb_buffer_image_out_of_bound), {255, 0, 0}, {100, 100}, {160, 160});
 
     gil::write_view("rasterized_ellipse_gray.jpg", view(gray_buffer_image), gil::jpeg_tag{});
     gil::write_view("rasterized_ellipse_rgb.jpg", view(rgb_buffer_image), gil::jpeg_tag{});
-    gil::write_view("rasterized_ellipse_rgb_out_of_bound.jpg", view(rgb_buffer_image_out_of_bound),
+    gil::write_view(
+        "rasterized_ellipse_rgb_out_of_bound.jpg",
+        view(rgb_buffer_image_out_of_bound),
         gil::jpeg_tag{});
 }

@@ -10,11 +10,11 @@
 
 #include <boost/gil/cmyk.hpp>
 #include <boost/gil/color_convert.hpp>
+#include <boost/gil/detail/mp11.hpp>
 #include <boost/gil/rgba.hpp>
 #include <boost/gil/typedefs.hpp>
-#include <boost/gil/detail/mp11.hpp>
 
-namespace boost{ namespace gil {
+namespace boost { namespace gil {
 
 /// \ingroup ColorSpaceModel
 using cmyka_t = mp11::mp_list<cyan_t, magenta_t, yellow_t, black_t, alpha_t>;
@@ -46,30 +46,34 @@ BOOST_GIL_DEFINE_ALL_TYPEDEFS(32f, float32_t, cmyka)
 //    }
 //};
 template <>
-struct default_color_converter_impl<cmyka_t,rgba_t> {
+struct default_color_converter_impl<cmyka_t, rgba_t>
+{
     template <typename P1, typename P2>
-    void operator()(const P1& src, P2& dst) const {
+    void operator()(const P1& src, P2& dst) const
+    {
         using T1 = typename channel_type<P1>::type;
-        default_color_converter_impl<cmyk_t,rgba_t>()(
-            pixel<T1,cmyk_layout_t>(get_color(src,cyan_t()),
-                                    get_color(src,magenta_t()),
-                                    get_color(src,yellow_t()),
-                                    get_color(src,black_t()))
-            ,dst);
+        default_color_converter_impl<cmyk_t, rgba_t>()(
+            pixel<T1, cmyk_layout_t>(
+                get_color(src, cyan_t()),
+                get_color(src, magenta_t()),
+                get_color(src, yellow_t()),
+                get_color(src, black_t())),
+            dst);
     }
 };
 
 /// \ingroup ColorConvert
 /// \brief Unfortunately CMYKA to CMYKA must be explicitly provided - otherwise we get ambiguous specialization error.
 template <>
-struct default_color_converter_impl<cmyka_t,cmyka_t> {
+struct default_color_converter_impl<cmyka_t, cmyka_t>
+{
     template <typename P1, typename P2>
-    void operator()(const P1& src, P2& dst) const {
-        static_for_each(src,dst,default_channel_converter());
+    void operator()(const P1& src, P2& dst) const
+    {
+        static_for_each(src, dst, default_channel_converter());
     }
 };
 
-} // namespace gil
-} // namespace boost
+}}  // namespace boost::gil
 
 #endif

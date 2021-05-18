@@ -10,12 +10,12 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-#include "paths.hpp"
-#include "scanline_read_test.hpp"
-
 #include <cmath>
 #include <sstream>
 #include <string>
+
+#include "paths.hpp"
+#include "scanline_read_test.hpp"
 
 namespace gil = boost::gil;
 
@@ -44,7 +44,11 @@ void test_read_pixel_density()
     gil::read_image(jpeg_in + "EddDawson/36dpi.jpg", img, gil::jpeg_tag());
 
     gil::image_write_info<gil::jpeg_tag> write_settings;
-    write_settings.set_pixel_dimensions(backend._info._width, backend._info._height, backend._info._pixel_width_mm, backend._info._pixel_height_mm);
+    write_settings.set_pixel_dimensions(
+        backend._info._width,
+        backend._info._height,
+        backend._info._pixel_width_mm,
+        backend._info._pixel_height_mm);
 
     std::stringstream in_memory(std::ios_base::in | std::ios_base::out | std::ios_base::binary);
     gil::write_view(in_memory, gil::view(img), write_settings);
@@ -53,7 +57,8 @@ void test_read_pixel_density()
     backend2_t backend2 = gil::read_image_info(in_memory, gil::jpeg_tag());
 
     // Because of rounding the two results differ slightly.
-    if (std::abs(backend._info._pixel_width_mm - backend2._info._pixel_width_mm) > 10.0 || std::abs(backend._info._pixel_height_mm - backend2._info._pixel_height_mm) > 10.0)
+    if (std::abs(backend._info._pixel_width_mm - backend2._info._pixel_width_mm) > 10.0
+        || std::abs(backend._info._pixel_height_mm - backend2._info._pixel_height_mm) > 10.0)
     {
         BOOST_TEST_EQ(0, 1);
     }
@@ -65,9 +70,9 @@ void test_read_reference_images()
     image_t img;
     read_image(jpeg_filename, img, gil::jpeg_tag());
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(jpeg_out + "rgb8_test.jpg", gil::view(img), gil::jpeg_tag());
-#endif // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_dct_method_read()
@@ -80,9 +85,9 @@ void test_dct_method_read()
 
     gil::read_image(jpeg_filename, img, settings);
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(jpeg_out + "fast_dct_read_test.jpg", gil::view(img), gil::jpeg_tag());
-#endif // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_read_reference_images_image_iterator()
@@ -102,5 +107,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

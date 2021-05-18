@@ -6,8 +6,8 @@
 // http://www.boost.org/LICENSE_1_0.txt
 //
 #include <boost/gil.hpp>
-#include <boost/gil/io/typedefs.hpp>
 #include <boost/gil/extension/io/targa.hpp>
+#include <boost/gil/io/typedefs.hpp>
 
 #include <boost/core/lightweight_test.hpp>
 

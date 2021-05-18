@@ -9,18 +9,17 @@
 #ifndef BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_ANY_IMAGE_HPP
 #define BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_ANY_IMAGE_HPP
 
+#include <boost/gil/detail/mp11.hpp>
 #include <boost/gil/extension/dynamic_image/any_image_view.hpp>
 #include <boost/gil/extension/dynamic_image/apply_operation.hpp>
-
 #include <boost/gil/image.hpp>
-#include <boost/gil/detail/mp11.hpp>
 
 #include <boost/config.hpp>
 #include <boost/variant2/variant.hpp>
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(push)
-#pragma warning(disable:4512) //assignment operator could not be generated
+#    pragma warning(push)
+#    pragma warning(disable : 4512)  //assignment operator could not be generated
 #endif
 
 namespace boost { namespace gil {
@@ -46,11 +45,16 @@ struct recreate_image_fnobj
     unsigned _alignment;
 
     recreate_image_fnobj(point<std::ptrdiff_t> const& dims, unsigned alignment)
-        : _dimensions(dims), _alignment(alignment)
-    {}
+        : _dimensions(dims)
+        , _alignment(alignment)
+    {
+    }
 
     template <typename Image>
-    result_type operator()(Image& img) const { img.recreate(_dimensions,_alignment); }
+    result_type operator()(Image& img) const
+    {
+        img.recreate(_dimensions, _alignment);
+    }
 };
 
 template <typename AnyView>  // Models AnyViewConcept
@@ -69,10 +73,13 @@ struct any_image_get_const_view
 {
     using result_type = AnyConstView;
     template <typename Image>
-    result_type operator()(Image const& img) const { return result_type{const_view(img)}; }
+    result_type operator()(Image const& img) const
+    {
+        return result_type{const_view(img)};
+    }
 };
 
-} // namespce detail
+}  // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// \ingroup ImageModel
@@ -85,18 +92,19 @@ struct any_image_get_const_view
 /// In particular, its \p view and \p const_view methods return \p any_image_view, which does not fully model ImageViewConcept. See \p any_image_view for more.
 ////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...Images>
+template <typename... Images>
 class any_image : public variant2::variant<Images...>
 {
     using parent_t = variant2::variant<Images...>;
 
-public:    
+public:
     using view_t = mp11::mp_rename<detail::images_get_views_t<any_image>, any_image_view>;
-    using const_view_t = mp11::mp_rename<detail::images_get_const_views_t<any_image>, any_image_view>;
+    using const_view_t
+        = mp11::mp_rename<detail::images_get_const_views_t<any_image>, any_image_view>;
     using x_coord_t = std::ptrdiff_t;
     using y_coord_t = std::ptrdiff_t;
     using point_t = point<std::ptrdiff_t>;
-    
+
     using parent_t::parent_t;
 
     any_image& operator=(any_image const& img)
@@ -112,21 +120,21 @@ public:
         return *this;
     }
 
-    template <typename ...OtherImages>
+    template <typename... OtherImages>
     any_image& operator=(any_image<OtherImages...> const& img)
     {
-            parent_t::operator=((typename variant2::variant<OtherImages...> const&)img);
-            return *this;
+        parent_t::operator=((typename variant2::variant<OtherImages...> const&)img);
+        return *this;
     }
 
-    void recreate(const point_t& dims, unsigned alignment=1)
+    void recreate(const point_t& dims, unsigned alignment = 1)
     {
         apply_operation(*this, detail::recreate_image_fnobj(dims, alignment));
     }
 
-    void recreate(x_coord_t width, y_coord_t height, unsigned alignment=1)
+    void recreate(x_coord_t width, y_coord_t height, unsigned alignment = 1)
     {
-        recreate({ width, height }, alignment);
+        recreate({width, height}, alignment);
     }
 
     std::size_t num_channels() const
@@ -139,8 +147,14 @@ public:
         return apply_operation(*this, detail::any_type_get_dimensions());
     }
 
-    x_coord_t width()  const { return dimensions().x; }
-    y_coord_t height() const { return dimensions().y; }
+    x_coord_t width() const
+    {
+        return dimensions().x;
+    }
+    y_coord_t height() const
+    {
+        return dimensions().y;
+    }
 };
 
 ///@{
@@ -151,9 +165,8 @@ public:
 
 /// \brief Returns the non-constant-pixel view of any image. The returned view is any view.
 /// \tparam Images Models ImageVectorConcept
-template <typename ...Images>
-BOOST_FORCEINLINE
-auto view(any_image<Images...>& img) -> typename any_image<Images...>::view_t
+template <typename... Images>
+BOOST_FORCEINLINE auto view(any_image<Images...>& img) -> typename any_image<Images...>::view_t
 {
     using view_t = typename any_image<Images...>::view_t;
     return apply_operation(img, detail::any_image_get_view<view_t>());
@@ -161,9 +174,9 @@ auto view(any_image<Images...>& img) -> typename any_image<Images...>::view_t
 
 /// \brief Returns the constant-pixel view of any image. The returned view is any view.
 /// \tparam Types Models ImageVectorConcept
-template <typename ...Images>
-BOOST_FORCEINLINE
-auto const_view(any_image<Images...> const& img) -> typename any_image<Images...>::const_view_t
+template <typename... Images>
+BOOST_FORCEINLINE auto const_view(any_image<Images...> const& img) ->
+    typename any_image<Images...>::const_view_t
 {
     using view_t = typename any_image<Images...>::const_view_t;
     return apply_operation(img, detail::any_image_get_const_view<view_t>());
@@ -173,7 +186,7 @@ auto const_view(any_image<Images...> const& img) -> typename any_image<Images...
 }}  // namespace boost::gil
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
 #endif

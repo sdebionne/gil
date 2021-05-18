@@ -16,8 +16,7 @@ using namespace boost::mp11;
 
 int main()
 {
-    using non_planar_pixels = mp_list
-    <
+    using non_planar_pixels = mp_list<
         gil::gray8_pixel_t,
         gil::gray8c_pixel_t,
         gil::gray8s_pixel_t,
@@ -116,22 +115,13 @@ int main()
         gil::rgba32f_pixel_t,
         gil::rgba32fc_pixel_t,
         gil::rgba32s_pixel_t,
-        gil::rgba32sc_pixel_t
-    >;
+        gil::rgba32sc_pixel_t>;
 
     static_assert(
-        std::is_same
-        <
-            mp_all_of<non_planar_pixels, gil::is_planar>,
-            std::false_type
-        >::value,
+        std::is_same<mp_all_of<non_planar_pixels, gil::is_planar>, std::false_type>::value,
         "is_planar yields true for non-planar pixel type");
 
     static_assert(
-        std::is_same
-        <
-            mp_none_of<non_planar_pixels, gil::is_planar>,
-            std::true_type
-        >::value,
+        std::is_same<mp_none_of<non_planar_pixels, gil::is_planar>, std::true_type>::value,
         "is_planar yields true for non-planar pixel type");
 }

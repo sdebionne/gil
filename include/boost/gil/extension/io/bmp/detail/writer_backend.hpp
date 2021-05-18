@@ -13,43 +13,36 @@
 namespace boost { namespace gil {
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(push)
-#pragma warning(disable:4512) //assignment operator could not be generated
+#    pragma warning(push)
+#    pragma warning(disable : 4512)  //assignment operator could not be generated
 #endif
 
 ///
 /// BMP Writer Backend
 ///
-template< typename Device >
-struct writer_backend< Device
-                     , bmp_tag
-                     >
+template <typename Device>
+struct writer_backend<Device, bmp_tag>
 {
 public:
-
     using format_tag_t = bmp_tag;
 
 public:
-
-    writer_backend( const Device&                      io_dev
-                  , const image_write_info< bmp_tag >& info
-                  )
-    : _io_dev( io_dev )
-    , _info  ( info   )
-    {}
+    writer_backend(const Device& io_dev, const image_write_info<bmp_tag>& info)
+        : _io_dev(io_dev)
+        , _info(info)
+    {
+    }
 
 public:
-
     Device _io_dev;
 
-    image_write_info< bmp_tag > _info;
+    image_write_info<bmp_tag> _info;
 };
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
-} // namespace gil
-} // namespace boost
+}}  // namespace boost::gil
 
 #endif

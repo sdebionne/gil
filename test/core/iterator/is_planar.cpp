@@ -16,8 +16,7 @@ using namespace boost::mp11;
 
 int main()
 {
-    using iterators = mp_list
-    <
+    using iterators = mp_list<
         gil::planar_pixel_iterator<gil::rgb8_view_t*, gil::rgb_t>,
         gil::rgb8_planar_ptr_t,
         gil::rgb8_planar_step_ptr_t,
@@ -60,13 +59,9 @@ int main()
         gil::rgba32f_planar_ptr_t,
         gil::rgba32fc_planar_ptr_t,
         gil::rgba32s_planar_ptr_t,
-        gil::rgba32sc_planar_ptr_t
-    >;
+        gil::rgba32sc_planar_ptr_t>;
 
-    static_assert(std::is_same
-        <
-            mp_all_of<iterators, gil::is_planar>,
-            std::true_type
-        >::value,
+    static_assert(
+        std::is_same<mp_all_of<iterators, gil::is_planar>, std::true_type>::value,
         "is_planar yields true for non-planar pixel iterator");
 }

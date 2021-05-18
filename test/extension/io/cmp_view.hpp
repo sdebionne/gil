@@ -18,7 +18,7 @@ void cmp_view(View1 const& v1, View2 const& v2)
     if (v1.dimensions() != v2.dimensions())
         throw std::runtime_error("Images are not equal.");
 
-    typename View1::x_coord_t width  = v1.width();
+    typename View1::x_coord_t width = v1.width();
     typename View1::y_coord_t height = v1.height();
 
     for (typename View1::y_coord_t y = 0; y < height; ++y)
@@ -34,4 +34,4 @@ void cmp_view(View1 const& v1, View2 const& v2)
     }
 }
 
-#endif // BOOST_GIL_IO_TEST_EXTENSION_IO_CMP_VIEW_HPP
+#endif  // BOOST_GIL_IO_TEST_EXTENSION_IO_CMP_VIEW_HPP

@@ -13,14 +13,14 @@
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 namespace boost { namespace gil {
@@ -46,7 +46,9 @@ struct ColorSpaceConcept
 
 // Models ColorSpaceConcept
 template <typename CS1, typename CS2>
-struct color_spaces_are_compatible : std::is_same<CS1, CS2> {};
+struct color_spaces_are_compatible : std::is_same<CS1, CS2>
+{
+};
 
 /// \ingroup ColorSpaceAndLayoutConcept
 /// \brief Two color spaces are compatible if they are the same
@@ -86,14 +88,14 @@ struct ChannelMappingConcept
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

@@ -18,13 +18,12 @@ namespace boost { namespace gil { namespace detail {
 
 struct png_ptr_wrapper
 {
-    png_ptr_wrapper()
-    : _struct( nullptr )
-    , _info  ( nullptr )
-    {}
+    png_ptr_wrapper() : _struct(nullptr), _info(nullptr)
+    {
+    }
 
     png_structp _struct;
-    png_infop   _info;
+    png_infop _info;
 };
 
 ///
@@ -33,41 +32,52 @@ struct png_ptr_wrapper
 struct png_struct_info_wrapper
 {
 protected:
-
     using png_ptr_t = std::shared_ptr<png_ptr_wrapper>;
 
 protected:
-
     ///
     /// Default Constructor
     ///
-    png_struct_info_wrapper( bool read = true )
-    : _png_ptr( new png_ptr_wrapper()
-              , ( ( read ) ? png_ptr_read_deleter : png_ptr_write_deleter )
-              )
-    {}
+    png_struct_info_wrapper(bool read = true)
+        : _png_ptr(new png_ptr_wrapper(), ((read) ? png_ptr_read_deleter : png_ptr_write_deleter))
+    {
+    }
 
-    png_ptr_wrapper*       get()       { return _png_ptr.get(); }
-    png_ptr_wrapper const* get() const { return _png_ptr.get(); }
+    png_ptr_wrapper* get()
+    {
+        return _png_ptr.get();
+    }
+    png_ptr_wrapper const* get() const
+    {
+        return _png_ptr.get();
+    }
 
-    png_struct*       get_struct()       { return get()->_struct; }
-    png_struct const* get_struct() const { return get()->_struct; }
+    png_struct* get_struct()
+    {
+        return get()->_struct;
+    }
+    png_struct const* get_struct() const
+    {
+        return get()->_struct;
+    }
 
-    png_info*       get_info()       { return get()->_info; }
-    png_info const* get_info() const { return get()->_info; }
+    png_info* get_info()
+    {
+        return get()->_info;
+    }
+    png_info const* get_info() const
+    {
+        return get()->_info;
+    }
 
 private:
-
-    static void png_ptr_read_deleter( png_ptr_wrapper* png_ptr )
+    static void png_ptr_read_deleter(png_ptr_wrapper* png_ptr)
     {
-        if( png_ptr )
+        if (png_ptr)
         {
-            if( png_ptr->_struct && png_ptr->_info )
+            if (png_ptr->_struct && png_ptr->_info)
             {
-                png_destroy_read_struct( &png_ptr->_struct
-                                       , &png_ptr->_info
-                                       , nullptr
-                                       );
+                png_destroy_read_struct(&png_ptr->_struct, &png_ptr->_info, nullptr);
             }
 
             delete png_ptr;
@@ -75,15 +85,13 @@ private:
         }
     }
 
-    static void png_ptr_write_deleter( png_ptr_wrapper* png_ptr )
+    static void png_ptr_write_deleter(png_ptr_wrapper* png_ptr)
     {
-        if( png_ptr )
+        if (png_ptr)
         {
-            if( png_ptr->_struct && png_ptr->_info )
+            if (png_ptr->_struct && png_ptr->_info)
             {
-                png_destroy_write_struct( &png_ptr->_struct
-                                        , &png_ptr->_info
-                                        );
+                png_destroy_write_struct(&png_ptr->_struct, &png_ptr->_info);
             }
 
             delete png_ptr;
@@ -93,12 +101,9 @@ private:
 
 
 private:
-
     png_ptr_t _png_ptr;
 };
 
-} // namespace detail
-} // namespace gil
-} // namespace boost
+}}}  // namespace boost::gil::detail
 
 #endif

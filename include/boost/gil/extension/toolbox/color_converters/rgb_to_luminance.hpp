@@ -10,23 +10,19 @@
 
 #include <boost/gil/color_convert.hpp>
 
-namespace boost{ namespace gil { namespace detail {
+namespace boost { namespace gil { namespace detail {
 
 /// - performance specialization double
 /// - to eliminate compiler warning 4244
 template <typename GrayChannelValue>
-struct rgb_to_luminance_fn< double, double, double, GrayChannelValue >
+struct rgb_to_luminance_fn<double, double, double, GrayChannelValue>
 {
-    GrayChannelValue operator()( const double& red
-                               , const double& green
-                               , const double& blue    ) const
-   {
-      return channel_convert<GrayChannelValue>( red * 0.30 + green * 0.59 + blue * 0.11 );
-   }
+    GrayChannelValue operator()(const double& red, const double& green, const double& blue) const
+    {
+        return channel_convert<GrayChannelValue>(red * 0.30 + green * 0.59 + blue * 0.11);
+    }
 };
 
-} // namespace detail
-} // namespace gil
-} // namespace boost
+}}}  // namespace boost::gil::detail
 
 #endif

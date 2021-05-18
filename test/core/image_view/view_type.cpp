@@ -11,45 +11,47 @@
 
 namespace gil = boost::gil;
 
-struct Interleaved : std::false_type {};
-struct Planar : std::true_type {};
-struct NotStepX : std::false_type {};
-struct StepX : std::true_type {};
-struct Immutable : std::false_type {};
-struct Mutable : std::true_type {};
+struct Interleaved : std::false_type
+{
+};
+struct Planar : std::true_type
+{
+};
+struct NotStepX : std::false_type
+{
+};
+struct StepX : std::true_type
+{
+};
+struct Immutable : std::false_type
+{
+};
+struct Mutable : std::true_type
+{
+};
 
 template <typename ResultView, typename Layout, typename IsPlanar, typename IsStepX, typename IsMutable>
 void test()
 {
-    static_assert(std::is_same
-    <
-        typename gil::view_type
-        <
-            std::uint8_t,
-            Layout,
-            IsPlanar::value,
-            IsStepX::value,
-            IsMutable::value
-        >::type,
-        ResultView
-    >::value, "view_type yields unexpected view");
+    static_assert(
+        std::is_same<
+            typename gil::
+                view_type<std::uint8_t, Layout, IsPlanar::value, IsStepX::value, IsMutable::value>::
+                    type,
+            ResultView>::value,
+        "view_type yields unexpected view");
 }
 
 template <typename ResultView, typename Layout, typename IsPlanar, typename IsStepX, typename IsMutable>
 void test_not()
 {
-    static_assert(!std::is_same
-    <
-        typename gil::view_type
-        <
-            std::uint8_t,
-            Layout,
-            IsPlanar::value,
-            IsStepX::value,
-            IsMutable::value
-        >::type,
-        ResultView
-    >::value, "view_type yields unexpected view");
+    static_assert(
+        !std::is_same<
+            typename gil::
+                view_type<std::uint8_t, Layout, IsPlanar::value, IsStepX::value, IsMutable::value>::
+                    type,
+            ResultView>::value,
+        "view_type yields unexpected view");
 }
 
 int main()

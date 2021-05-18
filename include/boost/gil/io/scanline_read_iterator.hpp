@@ -20,8 +20,8 @@
 namespace boost { namespace gil {
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(push)
-#pragma warning(disable:4512) //assignment operator could not be generated
+#    pragma warning(push)
+#    pragma warning(disable : 4512)  //assignment operator could not be generated
 #endif
 
 /// Input iterator to read images.
@@ -30,17 +30,13 @@ class scanline_read_iterator
     : public boost::iterator_facade<scanline_read_iterator<Reader>, byte_t*, std::input_iterator_tag>
 {
 private:
-    using base_t = boost::iterator_facade
-        <
-            scanline_read_iterator<Reader>,
-            byte_t*,
-            std::input_iterator_tag
-        >;
+    using base_t
+        = boost::iterator_facade<scanline_read_iterator<Reader>, byte_t*, std::input_iterator_tag>;
+
 public:
-    scanline_read_iterator(Reader& reader, int pos = 0)
-        : reader_(reader), pos_(pos)
+    scanline_read_iterator(Reader& reader, int pos = 0) : reader_(reader), pos_(pos)
     {
-        buffer_       = std::make_shared<buffer_t>(buffer_t(reader_._scanline_length));
+        buffer_ = std::make_shared<buffer_t>(buffer_t(reader_._scanline_length));
         buffer_start_ = &buffer_->front();
     }
 
@@ -80,21 +76,20 @@ private:
 private:
     Reader& reader_;
 
-    mutable int pos_            = 0;
+    mutable int pos_ = 0;
     mutable bool read_scanline_ = true;
     mutable bool skip_scanline_ = true;
 
-    using buffer_t     = std::vector<byte_t>;
+    using buffer_t = std::vector<byte_t>;
     using buffer_ptr_t = std::shared_ptr<buffer_t>;
     buffer_ptr_t buffer_;
     mutable byte_t* buffer_start_ = nullptr;
 };
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
-#pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
-} // namespace gil
-} // namespace boost
+}}  // namespace boost::gil
 
 #endif

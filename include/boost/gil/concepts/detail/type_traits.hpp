@@ -14,11 +14,10 @@ namespace boost { namespace gil { namespace detail {
 
 // TODO: C++20: deprecate and replace with std::std_remove_cvref
 template <typename T>
-struct remove_const_and_reference
-    : std::remove_const<typename std::remove_reference<T>::type>
+struct remove_const_and_reference : std::remove_const<typename std::remove_reference<T>::type>
 {
 };
 
-}}} // namespace boost::gil::detail
+}}}  // namespace boost::gil::detail
 
 #endif

@@ -9,8 +9,8 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-#include "test_utility_output_stream.hpp"
 #include "core/image/test_fixture.hpp"
+#include "test_utility_output_stream.hpp"
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
@@ -67,13 +67,13 @@ struct test_subimage_equals_image_quadrants
         auto const i4 = fixture::create_image<image_t>(2, 2, 32);
         v0[10] = v0[11] = v0[14] = v0[15] = gil::const_view(i4)[0];
 
-        auto v1 = gil::subimage_view(gil::view(i0), { 2, 0 }, i0.dimensions() / 2);
+        auto v1 = gil::subimage_view(gil::view(i0), {2, 0}, i0.dimensions() / 2);
         BOOST_TEST(gil::equal_pixels(v1, gil::const_view(i1)));
-        auto v2 = gil::subimage_view(gil::view(i0), { 0, 0 }, i0.dimensions() / 2);
+        auto v2 = gil::subimage_view(gil::view(i0), {0, 0}, i0.dimensions() / 2);
         BOOST_TEST(gil::equal_pixels(v2, gil::const_view(i2)));
-        auto v3 = gil::subimage_view(gil::view(i0), { 0, 2 }, i0.dimensions() / 2);
+        auto v3 = gil::subimage_view(gil::view(i0), {0, 2}, i0.dimensions() / 2);
         BOOST_TEST(gil::equal_pixels(v3, gil::const_view(i3)));
-        auto v4 = gil::subimage_view(gil::view(i0), { 2, 2 }, i0.dimensions() / 2);
+        auto v4 = gil::subimage_view(gil::view(i0), {2, 2}, i0.dimensions() / 2);
         BOOST_TEST(gil::equal_pixels(v4, gil::const_view(i4)));
     }
     static void run()

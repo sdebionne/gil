@@ -15,16 +15,12 @@ template <typename View>
 void test()
 {
     static_assert(
-        gil::view_is_basic
-        <
-            typename gil::dynamic_x_step_type<View>::type
-        >::value, "view does not model HasDynamicXStepTypeConcept");
+        gil::view_is_basic<typename gil::dynamic_x_step_type<View>::type>::value,
+        "view does not model HasDynamicXStepTypeConcept");
 
     static_assert(
-        gil::view_is_basic
-        <
-            typename gil::dynamic_y_step_type<View>::type
-        >::value, "view does not model HasDynamicYStepTypeConcept");
+        gil::view_is_basic<typename gil::dynamic_y_step_type<View>::type>::value,
+        "view does not model HasDynamicYStepTypeConcept");
 }
 
 int main()

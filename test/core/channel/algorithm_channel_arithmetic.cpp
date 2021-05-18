@@ -10,17 +10,19 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-#include <type_traits>
 #include <utility>
 
 #include "test_fixture.hpp"
 #include "test_utility_output_stream.hpp"
+#include <type_traits>
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
 
 template <typename ChannelFixtureBase>
-void test_channel_arithmetic_mutable(std::false_type)  {}
+void test_channel_arithmetic_mutable(std::false_type)
+{
+}
 
 template <typename ChannelFixtureBase>
 void test_channel_arithmetic_mutable(std::true_type)
@@ -45,9 +47,9 @@ void test_channel_arithmetic_mutable(std::true_type)
     f.min_v_ /= one;
     BOOST_TEST_EQ(v, f.min_v_);
 
-    f.min_v_ = one; // assignable to scalar
+    f.min_v_ = one;  // assignable to scalar
     BOOST_TEST_EQ(f.min_v_, one);
-    f.min_v_ = v; // and to value type
+    f.min_v_ = v;  // and to value type
     BOOST_TEST_EQ(f.min_v_, v);
 
     // test swap
@@ -71,18 +73,15 @@ void test_channel_arithmetic()
     BOOST_TEST_EQ((f.min_v_ + 1) + 1, f.min_v_ + 2);
     BOOST_TEST_EQ((f.max_v_ - 1) - 1, f.max_v_ - 2);
 
-    using is_mutable_t = std::integral_constant
-        <
-            bool,
-            gil::channel_traits<typename fixture_t::channel_t>::is_mutable
-        >;
+    using is_mutable_t = std::
+        integral_constant<bool, gil::channel_traits<typename fixture_t::channel_t>::is_mutable>;
     test_channel_arithmetic_mutable<ChannelFixtureBase>(is_mutable_t{});
 }
 
 struct test_channel_value
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
         using fixture_t = fixture::channel_value<channel_t>;
@@ -97,10 +96,10 @@ struct test_channel_value
 struct test_channel_reference
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
-        using fixture_t = fixture::channel_reference<channel_t &>;
+        using fixture_t = fixture::channel_reference<channel_t&>;
         test_channel_arithmetic<fixture_t>();
     }
     static void run()
@@ -112,10 +111,10 @@ struct test_channel_reference
 struct test_channel_reference_const
 {
     template <typename Channel>
-    void operator()(Channel const &)
+    void operator()(Channel const&)
     {
         using channel_t = Channel;
-        using fixture_t = fixture::channel_reference<channel_t const &>;
+        using fixture_t = fixture::channel_reference<channel_t const&>;
         test_channel_arithmetic<fixture_t>();
     }
     static void run()
@@ -127,7 +126,7 @@ struct test_channel_reference_const
 struct test_packed_channel_reference
 {
     template <typename BitField>
-    void operator()(BitField const &)
+    void operator()(BitField const&)
     {
         using bitfield_t = BitField;
         using channels565_t = fixture::packed_channels565<bitfield_t>;
@@ -143,9 +142,8 @@ struct test_packed_channel_reference
 
 struct test_packed_dynamic_channel_reference
 {
-
     template <typename BitField>
-    void operator()(BitField const &)
+    void operator()(BitField const&)
     {
         using bitfield_t = BitField;
         using channels565_t = fixture::packed_dynamic_channels565<bitfield_t>;
@@ -154,7 +152,8 @@ struct test_packed_dynamic_channel_reference
     }
     static void run()
     {
-        boost::mp11::mp_for_each<fixture::channel_bitfield_types>(test_packed_dynamic_channel_reference{});
+        boost::mp11::mp_for_each<fixture::channel_bitfield_types>(
+            test_packed_dynamic_channel_reference{});
     }
 };
 

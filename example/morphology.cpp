@@ -7,6 +7,7 @@
 //
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/png.hpp>
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -33,7 +34,7 @@ int main(int argc, char** argv)
         // User has to enter atleast one operation and they can enter maximum 8
         // operations considering binary conversion to be an
         // operation.Output_image_template argument is the common component which
-        // will be added in names of all output images followed by a hyphen and 
+        // will be added in names of all output images followed by a hyphen and
         // the operation name.
         // Example :
         // ./example_morphology morphology_original.png out black_hat top_hat
@@ -64,7 +65,7 @@ int main(int argc, char** argv)
         gil::write_view(name, view(img), gil::png_tag{});
     }
 
-    std::vector<float> ker_vec(9, 1.0f); // Structuring element
+    std::vector<float> ker_vec(9, 1.0f);  // Structuring element
     gil::detail::kernel_2d<float> ker_mat(ker_vec.begin(), ker_vec.size(), 1, 1);
     gil::gray8_image_t img_out_dilation(img.dimensions()), img_out_erosion(img.dimensions()),
         img_out_opening(img.dimensions());

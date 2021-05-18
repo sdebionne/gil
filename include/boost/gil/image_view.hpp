@@ -49,35 +49,41 @@ namespace boost { namespace gil {
 /// Many generic algorithms don't require the elements to be pixels.
 ///
 ////////////////////////////////////////////////////////////////////////////////////////
-template <typename Loc>     // Models 2D Pixel Locator
+template <typename Loc>  // Models 2D Pixel Locator
 class image_view
 {
 public:
     // aliases required by ConstRandomAccessNDImageViewConcept
-    static const std::size_t num_dimensions=2;
+    static const std::size_t num_dimensions = 2;
     using value_type = typename Loc::value_type;
-    using reference = typename Loc::reference;       // result of dereferencing
+    using reference = typename Loc::reference;  // result of dereferencing
     using coord_t = typename Loc::coord_t;      // 1D difference type (same for all dimensions)
-    using difference_type = coord_t; // result of operator-(1d_iterator,1d_iterator)
+    using difference_type = coord_t;            // result of operator-(1d_iterator,1d_iterator)
     using point_t = typename Loc::point_t;
     using locator = Loc;
-    using const_t = image_view<typename Loc::const_t>;      // same as this type, but over const values
-    template <std::size_t D> struct axis
+    using const_t = image_view<typename Loc::const_t>;  // same as this type, but over const values
+    template <std::size_t D>
+    struct axis
     {
-        using coord_t = typename Loc::template axis<D>::coord_t; // difference_type along each dimension
-        using iterator = typename Loc::template axis<D>::iterator; // 1D iterator type along each dimension
+        using coord_t =
+            typename Loc::template axis<D>::coord_t;  // difference_type along each dimension
+        using iterator =
+            typename Loc::template axis<D>::iterator;  // 1D iterator type along each dimension
     };
-    using iterator = iterator_from_2d<Loc>;       // 1D iterator type for each pixel left-to-right inside top-to-bottom
-    using const_iterator = typename const_t::iterator;  // may be used to examine, but not to modify values
-    using const_reference = typename const_t::reference; // behaves as a const reference
-    using pointer = typename std::iterator_traits<iterator>::pointer; // behaves as a pointer to the value type
+    using iterator
+        = iterator_from_2d<Loc>;  // 1D iterator type for each pixel left-to-right inside top-to-bottom
+    using const_iterator =
+        typename const_t::iterator;  // may be used to examine, but not to modify values
+    using const_reference = typename const_t::reference;  // behaves as a const reference
+    using pointer =
+        typename std::iterator_traits<iterator>::pointer;  // behaves as a pointer to the value type
     using reverse_iterator = std::reverse_iterator<iterator>;
     using size_type = std::size_t;
 
     // aliases required by ConstRandomAccess2DImageViewConcept
     using xy_locator = locator;
-    using x_iterator = typename xy_locator::x_iterator;     // pixel iterator along a row
-    using y_iterator = typename xy_locator::y_iterator;     // pixel iterator along a column
+    using x_iterator = typename xy_locator::x_iterator;  // pixel iterator along a row
+    using y_iterator = typename xy_locator::y_iterator;  // pixel iterator along a column
     using x_coord_t = typename xy_locator::x_coord_t;
     using y_coord_t = typename xy_locator::y_coord_t;
 
@@ -91,21 +97,33 @@ public:
         }
     };
 
-    image_view() : _dimensions(0,0) {}
+    image_view() : _dimensions(0, 0)
+    {
+    }
     image_view(image_view const& img_view)
-        : _dimensions(img_view.dimensions()), _pixels(img_view.pixels())
-    {}
+        : _dimensions(img_view.dimensions())
+        , _pixels(img_view.pixels())
+    {
+    }
 
     template <typename View>
-    image_view(View const& view) : _dimensions(view.dimensions()), _pixels(view.pixels()) {}
+    image_view(View const& view) : _dimensions(view.dimensions())
+                                 , _pixels(view.pixels())
+    {
+    }
 
     template <typename L2>
-    image_view(point_t const& dims, L2 const& loc) : _dimensions(dims), _pixels(loc) {}
+    image_view(point_t const& dims, L2 const& loc) : _dimensions(dims)
+                                                   , _pixels(loc)
+    {
+    }
 
     template <typename L2>
     image_view(coord_t width, coord_t height, L2 const& loc)
-        : _dimensions(x_coord_t(width), y_coord_t(height)), _pixels(loc)
-    {}
+        : _dimensions(x_coord_t(width), y_coord_t(height))
+        , _pixels(loc)
+    {
+    }
 
     template <typename View>
     image_view& operator=(View const& view)
@@ -124,7 +142,7 @@ public:
     }
 
     template <typename View>
-    bool operator==(View const &view) const
+    bool operator==(View const& view) const
     {
         return pixels() == view.pixels() && dimensions() == view.dimensions();
     }
@@ -136,7 +154,7 @@ public:
     }
 
     template <typename L2>
-    friend void swap(image_view<L2> &lhs, image_view<L2> &rhs);
+    friend void swap(image_view<L2>& lhs, image_view<L2>& rhs);
 
     /// \brief Exchanges the elements of the current view with those of \a other
     ///       in constant time.
@@ -239,7 +257,7 @@ public:
     auto operator[](difference_type i) const -> reference
     {
         BOOST_ASSERT(i < static_cast<difference_type>(size()));
-        return begin()[i]; // potential performance problem!
+        return begin()[i];  // potential performance problem!
     }
 
     auto at(difference_type i) const -> iterator
@@ -312,15 +330,19 @@ public:
     /// \name X navigation
     auto x_at(x_coord_t x, y_coord_t y) const -> x_iterator
     {
-        BOOST_ASSERT(0 <= x && x <= width()); // allow request for [begin, end] inclusive
-        BOOST_ASSERT(0 <= y && y < height()); // TODO: For empty image/view, shouldn't we accept: row_begin(0) == view.row_end(0) ?
+        BOOST_ASSERT(0 <= x && x <= width());  // allow request for [begin, end] inclusive
+        BOOST_ASSERT(
+            0 <= y
+            && y < height());  // TODO: For empty image/view, shouldn't we accept: row_begin(0) == view.row_end(0) ?
         return _pixels.x_at(x, y);
     }
 
     auto x_at(point_t const& p) const -> x_iterator
     {
-        BOOST_ASSERT(0 <= p.x && p.x <= width()); // allow request for [begin, end] inclusive
-        BOOST_ASSERT(0 <= p.y && p.y < height()); // TODO: For empty image/view, shouldn't we accept: row_begin(0) == view.row_end(0) ?
+        BOOST_ASSERT(0 <= p.x && p.x <= width());  // allow request for [begin, end] inclusive
+        BOOST_ASSERT(
+            0 <= p.y
+            && p.y < height());  // TODO: For empty image/view, shouldn't we accept: row_begin(0) == view.row_end(0) ?
         return _pixels.x_at(p);
     }
 
@@ -341,15 +363,19 @@ public:
     /// \name Y navigation
     auto y_at(x_coord_t x, y_coord_t y) const -> y_iterator
     {
-        BOOST_ASSERT(0 <= x && x < width()); // TODO: For empty image/view, shouldn't we accept: view.col_begin(0) == view.col_end(0) ?
-        BOOST_ASSERT(0 <= y && y <= height()); // allow request for [begin, end] inclusive
+        BOOST_ASSERT(
+            0 <= x
+            && x < width());  // TODO: For empty image/view, shouldn't we accept: view.col_begin(0) == view.col_end(0) ?
+        BOOST_ASSERT(0 <= y && y <= height());  // allow request for [begin, end] inclusive
         return xy_at(x, y).y();
     }
 
     auto y_at(point_t const& p) const -> y_iterator
     {
-        BOOST_ASSERT(0 <= p.x && p.x < width()); // TODO: For empty image/view, shouldn't we accept: view.col_begin(0) == view.col_end(0) ?
-        BOOST_ASSERT(0 <= p.y && p.y <= height()); // allow request for [begin, end] inclusive
+        BOOST_ASSERT(
+            0 <= p.x
+            && p.x < width());  // TODO: For empty image/view, shouldn't we accept: view.col_begin(0) == view.col_end(0) ?
+        BOOST_ASSERT(0 <= p.y && p.y <= height());  // allow request for [begin, end] inclusive
         return xy_at(p).y();
     }
 
@@ -370,15 +396,16 @@ private:
     template <typename L2>
     friend class image_view;
 
-    point_t    _dimensions;
+    point_t _dimensions;
     xy_locator _pixels;
 };
 
 template <typename L2>
-inline void swap(image_view<L2>& x, image_view<L2>& y) {
+inline void swap(image_view<L2>& x, image_view<L2>& y)
+{
     using std::swap;
-    swap(x._dimensions,y._dimensions);
-    swap(x._pixels, y._pixels);            // TODO: Extend further
+    swap(x._dimensions, y._dimensions);
+    swap(x._pixels, y._pixels);  // TODO: Extend further
 }
 
 /////////////////////////////
@@ -386,16 +413,24 @@ inline void swap(image_view<L2>& x, image_view<L2>& y) {
 /////////////////////////////
 
 template <typename L>
-struct channel_type<image_view<L> > : public channel_type<L> {};
+struct channel_type<image_view<L>> : public channel_type<L>
+{
+};
 
 template <typename L>
-struct color_space_type<image_view<L> > : public color_space_type<L> {};
+struct color_space_type<image_view<L>> : public color_space_type<L>
+{
+};
 
 template <typename L>
-struct channel_mapping_type<image_view<L> > : public channel_mapping_type<L> {};
+struct channel_mapping_type<image_view<L>> : public channel_mapping_type<L>
+{
+};
 
 template <typename L>
-struct is_planar<image_view<L> > : public is_planar<L> {};
+struct is_planar<image_view<L>> : public is_planar<L>
+{
+};
 
 /////////////////////////////
 //  HasDynamicXStepTypeConcept

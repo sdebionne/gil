@@ -7,8 +7,9 @@
 #ifndef BOOST_GIL_DETAIL_STD_COMMON_TYPE_HPP
 #define BOOST_GIL_DETAIL_STD_COMMON_TYPE_HPP
 
-#include <type_traits>
 #include <utility>
+
+#include <type_traits>
 
 namespace boost { namespace gil { namespace detail {
 
@@ -19,21 +20,16 @@ namespace boost { namespace gil { namespace detail {
 // does not support custom specializations.
 
 template <typename T, typename U, typename = void>
-struct std_common_type {};
-
-template <typename T, typename U>
 struct std_common_type
-<
-    T, U,
-    decltype((void)(true ? std::declval<T>() : std::declval<U>()))
->
 {
-    using type = typename std::decay
-        <
-            decltype(true ? std::declval<T>() : std::declval<U>())
-        >::type;
 };
 
-}}} // namespace boost::gil::detail
+template <typename T, typename U>
+struct std_common_type<T, U, decltype((void)(true ? std::declval<T>() : std::declval<U>()))>
+{
+    using type = typename std::decay<decltype(true ? std::declval<T>() : std::declval<U>())>::type;
+};
+
+}}}  // namespace boost::gil::detail
 
 #endif

@@ -5,12 +5,13 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#include <boost/core/lightweight_test.hpp>
-
 #include "test_utility_output_stream.hpp"
+
+#include <boost/core/lightweight_test.hpp>
 
 #include <cstdint>
 #include <sstream>
+
 #include <type_traits>
 
 namespace utility = boost::gil::test::utility;

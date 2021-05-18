@@ -9,12 +9,13 @@
 #define BOOST_GIL_GIL_CHANNEL_ALGORITHM_HPP
 
 #include <boost/gil/channel.hpp>
-#include <boost/gil/promote_integral.hpp>
-#include <boost/gil/typedefs.hpp>
 #include <boost/gil/detail/is_channel_integral.hpp>
 #include <boost/gil/detail/mp11.hpp>
+#include <boost/gil/promote_integral.hpp>
+#include <boost/gil/typedefs.hpp>
 
 #include <limits>
+
 #include <type_traits>
 
 namespace boost { namespace gil {
@@ -41,36 +42,32 @@ struct channel_converter_unsigned_integral_nondivisible;
 
 template <typename UnsignedIntegralChannel>
 struct unsigned_integral_max_value
-    : std::integral_constant
-    <
-        UnsignedIntegralChannel,
-        (std::numeric_limits<UnsignedIntegralChannel>::max)()
-    >
-{};
+    : std::integral_constant<
+          UnsignedIntegralChannel,
+          (std::numeric_limits<UnsignedIntegralChannel>::max)()>
+{
+};
 
 template <>
-struct unsigned_integral_max_value<uint8_t>
-    : std::integral_constant<uint32_t, 0xFF>
-{};
+struct unsigned_integral_max_value<uint8_t> : std::integral_constant<uint32_t, 0xFF>
+{
+};
 
 template <>
-struct unsigned_integral_max_value<uint16_t>
-    : std::integral_constant<uint32_t, 0xFFFF>
-{};
+struct unsigned_integral_max_value<uint16_t> : std::integral_constant<uint32_t, 0xFFFF>
+{
+};
 
 template <>
-struct unsigned_integral_max_value<uint32_t>
-    : std::integral_constant<uintmax_t, 0xFFFFFFFF>
-{};
+struct unsigned_integral_max_value<uint32_t> : std::integral_constant<uintmax_t, 0xFFFFFFFF>
+{
+};
 
 template <int K>
 struct unsigned_integral_max_value<packed_channel_value<K>>
-    : std::integral_constant
-    <
-        typename packed_channel_value<K>::integer_t,
-        (uint64_t(1)<<K)-1
-    >
-{};
+    : std::integral_constant<typename packed_channel_value<K>::integer_t, (uint64_t(1) << K) - 1>
+{
+};
 
 //////////////////////////////////////
 //// unsigned_integral_num_bits - given an unsigned integral channel type,
@@ -80,14 +77,15 @@ struct unsigned_integral_max_value<packed_channel_value<K>>
 template <typename UnsignedIntegralChannel>
 struct unsigned_integral_num_bits
     : std::integral_constant<int, static_cast<int>(sizeof(UnsignedIntegralChannel) * 8)>
-{};
+{
+};
 
 template <int K>
-struct unsigned_integral_num_bits<packed_channel_value<K>>
-    : std::integral_constant<int, K>
-{};
+struct unsigned_integral_num_bits<packed_channel_value<K>> : std::integral_constant<int, K>
+{
+};
 
-} // namespace detail
+}  // namespace detail
 
 /// \defgroup ChannelConvertAlgorithm channel_convert
 /// \brief Converting from one channel type to another
@@ -123,19 +121,21 @@ struct unsigned_integral_num_bits<packed_channel_value<K>>
 ////  channel_converter_unsigned
 //////////////////////////////////////
 
-template <typename SrcChannelV, typename DstChannelV>     // Model ChannelValueConcept
+template <typename SrcChannelV, typename DstChannelV>  // Model ChannelValueConcept
 struct channel_converter_unsigned
-    : detail::channel_converter_unsigned_impl
-    <
-        SrcChannelV,
-        DstChannelV,
-        detail::is_channel_integral<SrcChannelV>::value,
-        detail::is_channel_integral<DstChannelV>::value
-    >
-{};
+    : detail::channel_converter_unsigned_impl<
+          SrcChannelV,
+          DstChannelV,
+          detail::is_channel_integral<SrcChannelV>::value,
+          detail::is_channel_integral<DstChannelV>::value>
+{
+};
 
 /// \brief Converting a channel to itself - identity operation
-template <typename T> struct channel_converter_unsigned<T,T> : public detail::identity<T> {};
+template <typename T>
+struct channel_converter_unsigned<T, T> : public detail::identity<T>
+{
+};
 
 namespace detail {
 
@@ -145,16 +145,22 @@ namespace detail {
 
 /// \brief This is the default implementation. Performance specializatons are provided
 template <typename SrcChannelV, typename DstChannelV, bool SrcIsIntegral, bool DstIsIntegral>
-struct channel_converter_unsigned_impl {
+struct channel_converter_unsigned_impl
+{
     using argument_type = SrcChannelV;
     using result_type = DstChannelV;
-    DstChannelV operator()(SrcChannelV src) const {
-        return DstChannelV(channel_traits<DstChannelV>::min_value() +
-            (src - channel_traits<SrcChannelV>::min_value()) / channel_range<SrcChannelV>() * channel_range<DstChannelV>());
+    DstChannelV operator()(SrcChannelV src) const
+    {
+        return DstChannelV(
+            channel_traits<DstChannelV>::min_value()
+            + (src - channel_traits<SrcChannelV>::min_value()) / channel_range<SrcChannelV>()
+                  * channel_range<DstChannelV>());
     }
+
 private:
     template <typename C>
-    static double channel_range() {
+    static double channel_range()
+    {
         return double(channel_traits<C>::max_value()) - double(channel_traits<C>::min_value());
     }
 };
@@ -162,31 +168,40 @@ private:
 // When both the source and the destination are integral channels, perform a faster conversion
 template <typename SrcChannelV, typename DstChannelV>
 struct channel_converter_unsigned_impl<SrcChannelV, DstChannelV, true, true>
-    : channel_converter_unsigned_integral
-    <
-        SrcChannelV,
-        DstChannelV,
-        mp11::mp_less
-        <
-            unsigned_integral_max_value<SrcChannelV>,
-            unsigned_integral_max_value<DstChannelV>
-        >::value
-    >
-{};
+    : channel_converter_unsigned_integral<
+          SrcChannelV,
+          DstChannelV,
+          mp11::mp_less<
+              unsigned_integral_max_value<SrcChannelV>,
+              unsigned_integral_max_value<DstChannelV>>::value>
+{
+};
 
 //////////////////////////////////////
 ////  channel_converter_unsigned_integral
 //////////////////////////////////////
 
 template <typename SrcChannelV, typename DstChannelV>
-struct channel_converter_unsigned_integral<SrcChannelV,DstChannelV,true>
-    : public channel_converter_unsigned_integral_impl<SrcChannelV,DstChannelV,true,
-    !(unsigned_integral_max_value<DstChannelV>::value % unsigned_integral_max_value<SrcChannelV>::value) > {};
+struct channel_converter_unsigned_integral<SrcChannelV, DstChannelV, true>
+    : public channel_converter_unsigned_integral_impl<
+          SrcChannelV,
+          DstChannelV,
+          true,
+          !(unsigned_integral_max_value<DstChannelV>::value
+            % unsigned_integral_max_value<SrcChannelV>::value)>
+{
+};
 
 template <typename SrcChannelV, typename DstChannelV>
-struct channel_converter_unsigned_integral<SrcChannelV,DstChannelV,false>
-    : public channel_converter_unsigned_integral_impl<SrcChannelV,DstChannelV,false,
-    !(unsigned_integral_max_value<SrcChannelV>::value % unsigned_integral_max_value<DstChannelV>::value) > {};
+struct channel_converter_unsigned_integral<SrcChannelV, DstChannelV, false>
+    : public channel_converter_unsigned_integral_impl<
+          SrcChannelV,
+          DstChannelV,
+          false,
+          !(unsigned_integral_max_value<SrcChannelV>::value
+            % unsigned_integral_max_value<DstChannelV>::value)>
+{
+};
 
 
 //////////////////////////////////////
@@ -197,10 +212,13 @@ struct channel_converter_unsigned_integral<SrcChannelV,DstChannelV,false>
 // the src max value is less than the dst max value,
 // and the dst max value is divisible by the src max value
 template <typename SrcChannelV, typename DstChannelV>
-struct channel_converter_unsigned_integral_impl<SrcChannelV,DstChannelV,true,true> {
-    DstChannelV operator()(SrcChannelV src) const {
+struct channel_converter_unsigned_integral_impl<SrcChannelV, DstChannelV, true, true>
+{
+    DstChannelV operator()(SrcChannelV src) const
+    {
         using integer_t = typename unsigned_integral_max_value<DstChannelV>::value_type;
-        static const integer_t mul = unsigned_integral_max_value<DstChannelV>::value / unsigned_integral_max_value<SrcChannelV>::value;
+        static const integer_t mul = unsigned_integral_max_value<DstChannelV>::value
+                                   / unsigned_integral_max_value<SrcChannelV>::value;
         return DstChannelV(src * mul);
     }
 };
@@ -209,21 +227,27 @@ struct channel_converter_unsigned_integral_impl<SrcChannelV,DstChannelV,true,tru
 // the dst max value is less than (or equal to) the src max value,
 // and the src max value is divisible by the dst max value
 template <typename SrcChannelV, typename DstChannelV>
-struct channel_converter_unsigned_integral_impl<SrcChannelV,DstChannelV,false,true> {
-    DstChannelV operator()(SrcChannelV src) const {
+struct channel_converter_unsigned_integral_impl<SrcChannelV, DstChannelV, false, true>
+{
+    DstChannelV operator()(SrcChannelV src) const
+    {
         using integer_t = typename unsigned_integral_max_value<SrcChannelV>::value_type;
-        static const integer_t div = unsigned_integral_max_value<SrcChannelV>::value / unsigned_integral_max_value<DstChannelV>::value;
-        static const integer_t div2 = div/2;
+        static const integer_t div = unsigned_integral_max_value<SrcChannelV>::value
+                                   / unsigned_integral_max_value<DstChannelV>::value;
+        static const integer_t div2 = div / 2;
         return DstChannelV((src + div2) / div);
     }
 };
 
 // Prevent overflow for the largest integral type
 template <typename DstChannelV>
-struct channel_converter_unsigned_integral_impl<uintmax_t,DstChannelV,false,true> {
-    DstChannelV operator()(uintmax_t src) const {
-        static const uintmax_t div = unsigned_integral_max_value<uint32_t>::value / unsigned_integral_max_value<DstChannelV>::value;
-        static const uintmax_t div2 = div/2;
+struct channel_converter_unsigned_integral_impl<uintmax_t, DstChannelV, false, true>
+{
+    DstChannelV operator()(uintmax_t src) const
+    {
+        static const uintmax_t div = unsigned_integral_max_value<uint32_t>::value
+                                   / unsigned_integral_max_value<DstChannelV>::value;
+        static const uintmax_t div2 = div / 2;
         if (src > unsigned_integral_max_value<uintmax_t>::value - div2)
             return unsigned_integral_max_value<DstChannelV>::value;
         return DstChannelV((src + div2) / div);
@@ -235,22 +259,17 @@ struct channel_converter_unsigned_integral_impl<uintmax_t,DstChannelV,false,true
 // See if you can represent the expression (src * dst_max) / src_max in integral form
 template <typename SrcChannelV, typename DstChannelV, bool SrcLessThanDst>
 struct channel_converter_unsigned_integral_impl<SrcChannelV, DstChannelV, SrcLessThanDst, false>
-    : channel_converter_unsigned_integral_nondivisible
-    <
-        SrcChannelV,
-        DstChannelV,
-        SrcLessThanDst,
-        mp11::mp_less
-        <
-            unsigned_integral_num_bits<uintmax_t>,
-            mp11::mp_plus
-            <
-                unsigned_integral_num_bits<SrcChannelV>,
-                unsigned_integral_num_bits<DstChannelV>
-            >
-        >::value
-    >
-{};
+    : channel_converter_unsigned_integral_nondivisible<
+          SrcChannelV,
+          DstChannelV,
+          SrcLessThanDst,
+          mp11::mp_less<
+              unsigned_integral_num_bits<uintmax_t>,
+              mp11::mp_plus<
+                  unsigned_integral_num_bits<SrcChannelV>,
+                  unsigned_integral_num_bits<DstChannelV>>>::value>
+{
+};
 
 // Both source and destination are unsigned integral channels,
 // the src max value is less than the dst max value,
@@ -277,9 +296,8 @@ struct channel_converter_unsigned_integral_nondivisible<SrcChannelV, DstChannelV
 {
     DstChannelV operator()(SrcChannelV src) const
     {
-        static const double mul
-            = unsigned_integral_max_value<DstChannelV>::value
-            / double(unsigned_integral_max_value<SrcChannelV>::value);
+        static const double mul = unsigned_integral_max_value<DstChannelV>::value
+                                / double(unsigned_integral_max_value<SrcChannelV>::value);
         return DstChannelV(src * mul);
     }
 };
@@ -288,67 +306,89 @@ struct channel_converter_unsigned_integral_nondivisible<SrcChannelV, DstChannelV
 // the dst max value is less than (or equal to) the src max value,
 // and the src max value is not divisible by the dst max value
 template <typename SrcChannelV, typename DstChannelV, bool CannotFit>
-struct channel_converter_unsigned_integral_nondivisible<SrcChannelV,DstChannelV,false,CannotFit> {
-    DstChannelV operator()(SrcChannelV src) const {
-
+struct channel_converter_unsigned_integral_nondivisible<SrcChannelV, DstChannelV, false, CannotFit>
+{
+    DstChannelV operator()(SrcChannelV src) const
+    {
         using src_integer_t = typename detail::unsigned_integral_max_value<SrcChannelV>::value_type;
         using dst_integer_t = typename detail::unsigned_integral_max_value<DstChannelV>::value_type;
 
-        static const double div = unsigned_integral_max_value<SrcChannelV>::value
-                                / static_cast< double >( unsigned_integral_max_value<DstChannelV>::value );
+        static const double div
+            = unsigned_integral_max_value<SrcChannelV>::value
+            / static_cast<double>(unsigned_integral_max_value<DstChannelV>::value);
 
-        static const src_integer_t div2 = static_cast< src_integer_t >( div / 2.0 );
+        static const src_integer_t div2 = static_cast<src_integer_t>(div / 2.0);
 
-        return DstChannelV( static_cast< dst_integer_t >(( static_cast< double >( src + div2 ) / div )));
+        return DstChannelV(static_cast<dst_integer_t>((static_cast<double>(src + div2) / div)));
     }
 };
 
-} // namespace detail
+}  // namespace detail
 
 /////////////////////////////////////////////////////
 ///  float32_t conversion
 /////////////////////////////////////////////////////
 
-template <typename DstChannelV> struct channel_converter_unsigned<float32_t,DstChannelV> {
+template <typename DstChannelV>
+struct channel_converter_unsigned<float32_t, DstChannelV>
+{
     using argument_type = float32_t;
     using result_type = DstChannelV;
     DstChannelV operator()(float32_t x) const
     {
         using dst_integer_t = typename detail::unsigned_integral_max_value<DstChannelV>::value_type;
-        return DstChannelV( static_cast< dst_integer_t >(x*channel_traits<DstChannelV>::max_value()+0.5f ));
+        return DstChannelV(
+            static_cast<dst_integer_t>(x * channel_traits<DstChannelV>::max_value() + 0.5f));
     }
 };
 
-template <typename SrcChannelV> struct channel_converter_unsigned<SrcChannelV,float32_t> {
+template <typename SrcChannelV>
+struct channel_converter_unsigned<SrcChannelV, float32_t>
+{
     using argument_type = float32_t;
     using result_type = SrcChannelV;
-    float32_t operator()(SrcChannelV   x) const { return float32_t(x/float(channel_traits<SrcChannelV>::max_value())); }
+    float32_t operator()(SrcChannelV x) const
+    {
+        return float32_t(x / float(channel_traits<SrcChannelV>::max_value()));
+    }
 };
 
-template <> struct channel_converter_unsigned<float32_t,float32_t> {
+template <>
+struct channel_converter_unsigned<float32_t, float32_t>
+{
     using argument_type = float32_t;
     using result_type = float32_t;
-    float32_t operator()(float32_t   x) const { return x; }
+    float32_t operator()(float32_t x) const
+    {
+        return x;
+    }
 };
 
 
 /// \brief 32 bit <-> float channel conversion
-template <> struct channel_converter_unsigned<uint32_t,float32_t> {
+template <>
+struct channel_converter_unsigned<uint32_t, float32_t>
+{
     using argument_type = uint32_t;
     using result_type = float32_t;
-    float32_t operator()(uint32_t x) const {
+    float32_t operator()(uint32_t x) const
+    {
         // unfortunately without an explicit check it is possible to get a round-off error. We must ensure that max_value of uint32_t matches max_value of float32_t
-        if (x>=channel_traits<uint32_t>::max_value()) return channel_traits<float32_t>::max_value();
+        if (x >= channel_traits<uint32_t>::max_value())
+            return channel_traits<float32_t>::max_value();
         return float(x) / float(channel_traits<uint32_t>::max_value());
     }
 };
 /// \brief 32 bit <-> float channel conversion
-template <> struct channel_converter_unsigned<float32_t,uint32_t> {
+template <>
+struct channel_converter_unsigned<float32_t, uint32_t>
+{
     using argument_type = float32_t;
     using result_type = uint32_t;
-    uint32_t operator()(float32_t x) const {
+    uint32_t operator()(float32_t x) const
+    {
         // unfortunately without an explicit check it is possible to get a round-off error. We must ensure that max_value of uint32_t matches max_value of float32_t
-        if (x>=channel_traits<float32_t>::max_value())
+        if (x >= channel_traits<float32_t>::max_value())
             return channel_traits<uint32_t>::max_value();
 
         auto const max_value = channel_traits<uint32_t>::max_value();
@@ -362,115 +402,150 @@ template <> struct channel_converter_unsigned<float32_t,uint32_t> {
 namespace detail {
 // Converting from signed to unsigned integral channel.
 // It is both a unary function, and a metafunction (thus requires the 'type' nested alias, which equals result_type)
-template <typename ChannelValue>     // Model ChannelValueConcept
-struct channel_convert_to_unsigned : public detail::identity<ChannelValue> {
+template <typename ChannelValue>  // Model ChannelValueConcept
+struct channel_convert_to_unsigned : public detail::identity<ChannelValue>
+{
     using type = ChannelValue;
 };
 
-template <> struct channel_convert_to_unsigned<int8_t> {
+template <>
+struct channel_convert_to_unsigned<int8_t>
+{
     using argument_type = int8_t;
     using result_type = uint8_t;
     using type = uint8_t;
-    type operator()(int8_t val) const {
+    type operator()(int8_t val) const
+    {
         return static_cast<uint8_t>(static_cast<uint32_t>(val) + 128u);
     }
 };
 
-template <> struct channel_convert_to_unsigned<int16_t> {
+template <>
+struct channel_convert_to_unsigned<int16_t>
+{
     using argument_type = int16_t;
     using result_type = uint16_t;
     using type = uint16_t;
-    type operator()(int16_t val) const {
+    type operator()(int16_t val) const
+    {
         return static_cast<uint16_t>(static_cast<uint32_t>(val) + 32768u);
     }
 };
 
-template <> struct channel_convert_to_unsigned<int32_t> {
+template <>
+struct channel_convert_to_unsigned<int32_t>
+{
     using argument_type = int32_t;
     using result_type = uint32_t;
     using type = uint32_t;
-    type operator()(int32_t val) const {
-        return static_cast<uint32_t>(val)+(1u<<31);
+    type operator()(int32_t val) const
+    {
+        return static_cast<uint32_t>(val) + (1u << 31);
     }
 };
 
 
 // Converting from unsigned to signed integral channel
 // It is both a unary function, and a metafunction (thus requires the 'type' nested alias, which equals result_type)
-template <typename ChannelValue>     // Model ChannelValueConcept
-struct channel_convert_from_unsigned : public detail::identity<ChannelValue> {
+template <typename ChannelValue>  // Model ChannelValueConcept
+struct channel_convert_from_unsigned : public detail::identity<ChannelValue>
+{
     using type = ChannelValue;
 };
 
-template <> struct channel_convert_from_unsigned<int8_t> {
+template <>
+struct channel_convert_from_unsigned<int8_t>
+{
     using argument_type = uint8_t;
     using result_type = int8_t;
     using type = int8_t;
-    type  operator()(uint8_t val) const {
+    type operator()(uint8_t val) const
+    {
         return static_cast<int8_t>(static_cast<int32_t>(val) - 128);
     }
 };
 
-template <> struct channel_convert_from_unsigned<int16_t> {
+template <>
+struct channel_convert_from_unsigned<int16_t>
+{
     using argument_type = uint16_t;
     using result_type = int16_t;
     using type = int16_t;
-    type operator()(uint16_t val) const {
+    type operator()(uint16_t val) const
+    {
         return static_cast<int16_t>(static_cast<int32_t>(val) - 32768);
     }
 };
 
-template <> struct channel_convert_from_unsigned<int32_t> {
+template <>
+struct channel_convert_from_unsigned<int32_t>
+{
     using argument_type = uint32_t;
     using result_type = int32_t;
     using type = int32_t;
-    type operator()(uint32_t val) const {
-        return static_cast<int32_t>(val - (1u<<31));
+    type operator()(uint32_t val) const
+    {
+        return static_cast<int32_t>(val - (1u << 31));
     }
 };
 
-}   // namespace detail
+}  // namespace detail
 
 /// \ingroup ChannelConvertAlgorithm
 /// \brief A unary function object converting between channel types
-template <typename SrcChannelV, typename DstChannelV> // Model ChannelValueConcept
-struct channel_converter {
+template <typename SrcChannelV, typename DstChannelV>  // Model ChannelValueConcept
+struct channel_converter
+{
     using argument_type = SrcChannelV;
     using result_type = DstChannelV;
-    DstChannelV operator()(const SrcChannelV& src) const {
+    DstChannelV operator()(const SrcChannelV& src) const
+    {
         using to_unsigned = detail::channel_convert_to_unsigned<SrcChannelV>;
         using from_unsigned = detail::channel_convert_from_unsigned<DstChannelV>;
-        using converter_unsigned = channel_converter_unsigned<typename to_unsigned::result_type, typename from_unsigned::argument_type>;
+        using converter_unsigned = channel_converter_unsigned<
+            typename to_unsigned::result_type,
+            typename from_unsigned::argument_type>;
         return from_unsigned()(converter_unsigned()(to_unsigned()(src)));
     }
 };
 
 /// \ingroup ChannelConvertAlgorithm
 /// \brief Converting from one channel type to another.
-template <typename DstChannel, typename SrcChannel> // Model ChannelConcept (could be channel references)
-inline typename channel_traits<DstChannel>::value_type channel_convert(const SrcChannel& src) {
-    return channel_converter<typename channel_traits<SrcChannel>::value_type,
-                             typename channel_traits<DstChannel>::value_type>()(src);
+template <typename DstChannel, typename SrcChannel>  // Model ChannelConcept (could be channel references)
+inline typename channel_traits<DstChannel>::value_type channel_convert(const SrcChannel& src)
+{
+    return channel_converter<
+        typename channel_traits<SrcChannel>::value_type,
+        typename channel_traits<DstChannel>::value_type>()(src);
 }
 
 /// \ingroup ChannelConvertAlgorithm
 /// \brief Same as channel_converter, except it takes the destination channel by reference, which allows
 ///        us to move the templates from the class level to the method level. This is important when invoking it
 ///        on heterogeneous pixels.
-struct default_channel_converter {
+struct default_channel_converter
+{
     template <typename Ch1, typename Ch2>
-    void operator()(const Ch1& src, Ch2& dst) const {
-        dst=channel_convert<Ch2>(src);
+    void operator()(const Ch1& src, Ch2& dst) const
+    {
+        dst = channel_convert<Ch2>(src);
     }
 };
 
 namespace detail {
-    // fast integer division by 255
-    inline uint32_t div255(uint32_t in) { uint32_t tmp=in+128; return (tmp + (tmp>>8))>>8; }
-
-    // fast integer divison by 32768
-    inline uint32_t div32768(uint32_t in) { return (in+16384)>>15; }
+// fast integer division by 255
+inline uint32_t div255(uint32_t in)
+{
+    uint32_t tmp = in + 128;
+    return (tmp + (tmp >> 8)) >> 8;
 }
+
+// fast integer divison by 32768
+inline uint32_t div32768(uint32_t in)
+{
+    return (in + 16384) >> 15;
+}
+}  // namespace detail
 
 /// \defgroup ChannelMultiplyAlgorithm channel_multiply
 /// \ingroup ChannelAlgorithm
@@ -487,46 +562,66 @@ namespace detail {
 
 /// \brief This is the default implementation. Performance specializatons are provided
 template <typename ChannelValue>
-struct channel_multiplier_unsigned {
+struct channel_multiplier_unsigned
+{
     using first_argument_type = ChannelValue;
     using second_argument_type = ChannelValue;
     using result_type = ChannelValue;
-    ChannelValue operator()(ChannelValue a, ChannelValue b) const {
-        return ChannelValue(static_cast<typename base_channel_type<ChannelValue>::type>(a / double(channel_traits<ChannelValue>::max_value()) * b));
+    ChannelValue operator()(ChannelValue a, ChannelValue b) const
+    {
+        return ChannelValue(static_cast<typename base_channel_type<ChannelValue>::type>(
+            a / double(channel_traits<ChannelValue>::max_value()) * b));
     }
 };
 
 /// \brief Specialization of channel_multiply for 8-bit unsigned channels
-template<> struct channel_multiplier_unsigned<uint8_t> {
+template <>
+struct channel_multiplier_unsigned<uint8_t>
+{
     using first_argument_type = uint8_t;
     using second_argument_type = uint8_t;
     using result_type = uint8_t;
-    uint8_t operator()(uint8_t a, uint8_t b) const { return uint8_t(detail::div255(uint32_t(a) * uint32_t(b))); }
+    uint8_t operator()(uint8_t a, uint8_t b) const
+    {
+        return uint8_t(detail::div255(uint32_t(a) * uint32_t(b)));
+    }
 };
 
 /// \brief Specialization of channel_multiply for 16-bit unsigned channels
-template<> struct channel_multiplier_unsigned<uint16_t> {
+template <>
+struct channel_multiplier_unsigned<uint16_t>
+{
     using first_argument_type = uint16_t;
     using second_argument_type = uint16_t;
     using result_type = uint16_t;
-    uint16_t operator()(uint16_t a, uint16_t b) const { return uint16_t((uint32_t(a) * uint32_t(b))/65535); }
+    uint16_t operator()(uint16_t a, uint16_t b) const
+    {
+        return uint16_t((uint32_t(a) * uint32_t(b)) / 65535);
+    }
 };
 
 /// \brief Specialization of channel_multiply for float 0..1 channels
-template<> struct channel_multiplier_unsigned<float32_t> {
+template <>
+struct channel_multiplier_unsigned<float32_t>
+{
     using first_argument_type = float32_t;
     using second_argument_type = float32_t;
     using result_type = float32_t;
-    float32_t operator()(float32_t a, float32_t b) const { return a*b; }
+    float32_t operator()(float32_t a, float32_t b) const
+    {
+        return a * b;
+    }
 };
 
 /// \brief A function object to multiply two channels. result = a * b / max_value
 template <typename ChannelValue>
-struct channel_multiplier {
+struct channel_multiplier
+{
     using first_argument_type = ChannelValue;
     using second_argument_type = ChannelValue;
     using result_type = ChannelValue;
-    ChannelValue operator()(ChannelValue a, ChannelValue b) const {
+    ChannelValue operator()(ChannelValue a, ChannelValue b) const
+    {
         using to_unsigned = detail::channel_convert_to_unsigned<ChannelValue>;
         using from_unsigned = detail::channel_convert_from_unsigned<ChannelValue>;
         using multiplier_unsigned = channel_multiplier_unsigned<typename to_unsigned::result_type>;
@@ -535,9 +630,10 @@ struct channel_multiplier {
 };
 
 /// \brief A function multiplying two channels. result = a * b / max_value
-template <typename Channel> // Models ChannelConcept (could be a channel reference)
-inline typename channel_traits<Channel>::value_type channel_multiply(Channel a, Channel b) {
-    return channel_multiplier<typename channel_traits<Channel>::value_type>()(a,b);
+template <typename Channel>  // Models ChannelConcept (could be a channel reference)
+inline typename channel_traits<Channel>::value_type channel_multiply(Channel a, Channel b)
+{
+    return channel_multiplier<typename channel_traits<Channel>::value_type>()(a, b);
 }
 /// @}
 
@@ -555,9 +651,9 @@ inline typename channel_traits<Channel>::value_type channel_multiply(Channel a, 
 
 /// \brief Default implementation. Provide overloads for performance
 /// \ingroup ChannelInvertAlgorithm channel_invert
-template <typename Channel> // Models ChannelConcept (could be a channel reference)
-inline typename channel_traits<Channel>::value_type channel_invert(Channel x) {
-
+template <typename Channel>  // Models ChannelConcept (could be a channel reference)
+inline typename channel_traits<Channel>::value_type channel_invert(Channel x)
+{
     using base_t = typename base_channel_type<Channel>::type;
     using promoted_t = typename promote_integral<base_t>::type;
     promoted_t const promoted_x = x;
@@ -568,6 +664,6 @@ inline typename channel_traits<Channel>::value_type channel_invert(Channel x) {
     return inverted_x;
 }
 
-} }  // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

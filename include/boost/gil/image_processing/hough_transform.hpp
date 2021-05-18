@@ -9,9 +9,10 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_HOUGH_TRANSFORM_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_HOUGH_TRANSFORM_HPP
 
-#include <algorithm>
 #include <boost/gil/image_processing/hough_parameter.hpp>
 #include <boost/gil/rasterization/circle.hpp>
+
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <iterator>
@@ -34,9 +35,11 @@ namespace boost { namespace gil {
 /// accumulator array. The theta parameter is best computed through factory function
 /// provided in hough_parameter.hpp
 template <typename InputView, typename OutputView>
-void hough_line_transform(const InputView& input_view, const OutputView& accumulator_array,
-                          const hough_parameter<double>& theta,
-                          const hough_parameter<std::ptrdiff_t>& radius)
+void hough_line_transform(
+    const InputView& input_view,
+    const OutputView& accumulator_array,
+    const hough_parameter<double>& theta,
+    const hough_parameter<std::ptrdiff_t>& radius)
 {
     std::ptrdiff_t r_lower_bound = radius.start_point;
     std::ptrdiff_t r_upper_bound = r_lower_bound + radius.step_size * (radius.step_count - 1);
@@ -52,11 +55,11 @@ void hough_line_transform(const InputView& input_view, const OutputView& accumul
 
             for (std::size_t theta_index = 0; theta_index < theta.step_count; ++theta_index)
             {
-                double theta_current =
-                    theta.start_point + theta.step_size * static_cast<double>(theta_index);
-                std::ptrdiff_t current_r =
-                    std::llround(static_cast<double>(x) * std::cos(theta_current) +
-                                 static_cast<double>(y) * std::sin(theta_current));
+                double theta_current
+                    = theta.start_point + theta.step_size * static_cast<double>(theta_index);
+                std::ptrdiff_t current_r = std::llround(
+                    static_cast<double>(x) * std::cos(theta_current)
+                    + static_cast<double>(y) * std::sin(theta_current));
                 if (current_r < r_lower_bound || current_r > r_upper_bound)
                 {
                     continue;
@@ -81,23 +84,27 @@ void hough_line_transform(const InputView& input_view, const OutputView& accumul
 /// then is translated for every origin (x, y) in x y parameter space. For available
 /// circle rasterizers, please look at rasterization/circle.hpp
 template <typename ImageView, typename ForwardIterator, typename Rasterizer>
-void hough_circle_transform_brute(const ImageView& input,
-                                  const hough_parameter<std::ptrdiff_t> radius_parameter,
-                                  const hough_parameter<std::ptrdiff_t> x_parameter,
-                                  const hough_parameter<std::ptrdiff_t>& y_parameter,
-                                  ForwardIterator d_first, Rasterizer rasterizer)
+void hough_circle_transform_brute(
+    const ImageView& input,
+    const hough_parameter<std::ptrdiff_t> radius_parameter,
+    const hough_parameter<std::ptrdiff_t> x_parameter,
+    const hough_parameter<std::ptrdiff_t>& y_parameter,
+    ForwardIterator d_first,
+    Rasterizer rasterizer)
 {
     const auto width = input.width();
     const auto height = input.height();
     for (std::size_t radius_index = 0; radius_index < radius_parameter.step_count; ++radius_index)
     {
-        const auto radius = radius_parameter.start_point +
-                            radius_parameter.step_size * static_cast<std::ptrdiff_t>(radius_index);
+        const auto radius = radius_parameter.start_point
+                          + radius_parameter.step_size * static_cast<std::ptrdiff_t>(radius_index);
         std::vector<point_t> circle_points(rasterizer.point_count(radius));
         rasterizer(radius, {0, 0}, circle_points.begin());
         // sort by scanline to improve cache coherence for row major images
-        std::sort(circle_points.begin(), circle_points.end(),
-                  [](const point_t& lhs, const point_t& rhs) { return lhs.y < rhs.y; });
+        std::sort(
+            circle_points.begin(), circle_points.end(), [](const point_t& lhs, const point_t& rhs) {
+                return lhs.y < rhs.y;
+            });
         const auto translate = [](std::vector<point_t>& points, point_t offset) {
             std::transform(points.begin(), points.end(), points.begin(), [offset](point_t point) {
                 return point_t(point.x + offset.x, point.y + offset.y);
@@ -133,6 +140,6 @@ void hough_circle_transform_brute(const ImageView& input,
     }
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

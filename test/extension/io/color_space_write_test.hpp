@@ -11,7 +11,7 @@
 #include <boost/gil.hpp>
 
 #ifndef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
-#include <boost/core/ignore_unused.hpp>
+#    include <boost/core/ignore_unused.hpp>
 #endif
 #include <string>
 
@@ -49,4 +49,4 @@ void color_space_write_test(std::string const& file_name_1, std::string const& f
 #endif
 }
 
-#endif // BOOST_GIL_TEST_EXTENSION_IO_COLOR_SPACE_WRITE_TEST_HPP
+#endif  // BOOST_GIL_TEST_EXTENSION_IO_COLOR_SPACE_WRITE_TEST_HPP

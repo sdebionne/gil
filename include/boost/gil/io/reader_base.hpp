@@ -22,26 +22,23 @@ namespace boost { namespace gil {
 ///
 /// @tparam FormatTag        A format tag, like jpeg_tag.
 /// @tparam ConversionPolicy Conversion policy, see coversion_policies.hpp.
-template< typename FormatTag
-        , typename ConversionPolicy
-        >
+template <typename FormatTag, typename ConversionPolicy>
 struct reader_base
 {
 public:
-
     ///
     /// Default Constructor
     ///
-    reader_base()
-    :_cc_policy()
-    {}
+    reader_base() : _cc_policy()
+    {
+    }
 
     ///
     /// Constructor
     ///
-    reader_base( const ConversionPolicy& cc )
-    :_cc_policy( cc )
-    {}
+    reader_base(const ConversionPolicy& cc) : _cc_policy(cc)
+    {
+    }
 
     /// Initializes an image. But also does some check ups.
     ///
@@ -49,31 +46,24 @@ public:
     ///
     /// @param img  The image.
     /// @param info The image read info.
-    template< typename Image >
-    void init_image( Image&                                  img
-                   , const image_read_settings< FormatTag >& settings
-                   )
+    template <typename Image>
+    void init_image(Image& img, const image_read_settings<FormatTag>& settings)
     {
         //setup( backend._settings._dim );
 
         BOOST_ASSERT(settings._dim.x && settings._dim.y);
 
-        img.recreate( settings._dim.x
-                    , settings._dim.y
-                    );
+        img.recreate(settings._dim.x, settings._dim.y);
     }
 
-    template< typename View >
-    void init_view( const View&                             view
-                  , const image_read_settings< FormatTag >&
-                  )
+    template <typename View>
+    void init_view(const View& view, const image_read_settings<FormatTag>&)
     {
-        setup( view.dimensions() );
+        setup(view.dimensions());
     }
 
 private:
-
-    void setup( const point_t& /* dim */ )
+    void setup(const point_t& /* dim */)
     {
         //check_coordinates( dim );
 
@@ -88,39 +78,37 @@ private:
         //}
     }
 
-    void check_coordinates( const point_t& /* dim */ )
+    void check_coordinates(const point_t& /* dim */)
     {
-       //using int_t = point_t::value_type;
+        //using int_t = point_t::value_type;
 
-       //int_t width  = static_cast< int_t >( _info._width  );
-       //int_t height = static_cast< int_t >( _info._height );
+        //int_t width  = static_cast< int_t >( _info._width  );
+        //int_t height = static_cast< int_t >( _info._height );
 
-       //io_error_if( (  _settings._top_left.x < 0
-       //             || _settings._top_left.y < 0
-       //             || dim.x < 0
-       //             || dim.y < 0
-       //             )
-       //          , "User provided view has incorrect size." );
+        //io_error_if( (  _settings._top_left.x < 0
+        //             || _settings._top_left.y < 0
+        //             || dim.x < 0
+        //             || dim.y < 0
+        //             )
+        //          , "User provided view has incorrect size." );
 
 
-       //io_error_if( (  ( width  ) <  _settings._top_left.x
-       //             && ( width  ) <= dim.x
-       //             && ( height ) <  _settings._top_left.y
-       //             && ( height ) <= dim.y  )
-       //          , "User provided view has incorrect size."       );
+        //io_error_if( (  ( width  ) <  _settings._top_left.x
+        //             && ( width  ) <= dim.x
+        //             && ( height ) <  _settings._top_left.y
+        //             && ( height ) <= dim.y  )
+        //          , "User provided view has incorrect size."       );
 
-       //io_error_if( (  ( _settings._top_left.x + dim.x ) > width
-       //             || ( _settings._top_left.y + dim.y ) > height
-       //            )
-       //          , "User provided view has incorrect size." );
+        //io_error_if( (  ( _settings._top_left.x + dim.x ) > width
+        //             || ( _settings._top_left.y + dim.y ) > height
+        //            )
+        //          , "User provided view has incorrect size." );
     }
 
 protected:
-
     ConversionPolicy _cc_policy;
 };
 
-} // namespace gil
-} // namespace boost
+}}  // namespace boost::gil
 
 #endif

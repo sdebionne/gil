@@ -8,12 +8,13 @@
 #ifndef BOOST_GIL_POINT_HPP
 #define BOOST_GIL_POINT_HPP
 
-#include <boost/gil/utilities.hpp>
 #include <boost/gil/detail/std_common_type.hpp>
+#include <boost/gil/utilities.hpp>
 
 #include <boost/config.hpp>
 
 #include <cstddef>
+
 #include <type_traits>
 
 namespace boost { namespace gil {
@@ -37,7 +38,7 @@ class point
 public:
     using value_type = T;
 
-    template<std::size_t D>
+    template <std::size_t D>
     struct axis
     {
         using coord_t = value_type;
@@ -46,7 +47,9 @@ public:
     static constexpr std::size_t num_dimensions = 2;
 
     point() = default;
-    point(T px, T py) : x(px), y(py) {}
+    point(T px, T py) : x(px), y(py)
+    {
+    }
 
     point operator<<(std::ptrdiff_t shift) const
     {
@@ -105,7 +108,7 @@ public:
 private:
     // this static array of pointers to member variables makes operator[] safe
     // and doesn't seem to exhibit any performance penalty.
-    static T point<T>::* const mem_array[num_dimensions];
+    static T point<T>::*const mem_array[num_dimensions];
 };
 
 /// Alias template for backward compatibility with Boost <=1.68.
@@ -117,61 +120,48 @@ using point2 = point<T>;
 using point_t = point<std::ptrdiff_t>;
 
 template <typename T>
-T point<T>::* const point<T>::mem_array[point<T>::num_dimensions] =
-{
-    &point<T>::x,
-    &point<T>::y
-};
+T point<T>::*const point<T>::mem_array[point<T>::num_dimensions] = {&point<T>::x, &point<T>::y};
 
 /// \ingroup PointModel
 template <typename T>
-BOOST_FORCEINLINE
-bool operator==(const point<T>& p1, const point<T>& p2)
+BOOST_FORCEINLINE bool operator==(const point<T>& p1, const point<T>& p2)
 {
     return p1.x == p2.x && p1.y == p2.y;
 }
 
 /// \ingroup PointModel
 template <typename T>
-BOOST_FORCEINLINE
-bool operator!=(const point<T>& p1, const point<T>& p2)
+BOOST_FORCEINLINE bool operator!=(const point<T>& p1, const point<T>& p2)
 {
     return p1.x != p2.x || p1.y != p2.y;
 }
 
 /// \ingroup PointModel
 template <typename T>
-BOOST_FORCEINLINE
-point<T> operator+(const point<T>& p1, const point<T>& p2)
+BOOST_FORCEINLINE point<T> operator+(const point<T>& p1, const point<T>& p2)
 {
-    return { p1.x + p2.x, p1.y + p2.y };
+    return {p1.x + p2.x, p1.y + p2.y};
 }
 
 /// \ingroup PointModel
 template <typename T>
-BOOST_FORCEINLINE
-point<T> operator-(const point<T>& p)
+BOOST_FORCEINLINE point<T> operator-(const point<T>& p)
 {
-    return { -p.x, -p.y };
+    return {-p.x, -p.y};
 }
 
 /// \ingroup PointModel
 template <typename T>
-BOOST_FORCEINLINE
-point<T> operator-(const point<T>& p1, const point<T>& p2)
+BOOST_FORCEINLINE point<T> operator-(const point<T>& p1, const point<T>& p2)
 {
-    return { p1.x - p2.x, p1.y - p2.y };
+    return {p1.x - p2.x, p1.y - p2.y};
 }
 
 /// \ingroup PointModel
 template <typename T, typename D>
-BOOST_FORCEINLINE
-auto operator/(point<T> const& p, D d)
-    -> typename std::enable_if
-    <
-        std::is_arithmetic<D>::value,
-        point<typename detail::std_common_type<T, D>::type>
-    >::type
+BOOST_FORCEINLINE auto operator/(point<T> const& p, D d) -> typename std::enable_if<
+    std::is_arithmetic<D>::value,
+    point<typename detail::std_common_type<T, D>::type>>::type
 {
     static_assert(std::is_arithmetic<D>::value, "denominator is not arithmetic type");
     using result_type = typename detail::std_common_type<T, D>::type;
@@ -180,8 +170,7 @@ auto operator/(point<T> const& p, D d)
         double const x = static_cast<double>(p.x) / static_cast<double>(d);
         double const y = static_cast<double>(p.y) / static_cast<double>(d);
         return point<result_type>{
-            static_cast<result_type>(iround(x)),
-            static_cast<result_type>(iround(y))};
+            static_cast<result_type>(iround(x)), static_cast<result_type>(iround(y))};
     }
     else
     {
@@ -191,13 +180,9 @@ auto operator/(point<T> const& p, D d)
 
 /// \ingroup PointModel
 template <typename T, typename M>
-BOOST_FORCEINLINE
-auto operator*(point<T> const& p, M m)
-    -> typename std::enable_if
-    <
-        std::is_arithmetic<M>::value,
-        point<typename detail::std_common_type<T, M>::type>
-    >::type
+BOOST_FORCEINLINE auto operator*(point<T> const& p, M m) -> typename std::enable_if<
+    std::is_arithmetic<M>::value,
+    point<typename detail::std_common_type<T, M>::type>>::type
 {
     static_assert(std::is_arithmetic<M>::value, "multiplier is not arithmetic type");
     using result_type = typename detail::std_common_type<T, M>::type;
@@ -206,13 +191,9 @@ auto operator*(point<T> const& p, M m)
 
 /// \ingroup PointModel
 template <typename T, typename M>
-BOOST_FORCEINLINE
-auto operator*(M m, point<T> const& p)
-    -> typename std::enable_if
-    <
-        std::is_arithmetic<M>::value,
-        point<typename detail::std_common_type<T, M>::type>
-    >::type
+BOOST_FORCEINLINE auto operator*(M m, point<T> const& p) -> typename std::enable_if<
+    std::is_arithmetic<M>::value,
+    point<typename detail::std_common_type<T, M>::type>>::type
 {
     static_assert(std::is_arithmetic<M>::value, "multiplier is not arithmetic type");
     using result_type = typename detail::std_common_type<T, M>::type;
@@ -221,8 +202,7 @@ auto operator*(M m, point<T> const& p)
 
 /// \ingroup PointModel
 template <std::size_t K, typename T>
-BOOST_FORCEINLINE
-T const& axis_value(point<T> const& p)
+BOOST_FORCEINLINE T const& axis_value(point<T> const& p)
 {
     static_assert(K < point<T>::num_dimensions, "axis index out of range");
     return p[K];
@@ -230,8 +210,7 @@ T const& axis_value(point<T> const& p)
 
 /// \ingroup PointModel
 template <std::size_t K, typename T>
-BOOST_FORCEINLINE
-T& axis_value(point<T>& p)
+BOOST_FORCEINLINE T& axis_value(point<T>& p)
 {
     static_assert(K < point<T>::num_dimensions, "axis index out of range");
     return p[K];
@@ -249,45 +228,45 @@ template <typename T>
 inline point<std::ptrdiff_t> iround(point<T> const& p)
 {
     static_assert(std::is_integral<T>::value, "T is not integer");
-    return { static_cast<std::ptrdiff_t>(p.x), static_cast<std::ptrdiff_t>(p.y) };
+    return {static_cast<std::ptrdiff_t>(p.x), static_cast<std::ptrdiff_t>(p.y)};
 }
 
 /// \ingroup PointAlgorithm
 inline point<std::ptrdiff_t> iround(point<float> const& p)
 {
-    return { iround(p.x), iround(p.y) };
+    return {iround(p.x), iround(p.y)};
 }
 
 /// \ingroup PointAlgorithm
 inline point<std::ptrdiff_t> iround(point<double> const& p)
 {
-    return { iround(p.x), iround(p.y) };
+    return {iround(p.x), iround(p.y)};
 }
 
 /// \ingroup PointAlgorithm
 inline point<std::ptrdiff_t> ifloor(point<float> const& p)
 {
-    return { ifloor(p.x), ifloor(p.y) };
+    return {ifloor(p.x), ifloor(p.y)};
 }
 
 /// \ingroup PointAlgorithm
 inline point<std::ptrdiff_t> ifloor(point<double> const& p)
 {
-    return { ifloor(p.x), ifloor(p.y) };
+    return {ifloor(p.x), ifloor(p.y)};
 }
 
 /// \ingroup PointAlgorithm
 inline point<std::ptrdiff_t> iceil(point<float> const& p)
 {
-    return { iceil(p.x), iceil(p.y) };
+    return {iceil(p.x), iceil(p.y)};
 }
 
 /// \ingroup PointAlgorithm
 inline point<std::ptrdiff_t> iceil(point<double> const& p)
 {
-    return { iceil(p.x), iceil(p.y) };
+    return {iceil(p.x), iceil(p.y)};
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

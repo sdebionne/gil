@@ -10,8 +10,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/png.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -21,14 +21,14 @@
 #include "paths.hpp"
 #include "subimage_test.hpp"
 
-namespace gil  = boost::gil;
+namespace gil = boost::gil;
 namespace mp11 = boost::mp11;
 
 #ifdef BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
 void test_read_image_info_using_string()
 {
     {
-        using backend_t   = gil::get_reader_backend<std::string const, gil::png_tag>::type;
+        using backend_t = gil::get_reader_backend<std::string const, gil::png_tag>::type;
         backend_t backend = gil::read_image_info(png_filename, gil::png_tag());
 
         BOOST_TEST_EQ(backend._info._width, 1000u);
@@ -236,9 +236,9 @@ void test_stream()
     std::string filename(png_out + "stream_test.png");
     std::ofstream out(filename.c_str(), std::ios_base::binary);
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(out, view(dst), gil::png_tag());
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_stream_2()
@@ -265,19 +265,14 @@ void test_subimage()
 
 void test_dynamic_image()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::rgba8_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::rgba8_image_t>
+        image;
 
     gil::read_image(png_filename.c_str(), image, gil::png_tag());
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(png_out + "dynamic_image_test.png", gil::view(image), gil::png_tag());
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -297,5 +292,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

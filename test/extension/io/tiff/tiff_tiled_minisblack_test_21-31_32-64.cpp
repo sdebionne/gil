@@ -19,7 +19,11 @@ namespace gil = boost::gil;
 
 #ifdef BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
 
-BOOST_PP_REPEAT_FROM_TO(21, 32, BOOST_GIL_TEST_GENERATE_TILE_STRIP_COMPARISON_BIT_ALIGNED_MINISBLACK, minisblack )
+BOOST_PP_REPEAT_FROM_TO(
+    21,
+    32,
+    BOOST_GIL_TEST_GENERATE_TILE_STRIP_COMPARISON_BIT_ALIGNED_MINISBLACK,
+    minisblack)
 
 void test_read_tile_and_compare_with_minisblack_strip_32()
 {
@@ -60,5 +64,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES

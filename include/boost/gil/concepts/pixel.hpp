@@ -13,23 +13,24 @@
 #include <boost/gil/concepts/color.hpp>
 #include <boost/gil/concepts/color_base.hpp>
 #include <boost/gil/concepts/concept_check.hpp>
+#include <boost/gil/concepts/detail/type_traits.hpp>
 #include <boost/gil/concepts/fwd.hpp>
 #include <boost/gil/concepts/pixel_based.hpp>
-#include <boost/gil/concepts/detail/type_traits.hpp>
 #include <boost/gil/detail/mp11.hpp>
 
 #include <cstddef>
+
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 namespace boost { namespace gil {
@@ -76,16 +77,12 @@ struct PixelConcept
         // gil_function_requires<PixelValueConcept<value_type>>();
 
         using reference = typename P::reference;
-        gil_function_requires<PixelConcept
-            <
-                typename detail::remove_const_and_reference<reference>::type
-            >>();
+        gil_function_requires<
+            PixelConcept<typename detail::remove_const_and_reference<reference>::type>>();
 
         using const_reference = typename P::const_reference;
-        gil_function_requires<PixelConcept
-            <
-                typename detail::remove_const_and_reference<const_reference>::type
-            >>();
+        gil_function_requires<
+            PixelConcept<typename detail::remove_const_and_reference<const_reference>::type>>();
     }
 };
 
@@ -199,22 +196,20 @@ namespace detail {
 
 template <typename P1, typename P2, int K>
 struct channels_are_pairwise_compatible
-    : mp11::mp_and
-    <
-        channels_are_pairwise_compatible<P1, P2, K - 1>,
-        channels_are_compatible
-        <
-            typename kth_semantic_element_reference_type<P1, K>::type,
-            typename kth_semantic_element_reference_type<P2, K>::type
-        >
-    >
+    : mp11::mp_and<
+          channels_are_pairwise_compatible<P1, P2, K - 1>,
+          channels_are_compatible<
+              typename kth_semantic_element_reference_type<P1, K>::type,
+              typename kth_semantic_element_reference_type<P2, K>::type>>
 {
 };
 
 template <typename P1, typename P2>
-struct channels_are_pairwise_compatible<P1, P2, -1> : std::true_type {};
+struct channels_are_pairwise_compatible<P1, P2, -1> : std::true_type
+{
+};
 
-} // namespace detail
+}  // namespace detail
 
 /// \ingroup PixelAlgorithm
 /// \brief Returns whether two pixels are compatible
@@ -224,18 +219,11 @@ struct channels_are_pairwise_compatible<P1, P2, -1> : std::true_type {};
 /// \tparam P2 Models PixelConcept
 template <typename P1, typename P2>
 struct pixels_are_compatible
-    : mp11::mp_and
-        <
-            typename color_spaces_are_compatible
-            <
-                typename color_space_type<P1>::type,
-                typename color_space_type<P2>::type
-            >::type,
-            detail::channels_are_pairwise_compatible
-            <
-                P1, P2, num_channels<P1>::value - 1
-            >
-        >
+    : mp11::mp_and<
+          typename color_spaces_are_compatible<
+              typename color_space_type<P1>::type,
+              typename color_space_type<P2>::type>::type,
+          detail::channels_are_pairwise_compatible<P1, P2, num_channels<P1>::value - 1>>
 {
 };
 
@@ -286,14 +274,14 @@ struct PixelConvertibleConcept
     DstP dst;
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

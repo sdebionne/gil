@@ -21,8 +21,8 @@ namespace gil = boost::gil;
 void test_read_info_tile_minisblack_float()
 {
     using backend_t = gil::get_reader_backend<std::string const, gil::tiff_tag>::type;
-    backend_t backend =
-        gil::read_image_info(tiff_in_GM + "tiger-minisblack-float-tile-16.tif", gil::tiff_tag());
+    backend_t backend
+        = gil::read_image_info(tiff_in_GM + "tiger-minisblack-float-tile-16.tif", gil::tiff_tag());
 
     BOOST_TEST_EQ(backend._info._tile_width, 16);
     BOOST_TEST_EQ(backend._info._tile_length, 16);
@@ -31,8 +31,8 @@ void test_read_info_tile_minisblack_float()
 void test_read_info_tile_minisblack()
 {
     using backend_t = gil::get_reader_backend<std::string const, gil::tiff_tag>::type;
-    backend_t backend =
-        gil::read_image_info(tiff_in_GM + "tiger-minisblack-tile-08.tif", gil::tiff_tag());
+    backend_t backend
+        = gil::read_image_info(tiff_in_GM + "tiger-minisblack-tile-08.tif", gil::tiff_tag());
 
     BOOST_TEST_EQ(backend._info._tile_width, 16);
     BOOST_TEST_EQ(backend._info._tile_length, 16);
@@ -41,8 +41,8 @@ void test_read_info_tile_minisblack()
 void test_read_info_tile_palette()
 {
     using backend_t = gil::get_reader_backend<std::string const, gil::tiff_tag>::type;
-    backend_t backend =
-        gil::read_image_info(tiff_in_GM + "tiger-palette-tile-08.tif", gil::tiff_tag());
+    backend_t backend
+        = gil::read_image_info(tiff_in_GM + "tiger-palette-tile-08.tif", gil::tiff_tag());
 
     BOOST_TEST_EQ(backend._info._tile_width, 16);
     BOOST_TEST_EQ(backend._info._tile_length, 16);
@@ -51,8 +51,8 @@ void test_read_info_tile_palette()
 void test_read_info_tile_rgb()
 {
     using backend_t = gil::get_reader_backend<std::string const, gil::tiff_tag>::type;
-    backend_t backend =
-        gil::read_image_info(tiff_in_GM + "tiger-rgb-tile-contig-08.tif", gil::tiff_tag());
+    backend_t backend
+        = gil::read_image_info(tiff_in_GM + "tiger-rgb-tile-contig-08.tif", gil::tiff_tag());
 
     BOOST_TEST_EQ(backend._info._tile_width, 16);
     BOOST_TEST_EQ(backend._info._tile_length, 16);
@@ -61,8 +61,8 @@ void test_read_info_tile_rgb()
 void test_read_info_tile_planar()
 {
     using backend_t = gil::get_reader_backend<std::string const, gil::tiff_tag>::type;
-    backend_t backend =
-        gil::read_image_info(tiff_in_GM + "tiger-rgb-tile-planar-08.tif", gil::tiff_tag());
+    backend_t backend
+        = gil::read_image_info(tiff_in_GM + "tiger-rgb-tile-planar-08.tif", gil::tiff_tag());
 
     BOOST_TEST_EQ(backend._info._tile_width, 16);
     BOOST_TEST_EQ(backend._info._tile_length, 16);
@@ -80,5 +80,7 @@ int main()
 }
 
 #else
-int main() {}
+int main()
+{
+}
 #endif  // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES

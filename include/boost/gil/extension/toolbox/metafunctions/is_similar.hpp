@@ -12,24 +12,27 @@
 
 #include <type_traits>
 
-namespace boost{ namespace gil {
+namespace boost { namespace gil {
 
 /// is_similar metafunctions
 /// \brief Determines if two pixel types are similar.
 
-template<typename A, typename B>
-struct is_similar : std::false_type {};
+template <typename A, typename B>
+struct is_similar : std::false_type
+{
+};
 
-template<typename A>
-struct is_similar<A, A> : std::true_type {};
+template <typename A>
+struct is_similar<A, A> : std::true_type
+{
+};
 
-template<typename B,int I, int S, bool M, int I2>
-struct is_similar
-    <
-        packed_channel_reference<B,  I, S, M>,
-        packed_channel_reference<B, I2, S, M>
-    > : std::true_type {};
+template <typename B, int I, int S, bool M, int I2>
+struct is_similar<packed_channel_reference<B, I, S, M>, packed_channel_reference<B, I2, S, M>>
+    : std::true_type
+{
+};
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

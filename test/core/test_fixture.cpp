@@ -6,16 +6,18 @@
 // http://www.boost.org/LICENSE_1_0.txt
 //
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wconversion"
-#pragma clang diagnostic ignored "-Wfloat-equal"
-#pragma clang diagnostic ignored "-Wsign-conversion"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wconversion"
+#    pragma clang diagnostic ignored "-Wfloat-equal"
+#    pragma clang diagnostic ignored "-Wsign-conversion"
 #elif BOOST_GCC >= 40700
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wfloat-equal"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wconversion"
+#    pragma GCC diagnostic ignored "-Wfloat-equal"
+#    pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
+
+#include "test_fixture.hpp"
 
 #include <boost/gil.hpp>
 
@@ -24,8 +26,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <vector>
-
-#include "test_fixture.hpp"
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
@@ -51,7 +51,8 @@ void test_random_value()
     // Generate N pseudo-random values
     fixture::random_value<std::uint8_t> random;
     std::vector<std::uint8_t> v(10, 0);
-    for (auto& i : v) i = random();
+    for (auto& i : v)
+        i = random();
 
     // Require not all of N values are equal (duplicates are possible!)
     std::sort(v.begin(), v.end());

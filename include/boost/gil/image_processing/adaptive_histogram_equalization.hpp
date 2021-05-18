@@ -27,9 +27,9 @@ namespace boost { namespace gil {
 /// \defgroup AHE AHE
 /// \brief Contains implementation and description of the algorithm used to compute
 ///        adaptive histogram equalization of input images. Naming for the AHE functions
-///        are done in the following way 
+///        are done in the following way
 ///             <feature-1>_<feature-2>_.._<feature-n>ahe
-///        For example, for AHE done using local (non-overlapping) tiles/blocks and 
+///        For example, for AHE done using local (non-overlapping) tiles/blocks and
 ///        final output interpolated among tiles , it is called
 ///             non_overlapping_interpolated_clahe
 ///
@@ -48,16 +48,16 @@ namespace detail {
 template <typename SrcHist>
 double actual_clip_limit(SrcHist const& src_hist, double cliplimit = 0.03)
 {
-    double epsilon       = 1.0;
-    using value_t        = typename SrcHist::value_type;
-    double sum           = src_hist.sum();
+    double epsilon = 1.0;
+    using value_t = typename SrcHist::value_type;
+    double sum = src_hist.sum();
     std::size_t num_bins = src_hist.size();
 
     cliplimit = sum * cliplimit;
     long low = 0, high = cliplimit, middle = low;
     while (high - low >= 1)
     {
-        middle      = (low + high + 1) >> 1;
+        middle = (low + high + 1) >> 1;
         long excess = 0;
         std::for_each(src_hist.begin(), src_hist.end(), [&](value_t const& v) {
             if (v.second > middle)
@@ -75,20 +75,20 @@ double actual_clip_limit(SrcHist const& src_hist, double cliplimit = 0.03)
 
 /// \fn void clip_and_redistribute
 /// \ingroup AHE-helpers
-/// \brief Clips and redistributes excess pixels based on the actual clip limit value 
+/// \brief Clips and redistributes excess pixels based on the actual clip limit value
 ///        obtained from the other helper function actual_clip_limit
 ///        Reference - Graphic Gems 4, Pg. 474
 ///        (http://cas.xav.free.fr/Graphics%20Gems%204%20-%20Paul%20S.%20Heckbert.pdf)
-/// 
+///
 template <typename SrcHist, typename DstHist>
 void clip_and_redistribute(SrcHist const& src_hist, DstHist& dst_hist, double clip_limit = 0.03)
 {
-    using value_t            = typename SrcHist::value_type;
-    double sum               = src_hist.sum();
+    using value_t = typename SrcHist::value_type;
+    double sum = src_hist.sum();
     double actual_clip_value = detail::actual_clip_limit(src_hist, clip_limit);
     // double actual_clip_value = clip_limit;
     long actual_clip_limit = actual_clip_value * sum;
-    double excess          = 0;
+    double excess = 0;
     std::for_each(src_hist.begin(), src_hist.end(), [&](value_t const& v) {
         if (v.second > actual_clip_limit)
             excess += v.second - actual_clip_limit;
@@ -102,7 +102,7 @@ void clip_and_redistribute(SrcHist const& src_hist, DstHist& dst_hist, double cl
     long rem = long(excess) % src_hist.size();
     if (rem == 0)
         return;
-    long period       = round(src_hist.size() / rem);
+    long period = round(src_hist.size() / rem);
     std::size_t index = 0;
     while (rem)
     {
@@ -131,18 +131,18 @@ void clip_and_redistribute(SrcHist const& src_hist, DstHist& dst_hist, double cl
 /// @param src_mask      Input   Mask on input image to ignore specified pixels
 /// \brief Performs local histogram equalization on tiles of size (tile_width_x, tile_width_y)
 ///        Then uses the clip limit to redistribute excess pixels above the limit uniformly to
-///        other bins. The clip limit is specified as a fraction i.e. a bin's value is clipped 
-///        if bin_value >= clip_limit * (Total number of pixels in the tile) 
+///        other bins. The clip limit is specified as a fraction i.e. a bin's value is clipped
+///        if bin_value >= clip_limit * (Total number of pixels in the tile)
 ///
 template <typename SrcView, typename DstView>
 void non_overlapping_interpolated_clahe(
     SrcView const& src_view,
     DstView const& dst_view,
-    std::size_t tile_width_x                = 20,
-    std::size_t tile_width_y                = 20,
-    double clip_limit                       = 0.03,
-    std::size_t bin_width                   = 1.0,
-    bool mask                               = false,
+    std::size_t tile_width_x = 20,
+    std::size_t tile_width_y = 20,
+    double clip_limit = 0.03,
+    std::size_t bin_width = 1.0,
+    bool mask = false,
     std::vector<std::vector<bool>> src_mask = {})
 {
     gil_function_requires<ImageViewConcept<SrcView>>();
@@ -153,14 +153,14 @@ void non_overlapping_interpolated_clahe(
             typename color_space_type<SrcView>::type,
             typename color_space_type<DstView>::type>::value,
         "Source and destination views must have same color space");
-    
+
     using source_channel_t = typename channel_type<SrcView>::type;
-    using dst_channel_t    = typename channel_type<DstView>::type;
-    using coord_t          = typename SrcView::x_coord_t;
+    using dst_channel_t = typename channel_type<DstView>::type;
+    using coord_t = typename SrcView::x_coord_t;
 
     std::size_t const channels = num_channels<SrcView>::value;
-    coord_t const width        = src_view.width();
-    coord_t const height       = src_view.height();
+    coord_t const width = src_view.width();
+    coord_t const height = src_view.height();
 
     // Find control points
 
@@ -170,18 +170,18 @@ void non_overlapping_interpolated_clahe(
     coord_t sample_y1 = tile_width_y / 2;
     coord_t sample_y2 = (tile_width_y + 1) / 2;
 
-    auto extend_left   = tile_width_x;
-    auto extend_top    = tile_width_y;
-    auto extend_right  = (tile_width_x - width % tile_width_x) % tile_width_x + tile_width_x;
+    auto extend_left = tile_width_x;
+    auto extend_top = tile_width_y;
+    auto extend_right = (tile_width_x - width % tile_width_x) % tile_width_x + tile_width_x;
     auto extend_bottom = (tile_width_y - height % tile_width_y) % tile_width_y + tile_width_y;
 
-    auto new_width  = width + extend_left + extend_right;
+    auto new_width = width + extend_left + extend_right;
     auto new_height = height + extend_top + extend_bottom;
 
     image<typename SrcView::value_type> padded_img(new_width, new_height);
 
-    auto top_left_x     = tile_width_x;
-    auto top_left_y     = tile_width_y;
+    auto top_left_x = tile_width_x;
+    auto top_left_y = tile_width_y;
     auto bottom_right_x = tile_width_x + width;
     auto bottom_right_y = tile_width_y + height;
 
@@ -194,7 +194,7 @@ void non_overlapping_interpolated_clahe(
         std::vector<std::map<source_channel_t, source_channel_t>> prev_map(
             new_width / tile_width_x),
             next_map((new_width / tile_width_x));
-        
+
         coord_t prev = 0, next = 1;
         auto channel_view = nth_channel_view(view(padded_img), k);
 
@@ -212,26 +212,28 @@ void non_overlapping_interpolated_clahe(
                 for (std::ptrdiff_t j = sample_x1; j < new_width; j += tile_width_x)
                 {
                     auto img_view = subimage_view(
-                        channel_view, j - sample_x1, next * tile_width_y,
+                        channel_view,
+                        j - sample_x1,
+                        next * tile_width_y,
                         std::max<int>(
-                            std::min<int>(tile_width_x + j - sample_x1, bottom_right_x) -
-                                (j - sample_x1),
+                            std::min<int>(tile_width_x + j - sample_x1, bottom_right_x)
+                                - (j - sample_x1),
                             0),
                         std::max<int>(
-                            std::min<int>((next + 1) * tile_width_y, bottom_right_y) -
-                                next * tile_width_y,
+                            std::min<int>((next + 1) * tile_width_y, bottom_right_y)
+                                - next * tile_width_y,
                             0));
 
                     fill_histogram(
-                        img_view, next_row[(j - sample_x1) / tile_width_x], bin_width, false,
-                        false);
-                    
+                        img_view, next_row[(j - sample_x1) / tile_width_x], bin_width, false, false);
+
                     detail::clip_and_redistribute(
                         next_row[(j - sample_x1) / tile_width_x],
-                        next_row[(j - sample_x1) / tile_width_x], clip_limit);
+                        next_row[(j - sample_x1) / tile_width_x],
+                        clip_limit);
 
-                    next_map[(j - sample_x1) / tile_width_x] =
-                        histogram_equalization(next_row[(j - sample_x1) / tile_width_x]);
+                    next_map[(j - sample_x1) / tile_width_x]
+                        = histogram_equalization(next_row[(j - sample_x1) / tile_width_x]);
                 }
             }
             bool prev_row_mask = 1, next_row_mask = 1;
@@ -246,15 +248,15 @@ void non_overlapping_interpolated_clahe(
                     prev_col_mask = false;
                 else if ((j - sample_x1) / tile_width_x + 1 == new_width / tile_width_x - 1)
                     next_col_mask = false;
-                
+
                 // Bilinear interpolation
                 point_t top_left(
                     (j - sample_x1) / tile_width_x * tile_width_x + sample_x1,
-                                    prev * tile_width_y + sample_y1);
+                    prev * tile_width_y + sample_y1);
                 point_t top_right(top_left.x + tile_width_x, top_left.y);
                 point_t bottom_left(top_left.x, top_left.y + tile_width_y);
                 point_t bottom_right(top_left.x + tile_width_x, top_left.y + tile_width_y);
-                
+
                 long double x_diff = top_right.x - top_left.x;
                 long double y_diff = bottom_left.y - top_left.y;
 
@@ -272,28 +274,29 @@ void non_overlapping_interpolated_clahe(
                 else if (next_col_mask == 0)
                     x2 = 1;
 
-                long double numerator =
-                    ((prev_row_mask & prev_col_mask) * x2 *
-                         prev_map[(top_left.x - sample_x1) / tile_width_x][channel_view(j, i)] +
-                     (prev_row_mask & next_col_mask) * x1 *
-                         prev_map[(top_right.x - sample_x1) / tile_width_x][channel_view(j, i)]) *
-                        y2 +
-                    ((next_row_mask & prev_col_mask) * x2 *
-                         next_map[(bottom_left.x - sample_x1) / tile_width_x][channel_view(j, i)] +
-                     (next_row_mask & next_col_mask) * x1 *
-                         next_map[(bottom_right.x - sample_x1) / tile_width_x][channel_view(j, i)]) *
-                        y1;
-                
+                long double numerator
+                    = ((prev_row_mask & prev_col_mask) * x2
+                           * prev_map[(top_left.x - sample_x1) / tile_width_x][channel_view(j, i)]
+                       + (prev_row_mask & next_col_mask) * x1
+                             * prev_map[(top_right.x - sample_x1) / tile_width_x]
+                                       [channel_view(j, i)])
+                        * y2
+                    + ((next_row_mask & prev_col_mask) * x2
+                           * next_map[(bottom_left.x - sample_x1) / tile_width_x][channel_view(j, i)]
+                       + (next_row_mask & next_col_mask) * x1
+                             * next_map[(bottom_right.x - sample_x1) / tile_width_x]
+                                       [channel_view(j, i)])
+                          * y1;
+
                 if (mask && !src_mask[i - top_left_y][j - top_left_x])
                 {
-                    dst_view(j - top_left_x, i - top_left_y) = 
-                        channel_convert<dst_channel_t>(
-                            static_cast<source_channel_t>(channel_view(i, j)));
+                    dst_view(j - top_left_x, i - top_left_y) = channel_convert<dst_channel_t>(
+                        static_cast<source_channel_t>(channel_view(i, j)));
                 }
                 else
                 {
-                    dst_view(j - top_left_x, i - top_left_y) = 
-                        channel_convert<dst_channel_t>(static_cast<source_channel_t>(numerator));
+                    dst_view(j - top_left_x, i - top_left_y)
+                        = channel_convert<dst_channel_t>(static_cast<source_channel_t>(numerator));
                 }
             }
         }

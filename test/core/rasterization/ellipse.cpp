@@ -5,46 +5,50 @@
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <boost/core/lightweight_test.hpp>
 #include <boost/gil.hpp>
+
+#include <boost/core/lightweight_test.hpp>
+
 #include <array>
 #include <cmath>
 #include <vector>
 
 namespace gil = boost::gil;
 
-// This function utilizes the fact that sum of distances of a point on an ellipse from its foci 
+// This function utilizes the fact that sum of distances of a point on an ellipse from its foci
 // is equal to the length of major axis of the ellipse.
 // Parameters b and a represent half of lengths of vertical and horizontal axis respectively.
 void test_rasterizer_follows_equation(
-    std::vector<std::array<std::ptrdiff_t, 2>> trajectory_points, float a, float b)
+    std::vector<std::array<std::ptrdiff_t, 2>> trajectory_points,
+    float a,
+    float b)
 {
     float focus_x, focus_y;
-    if (a > b) // For horizontal ellipse
+    if (a > b)  // For horizontal ellipse
     {
         focus_x = a * std::sqrt(1 - b * b / (a * a));
         focus_y = 0;
     }
-    else // For vertical ellipse
+    else  // For vertical ellipse
     {
         focus_x = 0;
         focus_y = b * std::sqrt(1 - a * a / (b * b));
     }
-    
+
     for (auto trajectory_point : trajectory_points)
     {
         // To suppress conversion warnings from compiler
-        std::array<float, 2> point {
+        std::array<float, 2> point{
             static_cast<float>(trajectory_point[0]), static_cast<float>(trajectory_point[1])};
 
-        double dist_sum = std::sqrt(std::pow(focus_x - point[0], 2) + 
-            std::pow(focus_y - point[1], 2)) + std::sqrt(std::pow( - focus_x - point[0], 2) + 
-            std::pow( - focus_y - point[1], 2));
+        double dist_sum
+            = std::sqrt(std::pow(focus_x - point[0], 2) + std::pow(focus_y - point[1], 2))
+            + std::sqrt(std::pow(-focus_x - point[0], 2) + std::pow(-focus_y - point[1], 2));
         if (a > b)
         {
             BOOST_TEST(std::abs(dist_sum - 2 * a) < 1);
         }
-        else 
+        else
         {
             BOOST_TEST(std::abs(dist_sum - 2 * b) < 1);
         }

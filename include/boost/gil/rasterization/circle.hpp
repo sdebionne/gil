@@ -11,6 +11,7 @@
 
 #include <boost/gil/detail/math.hpp>
 #include <boost/gil/point.hpp>
+
 #include <cmath>
 #include <cstddef>
 
@@ -44,8 +45,9 @@ struct trigonometric_circle_rasterizer
     /// \brief Calculate the amount of points that rasterizer will output
     std::ptrdiff_t point_count(std::ptrdiff_t radius) const noexcept
     {
-        return 8 * static_cast<std::ptrdiff_t>(
-                       std::round(detail::pi / 4 / minimum_angle_step(radius)) + 1);
+        return 8
+             * static_cast<std::ptrdiff_t>(
+                   std::round(detail::pi / 4 / minimum_angle_step(radius)) + 1);
     }
 
     /// \brief perform rasterization and output into d_first
@@ -89,8 +91,9 @@ struct midpoint_circle_rasterizer
         // the reason for pulling 8 out is so that when the expression radius * cos(45 degrees)
         // is used, it would yield the same result as here
         // + 1 at the end is because the point at radius itself is computed as well
-        return 8 * static_cast<std::ptrdiff_t>(
-                       std::round(radius * std::cos(boost::gil::detail::pi / 4)) + 1);
+        return 8
+             * static_cast<std::ptrdiff_t>(
+                   std::round(radius * std::cos(boost::gil::detail::pi / 4)) + 1);
     }
 
     /// \brief perform rasterization and output into d_first
@@ -122,5 +125,5 @@ struct midpoint_circle_rasterizer
         }
     }
 };
-}} // namespace boost::gil
+}}  // namespace boost::gil
 #endif

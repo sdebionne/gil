@@ -7,8 +7,8 @@
 //
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/jpeg.hpp>
-#include <boost/gil/extension/numeric/sampler.hpp>
 #include <boost/gil/extension/numeric/resample.hpp>
+#include <boost/gil/extension/numeric/sampler.hpp>
 
 // Example for resize_view() in the numeric extension
 

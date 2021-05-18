@@ -45,7 +45,7 @@ void test_index_image()
         gil::generate_pixels(img.get_palette_view(), pixel_generator);
 
         gil::gray8_pixel_t index{0};
-        index = *img.get_indices_view().xy_at(0, 0); // verify values along first row
+        index = *img.get_indices_view().xy_at(0, 0);  // verify values along first row
         BOOST_TEST_EQ(static_cast<int>(index), (0 + 1));
         index = *img.get_indices_view().xy_at(128, 0);
         BOOST_TEST_EQ(static_cast<int>(index), (128 + 1));
@@ -67,12 +67,11 @@ void test_index_image()
         using image_t = gil::indexed_image<gil::gray8_pixel_t, gil::rgb8_pixel_t>;
         image_t img(640, 480, 256);
 
-        gil::generate_pixels(img.get_indices_view(), []() -> uint8_t
-            {
-                static int i = 0;
-                i = (i > 255) ? 0 : (i + 1);
-                return static_cast<std::uint8_t>(i);
-            });
+        gil::generate_pixels(img.get_indices_view(), []() -> uint8_t {
+            static int i = 0;
+            i = (i > 255) ? 0 : (i + 1);
+            return static_cast<std::uint8_t>(i);
+        });
         gil::generate_pixels(img.get_palette_view(), pixel_generator);
 
         std::uint8_t index = *img.get_indices_view().xy_at(128, 0);
@@ -123,13 +122,17 @@ void test_index_image_view()
     palette[2] = gil::rgb8_pixel_t(70, 80, 90);
 
     // create image views from raw memory
-    auto indices_view = gil::interleaved_view(width, height,
-        (gil::gray8_image_t::view_t::x_iterator) indices.data(),
-        width); // row size in bytes
+    auto indices_view = gil::interleaved_view(
+        width,
+        height,
+        (gil::gray8_image_t::view_t::x_iterator)indices.data(),
+        width);  // row size in bytes
 
-    auto palette_view = gil::interleaved_view(100, 1,
-        (gil::rgb8_image_t::view_t::x_iterator) palette.data(),
-        num_colors * 3); // row size in bytes
+    auto palette_view = gil::interleaved_view(
+        100,
+        1,
+        (gil::rgb8_image_t::view_t::x_iterator)palette.data(),
+        num_colors * 3);  // row size in bytes
 
     auto ii_view = gil::view(indices_view, palette_view);
 

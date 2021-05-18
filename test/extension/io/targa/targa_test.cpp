@@ -9,8 +9,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/targa.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -28,7 +28,7 @@ namespace mp11 = boost::mp11;
 void test_read_image_info_using_string()
 {
     {
-        using backend_t   = gil::get_reader_backend<std::string const, gil::targa_tag>::type;
+        using backend_t = gil::get_reader_backend<std::string const, gil::targa_tag>::type;
         backend_t backend = gil::read_image_info(targa_filename, gil::targa_tag());
 
         BOOST_TEST_EQ(backend._info._width, 124);
@@ -37,7 +37,7 @@ void test_read_image_info_using_string()
     {
         std::ifstream in(targa_filename.c_str(), std::ios::binary);
 
-        using backend_t   = gil::get_reader_backend<std::ifstream, gil::targa_tag>::type;
+        using backend_t = gil::get_reader_backend<std::ifstream, gil::targa_tag>::type;
         backend_t backend = gil::read_image_info(in, gil::targa_tag());
 
         BOOST_TEST_EQ(backend._info._width, 124);
@@ -46,7 +46,7 @@ void test_read_image_info_using_string()
     {
         FILE* file = fopen(targa_filename.c_str(), "rb");
 
-        using backend_t   = gil::get_reader_backend<FILE*, gil::targa_tag>::type;
+        using backend_t = gil::get_reader_backend<FILE*, gil::targa_tag>::type;
         backend_t backend = gil::read_image_info(file, gil::targa_tag());
 
         BOOST_TEST_EQ(backend._info._width, 124);
@@ -55,7 +55,7 @@ void test_read_image_info_using_string()
     {
         fs::path my_path(targa_filename);
 
-        using backend_t   = gil::get_reader_backend<fs::path, gil::targa_tag>::type;
+        using backend_t = gil::get_reader_backend<fs::path, gil::targa_tag>::type;
         backend_t backend = gil::read_image_info(my_path, gil::targa_tag());
 
         BOOST_TEST_EQ(backend._info._width, 124);
@@ -254,13 +254,8 @@ void test_subimage()
 
 void test_dynamic_image()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::rgba8_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::rgba8_image_t>
+        image;
 
     gil::read_image(targa_filename.c_str(), image, gil::targa_tag());
     gil::write_view(targa_out + "dynamic_image_test.tga", gil::view(image), gil::targa_tag());

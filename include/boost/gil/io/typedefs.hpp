@@ -9,32 +9,51 @@
 #define BOOST_GIL_IO_TYPEDEFS_HPP
 
 #ifdef BOOST_GIL_IO_ENABLE_GRAY_ALPHA
-#include <boost/gil/extension/toolbox/color_spaces/gray_alpha.hpp>
-#endif // BOOST_GIL_IO_ENABLE_GRAY_ALPHA
+#    include <boost/gil/extension/toolbox/color_spaces/gray_alpha.hpp>
+#endif  // BOOST_GIL_IO_ENABLE_GRAY_ALPHA
 
 #include <boost/gil/image.hpp>
 #include <boost/gil/point.hpp>
 #include <boost/gil/utilities.hpp>
 
-#include <type_traits>
 #include <vector>
+
+#include <type_traits>
 
 namespace boost { namespace gil {
 
-struct double_zero { static double apply() { return 0.0; } };
-struct double_one  { static double apply() { return 1.0; } };
+struct double_zero
+{
+    static double apply()
+    {
+        return 0.0;
+    }
+};
+struct double_one
+{
+    static double apply()
+    {
+        return 1.0;
+    }
+};
 
 using byte_t = unsigned char;
 using byte_vector_t = std::vector<byte_t>;
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 namespace boost {
 
-template<> struct is_floating_point<gil::float32_t> : std::true_type {};
-template<> struct is_floating_point<gil::float64_t> : std::true_type {};
+template <>
+struct is_floating_point<gil::float32_t> : std::true_type
+{
+};
+template <>
+struct is_floating_point<gil::float64_t> : std::true_type
+{
+};
 
-} // namespace boost
+}  // namespace boost
 
 namespace boost { namespace gil {
 
@@ -56,7 +75,7 @@ using gray64f_pixel_t = pixel<double, gray_layout_t>;
 using gray_alpha8_pixel_t = pixel<uint8_t, gray_alpha_layout_t>;
 using gray_alpha16_pixel_t = pixel<uint16_t, gray_alpha_layout_t>;
 using gray_alpha64f_pixel_t = pixel<double, gray_alpha_layout_t>;
-#endif // BOOST_GIL_IO_ENABLE_GRAY_ALPHA
+#endif  // BOOST_GIL_IO_ENABLE_GRAY_ALPHA
 
 using rgb64f_pixel_t = pixel<double, rgb_layout_t>;
 using rgba64f_pixel_t = pixel<double, rgba_layout_t>;
@@ -70,13 +89,13 @@ using gray_alpha32f_planar_image_t = image<gray_alpha32f_pixel_t, true>;
 using gray_alpha64f_image_t = image<gray_alpha64f_pixel_t, false>;
 using gray_alpha64f_planar_image_t = image<gray_alpha64f_pixel_t, true>;
 
-#endif // BOOST_GIL_IO_ENABLE_GRAY_ALPHA
+#endif  // BOOST_GIL_IO_ENABLE_GRAY_ALPHA
 
 using rgb64f_image_t = image<rgb64f_pixel_t, false>;
 using rgb64f_planar_image_t = image<rgb64f_pixel_t, true>;
 using rgba64f_image_t = image<rgba64f_pixel_t, false>;
 using rgba64f_planar_image_t = image<rgba64f_pixel_t, true>;
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

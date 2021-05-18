@@ -25,7 +25,7 @@ namespace boost { namespace gil {
 //////////////////////////////////////////////////////////
 /// Histogram extension for STL container
 //////////////////////////////////////////////////////////
-/// \defgroup Histogram - STL Containers 
+/// \defgroup Histogram - STL Containers
 /// \brief Collection of functions to provide histogram support in GIL using Standard
 ///        Template Library Containers
 /// The conversion from Boost.GIL images to compatible histograms are provided. The supported
@@ -55,7 +55,7 @@ void fill_histogram(SrcView const& srcview, std::vector<T>& histogram, bool accu
         "Improper container type for signed images.");
 
     using channel_t = typename channel_type<SrcView>::type;
-    using pixel_t   = pixel<channel_t, gray_layout_t>;
+    using pixel_t = pixel<channel_t, gray_layout_t>;
 
     if (!accumulate)
         histogram.clear();
@@ -79,10 +79,10 @@ void fill_histogram(SrcView const& srcview, std::array<T, N>& histogram, bool ac
         "Improper container type for signed images.");
 
     using channel_t = typename channel_type<SrcView>::type;
-    using pixel_t   = pixel<channel_t, gray_layout_t>;
+    using pixel_t = pixel<channel_t, gray_layout_t>;
 
     const size_t pixel_max = std::numeric_limits<channel_t>::max();
-    const float scale      = (histogram.size() - 1.0f) / pixel_max;
+    const float scale = (histogram.size() - 1.0f) / pixel_max;
 
     if (!accumulate)
         std::fill(std::begin(histogram), std::end(histogram), 0);
@@ -104,7 +104,7 @@ void fill_histogram(SrcView const& srcview, std::map<T1, T2>& histogram, bool ac
         "Improper container type for images.");
 
     using channel_t = typename channel_type<SrcView>::type;
-    using pixel_t   = pixel<channel_t, gray_layout_t>;
+    using pixel_t = pixel<channel_t, gray_layout_t>;
 
     if (!accumulate)
         histogram.clear();

@@ -10,15 +10,15 @@
 // when compiling with concepts check enabled.
 // See https://bugs.llvm.org/show_bug.cgi?id=41759
 #if !defined(BOOST_GIL_USE_CONCEPT_CHECK) && !defined(__clang__)
-#error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
+#    error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
 #endif
 // FIXME: There are missing headers internally, leading to incomplete types
 #if 0
-#include <boost/gil/image_view.hpp>
-#include <boost/gil/planar_pixel_reference.hpp>
-#include <boost/gil/typedefs.hpp>
+#    include <boost/gil/image_view.hpp>
+#    include <boost/gil/planar_pixel_reference.hpp>
+#    include <boost/gil/typedefs.hpp>
 #else
-#include <boost/gil.hpp>
+#    include <boost/gil.hpp>
 #endif
 
 namespace gil = boost::gil;

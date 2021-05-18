@@ -16,17 +16,13 @@
 namespace boost { namespace gil {
 
 template <typename String, typename FormatTag>
-inline
-auto make_scanline_reader(String const& file_name, FormatTag const&,
-    typename std::enable_if
-    <
-        mp11::mp_and
-        <
-            detail::is_supported_path_spec<String>,
-            is_format_tag<FormatTag>
-        >::value
-    >::type* /*dummy*/ = nullptr)
-    -> typename get_scanline_reader<String, FormatTag>::type
+inline auto make_scanline_reader(
+    String const& file_name,
+    FormatTag const&,
+    typename std::enable_if<
+        mp11::mp_and<detail::is_supported_path_spec<String>, is_format_tag<FormatTag>>::value>::
+        type* /*dummy*/
+    = nullptr) -> typename get_scanline_reader<String, FormatTag>::type
 {
     using device_t = typename get_read_device<String, FormatTag>::type;
     device_t device(
@@ -37,64 +33,44 @@ auto make_scanline_reader(String const& file_name, FormatTag const&,
         device, image_read_settings<FormatTag>());
 }
 
-template< typename FormatTag >
-inline
-typename get_scanline_reader< std::wstring
-                            , FormatTag
-                            >::type
-make_scanline_reader( const std::wstring& file_name
-                    , FormatTag const&
-                    )
+template <typename FormatTag>
+inline typename get_scanline_reader<std::wstring, FormatTag>::type make_scanline_reader(
+    const std::wstring& file_name,
+    FormatTag const&)
 {
-    const char* str = detail::convert_to_native_string( file_name );
+    const char* str = detail::convert_to_native_string(file_name);
 
-    typename get_read_device< std::wstring
-                            , FormatTag
-                            >::type device( str
-                                          , typename detail::file_stream_device< FormatTag >::read_tag()
-                                          );
+    typename get_read_device<std::wstring, FormatTag>::type device(
+        str, typename detail::file_stream_device<FormatTag>::read_tag());
 
     delete[] str;
 
-    return typename get_scanline_reader< std::wstring
-                                       , FormatTag
-                                       >::type( device
-                                              , image_read_settings< FormatTag >()
-                                              );
+    return typename get_scanline_reader<std::wstring, FormatTag>::type(
+        device, image_read_settings<FormatTag>());
 }
 
 #ifdef BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
-template< typename FormatTag >
-inline
-typename get_scanline_reader< std::wstring
-                            , FormatTag
-                            >::type
-make_scanline_reader( const filesystem::path& path
-                    , FormatTag const&
-                    )
+template <typename FormatTag>
+inline typename get_scanline_reader<std::wstring, FormatTag>::type make_scanline_reader(
+    const filesystem::path& path,
+    FormatTag const&)
 {
-    return make_scanline_reader( path.wstring()
-                               , image_read_settings< FormatTag >()
-                               );
+    return make_scanline_reader(path.wstring(), image_read_settings<FormatTag>());
 }
-#endif // BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
+#endif  // BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
 
 template <typename Device, typename FormatTag>
-inline
-auto make_scanline_reader(Device& io_dev, FormatTag const&,
-    typename std::enable_if
-    <
-        mp11::mp_and
-        <
-            detail::is_adaptable_input_device<FormatTag, Device>,
-            is_format_tag<FormatTag>
-        >::value
-    >::type* /*dummy*/ = nullptr)
-    -> typename get_scanline_reader<Device, FormatTag>::type
+inline auto make_scanline_reader(
+    Device& io_dev,
+    FormatTag const&,
+    typename std::enable_if<mp11::mp_and<
+        detail::is_adaptable_input_device<FormatTag, Device>,
+        is_format_tag<FormatTag>>::value>::type* /*dummy*/
+    = nullptr) -> typename get_scanline_reader<Device, FormatTag>::type
 {
     return make_scanline_reader(io_dev, image_read_settings<FormatTag>());
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

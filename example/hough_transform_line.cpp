@@ -8,6 +8,7 @@
 //
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/png.hpp>
+
 #include <cmath>
 #include <cstddef>
 #include <iostream>
@@ -43,13 +44,13 @@ int main()
     double _45_degrees = gil::detail::pi / 4;
     double _5_degrees = gil::detail::pi / 36;
     std::size_t step_count = 5;
-    auto theta_parameter =
-        gil::make_theta_parameter(_45_degrees, _5_degrees, input_view.dimensions());
+    auto theta_parameter
+        = gil::make_theta_parameter(_45_degrees, _5_degrees, input_view.dimensions());
     auto expected_radius = static_cast<std::ptrdiff_t>(std::round(std::cos(_45_degrees) * size));
-    auto radius_parameter =
-        gil::hough_parameter<std::ptrdiff_t>::from_step_size(expected_radius, 7, 1);
-    gil::gray32_image_t accumulator_array_image(theta_parameter.step_count,
-                                                radius_parameter.step_count);
+    auto radius_parameter
+        = gil::hough_parameter<std::ptrdiff_t>::from_step_size(expected_radius, 7, 1);
+    gil::gray32_image_t accumulator_array_image(
+        theta_parameter.step_count, radius_parameter.step_count);
     auto accumulator_array = gil::view(accumulator_array_image);
     gil::hough_line_transform(input_view, accumulator_array, theta_parameter, radius_parameter);
     std::cout << "expecting maximum at theta=" << _45_degrees << " and radius=" << expected_radius
@@ -59,10 +60,10 @@ int main()
         for (std::size_t radius_index = 0; radius_index < radius_parameter.step_count;
              ++radius_index)
         {
-            double current_theta =
-                theta_parameter.start_point + theta_index * theta_parameter.step_size;
-            std::ptrdiff_t current_radius =
-                radius_parameter.start_point + radius_parameter.step_size * radius_index;
+            double current_theta
+                = theta_parameter.start_point + theta_index * theta_parameter.step_size;
+            std::ptrdiff_t current_radius
+                = radius_parameter.start_point + radius_parameter.step_size * radius_index;
             std::cout << "theta: " << current_theta << " radius: " << current_radius
                       << " accumulated value: " << accumulator_array(theta_index, radius_index)[0]
                       << '\n';

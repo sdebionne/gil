@@ -6,7 +6,7 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#define BOOST_DISABLE_ASSERTS 1 // kernel_1d_adaptor assertions are too strict
+#define BOOST_DISABLE_ASSERTS 1  // kernel_1d_adaptor assertions are too strict
 #include <boost/gil.hpp>
 #include <boost/gil/extension/numeric/kernel.hpp>
 
@@ -21,7 +21,7 @@ void test_kernel_1d_fixed_default_constructor()
     gil::kernel_1d_fixed<int, 9> k;
     BOOST_TEST_EQ(k.center(), 0);
     BOOST_TEST_EQ(k.left_size(), 0);
-    BOOST_TEST_EQ(k.right_size(), 8); // TODO: Why not 0 or -1 if not set?
+    BOOST_TEST_EQ(k.right_size(), 8);  // TODO: Why not 0 or -1 if not set?
     // std::array interface
     BOOST_TEST_EQ(k.size(), 9);
 }
@@ -32,7 +32,7 @@ void test_kernel_2d_fixed_default_constructor()
     BOOST_TEST_EQ(k.center_x(), 0);
     BOOST_TEST_EQ(k.center_y(), 0);
     BOOST_TEST_EQ(k.left_size(), 0);
-    BOOST_TEST_EQ(k.right_size(), 8); // TODO: Why not 0 or -1 if not set?
+    BOOST_TEST_EQ(k.right_size(), 8);  // TODO: Why not 0 or -1 if not set?
     BOOST_TEST_EQ(k.upper_size(), 0);
     BOOST_TEST_EQ(k.lower_size(), 8);
     // std::array interface
@@ -77,7 +77,7 @@ void test_kernel_1d_fixed_parameterized_constructor_with_iterator()
 
 void test_kernel_2d_fixed_parameterized_constructor_with_iterator()
 {
-//    // FIXME: The constructor should throw if v.size() < k.size()
+    //    // FIXME: The constructor should throw if v.size() < k.size()
     std::array<int, 81> v;
     gil::detail::kernel_2d_fixed<int, 9> k(v.cbegin(), 4, 4);
     BOOST_TEST_EQ((gil::detail::kernel_2d_fixed<int, 9>::static_size), 9);
@@ -161,7 +161,7 @@ void test_kernel_1d_fixed_reverse_kernel()
     BOOST_TEST_ALL_EQ(k.begin(), k.end(), values.begin(), values.end());
 
     std::array<int, 3> values_rev = {{3, 2, 1}};
-    auto const k_rev              = gil::reverse_kernel(k);
+    auto const k_rev = gil::reverse_kernel(k);
     BOOST_TEST_ALL_EQ(k_rev.begin(), k_rev.end(), values_rev.begin(), values_rev.end());
 }
 

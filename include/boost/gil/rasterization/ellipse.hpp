@@ -9,8 +9,8 @@
 #define BOOST_GIL_RASTERIZATION_ELLIPSE_HPP
 
 #include <array>
-#include <vector>
 #include <iostream>
+#include <vector>
 
 namespace boost { namespace gil {
 
@@ -38,8 +38,8 @@ struct midpoint_elliptical_rasterizer
         // url: https://doi.ieeecomputersociety.org/10.1109/MCG.1984.275994
         std::vector<std::array<std::ptrdiff_t, 2>> trajectory_points;
         std::ptrdiff_t x = semi_axes[0], y = 0;
-        
-        // Variables declared on following lines are temporary variables used for improving 
+
+        // Variables declared on following lines are temporary variables used for improving
         // performance since they help in converting all multiplicative operations inside the while
         // loop into additive/subtractive operations.
         long long int const t1 = semi_axes[0] * semi_axes[0];
@@ -54,7 +54,7 @@ struct midpoint_elliptical_rasterizer
         // to be included in rasterizer trajectory.
         long long int d1, d2;
         d1 = t2 - t7 + t4 / 2, d2 = t1 / 2 - t8 + t5;
-        
+
         while (d2 < 0)
         {
             trajectory_points.push_back({x, y});
@@ -65,7 +65,7 @@ struct midpoint_elliptical_rasterizer
                 d1 += t9 + t2;
                 d2 += t9;
             }
-            else 
+            else
             {
                 x -= 1;
                 t8 -= t6;
@@ -84,7 +84,7 @@ struct midpoint_elliptical_rasterizer
                 t9 += t3;
                 d2 += t5 + t9 - t8;
             }
-            else 
+            else
             {
                 d2 += t5 - t8;
             }
@@ -99,22 +99,26 @@ struct midpoint_elliptical_rasterizer
     /// \param colour - Constant vector specifying colour intensity values for all channels present
     ///                 in 'view'.
     /// \param center - Constant array specifying co-ordinates of center of ellipse to be drawn.
-    /// \param trajectory_points - Constant vector specifying pixel co-ordinates of points lying 
+    /// \param trajectory_points - Constant vector specifying pixel co-ordinates of points lying
     ///                            on rasterizer trajectory.
     /// \tparam View - Type of input image view.
-    template<typename View>
-    void draw_curve(View view, std::vector<unsigned int> const colour,
+    template <typename View>
+    void draw_curve(
+        View view,
+        std::vector<unsigned int> const colour,
         std::array<unsigned int, 2> const center,
         std::vector<std::array<std::ptrdiff_t, 2>> const trajectory_points)
     {
-        for (int i = 0, colour_index = 0; i < static_cast<int>(view.num_channels()); 
-            ++i, ++colour_index)
+        for (int i = 0, colour_index = 0; i < static_cast<int>(view.num_channels());
+             ++i, ++colour_index)
         {
             for (std::array<std::ptrdiff_t, 2> point : trajectory_points)
             {
-                std::array<std::ptrdiff_t, 4> co_ords = {center[0] + point[0],
-                center[0] - point[0], center[1] + point[1], center[1] - point[1]
-                };
+                std::array<std::ptrdiff_t, 4> co_ords
+                    = {center[0] + point[0],
+                       center[0] - point[0],
+                       center[1] + point[1],
+                       center[1] - point[1]};
                 bool validity[4] = {0};
                 if (co_ords[0] < view.width())
                 {
@@ -162,31 +166,35 @@ struct midpoint_elliptical_rasterizer
     /// \param semi_axes - Array containing positive integer lengths of horizontal semi-axis
     /// and vertical semi-axis respectively.
     /// \tparam View - Type of input image view.
-    template<typename View>
-    void operator()(View view, std::vector<unsigned int> const colour,
-        std::array<unsigned int, 2> center, std::array<unsigned int, 2> const semi_axes)
+    template <typename View>
+    void operator()(
+        View view,
+        std::vector<unsigned int> const colour,
+        std::array<unsigned int, 2> center,
+        std::array<unsigned int, 2> const semi_axes)
     {
-        --center[0], --center[1]; // For converting center co-ordinate values to zero based indexing.
+        --center[0],
+            --center[1];  // For converting center co-ordinate values to zero based indexing.
         if (colour.size() != view.num_channels())
         {
-            throw std::length_error("Number of channels in given image is not equal to the "
+            throw std::length_error(
+                "Number of channels in given image is not equal to the "
                 "number of colours provided.");
         }
         if (center[0] + semi_axes[0] >= view.width() || center[1] + semi_axes[1] >= view.height()
-            || static_cast<int>(center[0] - semi_axes[0]) < 0 
+            || static_cast<int>(center[0] - semi_axes[0]) < 0
             || static_cast<int>(center[0] - semi_axes[0]) >= view.width()
             || static_cast<int>(center[1] - semi_axes[1]) < 0
             || static_cast<int>(center[1] - semi_axes[1]) >= view.height())
         {
             std::cout << "Image can't contain whole curve.\n"
-                "However, it will contain those parts of curve which can fit inside it.\n"
-                "Note : Image width = " << view.width() << " and Image height = " << 
-                view.height() << "\n";
+                         "However, it will contain those parts of curve which can fit inside it.\n"
+                         "Note : Image width = "
+                      << view.width() << " and Image height = " << view.height() << "\n";
         }
-        std::vector<std::array<std::ptrdiff_t, 2>> trajectory_points = 
-            obtain_trajectory(semi_axes);
+        std::vector<std::array<std::ptrdiff_t, 2>> trajectory_points = obtain_trajectory(semi_axes);
         draw_curve(view, colour, center, trajectory_points);
     }
-}; // midpoint elliptical rasterizer
-}} // namespace boost::gil
+};  // midpoint elliptical rasterizer
+}}  // namespace boost::gil
 #endif

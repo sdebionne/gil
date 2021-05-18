@@ -16,17 +16,10 @@ namespace gil = boost::gil;
 
 void test_channel_view()
 {
-    using kth_channel_view_t
-        = gil::kth_channel_view_type<0, gil::rgb8_view_t::const_t>::type;
-    using channel_view_t
-        = gil::channel_view_type<gil::red_t, gil::rgb8_view_t::const_t>::type;
+    using kth_channel_view_t = gil::kth_channel_view_type<0, gil::rgb8_view_t::const_t>::type;
+    using channel_view_t = gil::channel_view_type<gil::red_t, gil::rgb8_view_t::const_t>::type;
 
-    static_assert(std::is_same
-        <
-            kth_channel_view_t,
-            channel_view_t
-        >::value,
-        "");
+    static_assert(std::is_same<kth_channel_view_t, channel_view_t>::value, "");
 
     gil::rgb8_image_t img(100, 100);
     kth_channel_view_t const kth0 = gil::kth_channel_view<0>(gil::const_view(img));

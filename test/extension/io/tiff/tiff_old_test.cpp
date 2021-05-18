@@ -8,8 +8,8 @@
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/tiff/old.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
 #include "paths.hpp"
 
@@ -60,19 +60,14 @@ void test_old_read_and_convert_view()
 
 void test_old_dynamic_image()
 {
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgba8_image_t,
-        gil::gray1_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgba8_image_t, gil::gray1_image_t>
+        image;
 
     gil::tiff_read_image(tiff_filename.c_str(), image);
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::tiff_write_view(tiff_out + "old_dynamic_image_test.tif", gil::view(image));
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -88,5 +83,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

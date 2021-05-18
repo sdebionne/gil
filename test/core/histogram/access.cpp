@@ -14,7 +14,7 @@
 
 namespace gil = boost::gil;
 
-void check_indexing_operator() 
+void check_indexing_operator()
 {
     gil::histogram<int> h1;
     h1(1) = 3;
@@ -27,8 +27,8 @@ void check_indexing_operator()
     BOOST_TEST(h2(1, 'a', "B") == 0);
 }
 
-int main() {
-
+int main()
+{
     check_indexing_operator();
 
     return boost::report_errors();

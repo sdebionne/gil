@@ -10,27 +10,28 @@
 
 #include <boost/gil/concepts/basic.hpp>
 #include <boost/gil/concepts/concept_check.hpp>
+#include <boost/gil/concepts/detail/utility.hpp>
 #include <boost/gil/concepts/fwd.hpp>
 #include <boost/gil/concepts/pixel.hpp>
 #include <boost/gil/concepts/pixel_dereference.hpp>
 #include <boost/gil/concepts/pixel_iterator.hpp>
 #include <boost/gil/concepts/point.hpp>
-#include <boost/gil/concepts/detail/utility.hpp>
 
 #include <cstddef>
 #include <iterator>
+
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunused-local-typedefs"
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wunknown-pragmas"
+#    pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#    pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
 namespace boost { namespace gil {
@@ -132,10 +133,11 @@ struct RandomAccessNDLocatorConcept
         using point_t = typename Loc::point_t;
         ignore_unused_variable_warning(point_t{});
 
-        static std::size_t const N = Loc::num_dimensions; ignore_unused_variable_warning(N);
+        static std::size_t const N = Loc::num_dimensions;
+        ignore_unused_variable_warning(N);
 
         using first_it_type = typename Loc::template axis<0>::iterator;
-        using last_it_type = typename Loc::template axis<N-1>::iterator;
+        using last_it_type = typename Loc::template axis<N - 1>::iterator;
         gil_function_requires<boost_concepts::RandomAccessTraversalConcept<first_it_type>>();
         gil_function_requires<boost_concepts::RandomAccessTraversalConcept<last_it_type>>();
 
@@ -143,31 +145,35 @@ struct RandomAccessNDLocatorConcept
         // have the same type as difference_type of the corresponding iterator
         gil_function_requires<PointNDConcept<point_t>>();
         static_assert(point_t::num_dimensions == N, "");
-        static_assert(std::is_same
-            <
+        static_assert(
+            std::is_same<
                 typename std::iterator_traits<first_it_type>::difference_type,
-                typename point_t::template axis<0>::coord_t
-            >::value, "");
-        static_assert(std::is_same
-            <
+                typename point_t::template axis<0>::coord_t>::value,
+            "");
+        static_assert(
+            std::is_same<
                 typename std::iterator_traits<last_it_type>::difference_type,
-                typename point_t::template axis<N-1>::coord_t
-            >::value, "");
+                typename point_t::template axis<N - 1>::coord_t>::value,
+            "");
 
         difference_type d;
         loc += d;
         loc -= d;
         loc = loc + d;
         loc = loc - d;
-        reference r1 = loc[d];  ignore_unused_variable_warning(r1);
-        reference r2 = *loc;  ignore_unused_variable_warning(r2);
-        cached_location_t cl = loc.cache_location(d);  ignore_unused_variable_warning(cl);
-        reference r3 = loc[d];  ignore_unused_variable_warning(r3);
+        reference r1 = loc[d];
+        ignore_unused_variable_warning(r1);
+        reference r2 = *loc;
+        ignore_unused_variable_warning(r2);
+        cached_location_t cl = loc.cache_location(d);
+        ignore_unused_variable_warning(cl);
+        reference r3 = loc[d];
+        ignore_unused_variable_warning(r3);
 
         first_it_type fi = loc.template axis_iterator<0>();
         fi = loc.template axis_iterator<0>(d);
-        last_it_type li = loc.template axis_iterator<N-1>();
-        li = loc.template axis_iterator<N-1>(d);
+        last_it_type li = loc.template axis_iterator<N - 1>();
+        li = loc.template axis_iterator<N - 1>(d);
 
         using deref_t = PixelDereferenceAdaptorArchetype<typename Loc::value_type>;
         using dtype = typename Loc::template add_deref<deref_t>::type;
@@ -237,20 +243,21 @@ struct RandomAccess2DLocatorConcept
         using x_coord_t = typename Loc::x_coord_t;
         using y_coord_t = typename Loc::y_coord_t;
 
-        x_coord_t xd = 0; ignore_unused_variable_warning(xd);
-        y_coord_t yd = 0; ignore_unused_variable_warning(yd);
+        x_coord_t xd = 0;
+        ignore_unused_variable_warning(xd);
+        y_coord_t yd = 0;
+        ignore_unused_variable_warning(yd);
 
         typename Loc::difference_type d;
-        typename Loc::reference r=loc(xd,yd);  ignore_unused_variable_warning(r);
+        typename Loc::reference r = loc(xd, yd);
+        ignore_unused_variable_warning(r);
 
         dynamic_x_step_t loc2(dynamic_x_step_t(), yd);
         dynamic_x_step_t loc3(dynamic_x_step_t(), xd, yd);
 
-        using dynamic_xy_step_transposed_t = typename dynamic_y_step_type
-            <
-                typename dynamic_x_step_type<transposed_t>::type
-            >::type;
-        dynamic_xy_step_transposed_t loc4(loc, xd,yd,true);
+        using dynamic_xy_step_transposed_t =
+            typename dynamic_y_step_type<typename dynamic_x_step_type<transposed_t>::type>::type;
+        dynamic_xy_step_transposed_t loc4(loc, xd, yd, true);
 
         bool is_contiguous = loc.is_1d_traversable(xd);
         ignore_unused_variable_warning(is_contiguous);
@@ -309,17 +316,15 @@ struct RandomAccessNDLocatorIsMutableConcept
 {
     void constraints()
     {
-        gil_function_requires<detail::RandomAccessIteratorIsMutableConcept
-            <
-                typename Loc::template axis<0>::iterator
-            >>();
-        gil_function_requires<detail::RandomAccessIteratorIsMutableConcept
-            <
-                typename Loc::template axis<Loc::num_dimensions-1>::iterator
-            >>();
+        gil_function_requires<detail::RandomAccessIteratorIsMutableConcept<
+            typename Loc::template axis<0>::iterator>>();
+        gil_function_requires<detail::RandomAccessIteratorIsMutableConcept<
+            typename Loc::template axis<Loc::num_dimensions - 1>::iterator>>();
 
-        typename Loc::difference_type d; initialize_it(d);
-        typename Loc::value_type v; initialize_it(v);
+        typename Loc::difference_type d;
+        initialize_it(d);
+        typename Loc::value_type v;
+        initialize_it(v);
         typename Loc::cached_location_t cl = loc.cache_location(d);
         *loc = v;
         loc[d] = v;
@@ -335,15 +340,18 @@ struct RandomAccess2DLocatorIsMutableConcept
     void constraints()
     {
         gil_function_requires<detail::RandomAccessNDLocatorIsMutableConcept<Loc>>();
-        typename Loc::x_coord_t xd = 0; ignore_unused_variable_warning(xd);
-        typename Loc::y_coord_t yd = 0; ignore_unused_variable_warning(yd);
-        typename Loc::value_type v; initialize_it(v);
+        typename Loc::x_coord_t xd = 0;
+        ignore_unused_variable_warning(xd);
+        typename Loc::y_coord_t yd = 0;
+        ignore_unused_variable_warning(yd);
+        typename Loc::value_type v;
+        initialize_it(v);
         loc(xd, yd) = v;
     }
     Loc loc;
 };
 
-} // namespace detail
+}  // namespace detail
 
 /// \ingroup LocatorNDConcept
 /// \brief N-dimensional locator over mutable pixels
@@ -398,14 +406,14 @@ struct MutablePixelLocatorConcept
     }
 };
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #if defined(BOOST_CLANG)
-#pragma clang diagnostic pop
+#    pragma clang diagnostic pop
 #endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40900)
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
 
 #endif

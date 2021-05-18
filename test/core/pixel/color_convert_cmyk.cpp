@@ -10,11 +10,11 @@
 #include <boost/gil/pixel.hpp>
 #include <boost/gil/rgb.hpp>
 
-#include <boost/mp11.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/mp11.hpp>
 
-#include "test_fixture.hpp"
 #include "core/channel/test_fixture.hpp"
+#include "test_fixture.hpp"
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;
@@ -25,7 +25,7 @@ namespace mp11 = boost::mp11;
 template <typename SrcPixel>
 struct test_cmyk_from_gray
 {
-    template<typename DstPixel>
+    template <typename DstPixel>
     void operator()(DstPixel const&)
     {
         using pixel_src_t = SrcPixel;
@@ -57,19 +57,14 @@ struct test_cmyk_from_gray
     }
     static void run()
     {
-        boost::mp11::mp_for_each
-        <
-            mp11::mp_list
-            <
-                gil::cmyk8_pixel_t,
-                gil::cmyk8s_pixel_t,
-                gil::cmyk16_pixel_t,
-                gil::cmyk16s_pixel_t,
-                gil::cmyk32_pixel_t,
-                gil::cmyk32s_pixel_t,
-                gil::cmyk32f_pixel_t
-            >
-        >(test_cmyk_from_gray<SrcPixel>{});
+        boost::mp11::mp_for_each<mp11::mp_list<
+            gil::cmyk8_pixel_t,
+            gil::cmyk8s_pixel_t,
+            gil::cmyk16_pixel_t,
+            gil::cmyk16s_pixel_t,
+            gil::cmyk32_pixel_t,
+            gil::cmyk32s_pixel_t,
+            gil::cmyk32f_pixel_t>>(test_cmyk_from_gray<SrcPixel>{});
     }
 };
 
@@ -174,31 +169,23 @@ struct test_cmyk_from_rgb
     }
     static void run()
     {
-        boost::mp11::mp_for_each
-        <
-            mp11::mp_product
-            <
-                mp11::mp_list,
-                mp11::mp_list
-                <
-                    gil::rgb8_pixel_t,
-                    gil::rgb8s_pixel_t,
-                    gil::rgb16_pixel_t,
-                    gil::rgb16s_pixel_t,
-                    gil::rgb32_pixel_t,
-                    gil::rgb32s_pixel_t,
-                    gil::rgb32f_pixel_t
-                >,
-                mp11::mp_list
-                <
-                    gil::cmyk8_pixel_t,
-                    gil::cmyk16_pixel_t,
-                    gil::cmyk32_pixel_t,
-                    gil::cmyk32f_pixel_t
-                    // FIXME: Conversion not handle properly signed CMYK pixels as destination
-                >
-            >
-        >(test_cmyk_from_rgb{});
+        boost::mp11::mp_for_each<mp11::mp_product<
+            mp11::mp_list,
+            mp11::mp_list<
+                gil::rgb8_pixel_t,
+                gil::rgb8s_pixel_t,
+                gil::rgb16_pixel_t,
+                gil::rgb16s_pixel_t,
+                gil::rgb32_pixel_t,
+                gil::rgb32s_pixel_t,
+                gil::rgb32f_pixel_t>,
+            mp11::mp_list<
+                gil::cmyk8_pixel_t,
+                gil::cmyk16_pixel_t,
+                gil::cmyk32_pixel_t,
+                gil::cmyk32f_pixel_t
+                // FIXME: Conversion not handle properly signed CMYK pixels as destination
+                >>>(test_cmyk_from_rgb{});
     }
 };
 

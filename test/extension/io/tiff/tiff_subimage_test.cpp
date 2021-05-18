@@ -21,39 +21,41 @@ namespace gil = boost::gil;
 
 #ifdef BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
 
-#include <boost/preprocessor/cat.hpp>
-#include <boost/preprocessor/stringize.hpp>
-#include <boost/preprocessor/tuple/elem.hpp>
-#include <boost/preprocessor/comparison/less.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#    include <boost/preprocessor/cat.hpp>
+#    include <boost/preprocessor/comparison/less.hpp>
+#    include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#    include <boost/preprocessor/stringize.hpp>
+#    include <boost/preprocessor/tuple/elem.hpp>
 
-#define BOOST_GIL_TEST_NAME_SUBIMAGE_TEST(n, data) \
-    BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_CAT(test_, BOOST_PP_CAT(data, _)), n), bit_bit_aligned)
+#    define BOOST_GIL_TEST_NAME_SUBIMAGE_TEST(n, data)                                             \
+        BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_CAT(test_, BOOST_PP_CAT(data, _)), n), bit_bit_aligned)
 
-#define BOOST_GIL_TEST_GENERATE_SUBIMAGE_TEST(z, n, data)                                          \
-    void BOOST_GIL_TEST_NAME_SUBIMAGE_TEST(n, data) ()   \
-    {                                                                                              \
-        std::string filename_strip(tiff_in_GM + "tiger-" + BOOST_PP_STRINGIZE(data) + "-strip-");  \
-        std::string filename_tile(tiff_in_GM + "tiger-" + BOOST_PP_STRINGIZE(data) + "-tile-");    \
-        std::string padding("");                                                                   \
-        if (BOOST_PP_LESS(n, 10) == 1)                                                             \
-            padding = "0";                                                                         \
-        filename_strip = filename_strip + padding + BOOST_PP_STRINGIZE(n) + ".tif";                \
-        filename_tile  = filename_tile + padding + BOOST_PP_STRINGIZE(n) + ".tif";                 \
-        gil::bit_aligned_image1_type<n, gil::gray_layout_t>::type img1, img2, img3;                \
-        gil::point_t top_left(10, 10);                                                             \
-        gil::point_t dim(32, 32);                                                                  \
-        gil::image_read_settings<gil::tiff_tag> settings(top_left, dim);                           \
-        gil::read_image(filename_strip, img1, settings);                                           \
-        gil::read_image(filename_tile, img2, settings);                                            \
-        gil::read_image(filename_strip, img3, gil::tiff_tag());                                    \
-        BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::const_view(img2)));               \
-        BOOST_TEST(gil::equal_pixels(                                                              \
-            gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));           \
-    }
+#    define BOOST_GIL_TEST_GENERATE_SUBIMAGE_TEST(z, n, data)                                      \
+        void BOOST_GIL_TEST_NAME_SUBIMAGE_TEST(n, data)()                                          \
+        {                                                                                          \
+            std::string filename_strip(                                                            \
+                tiff_in_GM + "tiger-" + BOOST_PP_STRINGIZE(data) + "-strip-");                     \
+            std::string filename_tile(                                                             \
+                tiff_in_GM + "tiger-" + BOOST_PP_STRINGIZE(data) + "-tile-");                      \
+            std::string padding("");                                                               \
+            if (BOOST_PP_LESS(n, 10) == 1)                                                         \
+                padding = "0";                                                                     \
+            filename_strip = filename_strip + padding + BOOST_PP_STRINGIZE(n) + ".tif";            \
+            filename_tile = filename_tile + padding + BOOST_PP_STRINGIZE(n) + ".tif";              \
+            gil::bit_aligned_image1_type<n, gil::gray_layout_t>::type img1, img2, img3;            \
+            gil::point_t top_left(10, 10);                                                         \
+            gil::point_t dim(32, 32);                                                              \
+            gil::image_read_settings<gil::tiff_tag> settings(top_left, dim);                       \
+            gil::read_image(filename_strip, img1, settings);                                       \
+            gil::read_image(filename_tile, img2, settings);                                        \
+            gil::read_image(filename_strip, img3, gil::tiff_tag());                                \
+            BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::const_view(img2)));           \
+            BOOST_TEST(gil::equal_pixels(                                                          \
+                gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));       \
+        }
 
-#define BOOST_GIL_TEST_CALL_SUBIMAGE_TEST(z, n, data) \
-    BOOST_GIL_TEST_NAME_SUBIMAGE_TEST(n, data);
+#    define BOOST_GIL_TEST_CALL_SUBIMAGE_TEST(z, n, data)                                          \
+        BOOST_GIL_TEST_NAME_SUBIMAGE_TEST(n, data);
 
 BOOST_PP_REPEAT_FROM_TO(1, 8, BOOST_GIL_TEST_GENERATE_SUBIMAGE_TEST, minisblack)
 BOOST_PP_REPEAT_FROM_TO(9, 16, BOOST_GIL_TEST_GENERATE_SUBIMAGE_TEST, minisblack)
@@ -73,7 +75,8 @@ void test_subimage_test_8()
     gil::read_image(tiff_in_GM + "tiger-minisblack-strip-08.tif", img3, gil::tiff_tag());
 
     BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::const_view(img2)));
-    BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));
+    BOOST_TEST(gil::equal_pixels(
+        gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));
 }
 
 void test_subimage_test_16()
@@ -89,7 +92,8 @@ void test_subimage_test_16()
     gil::read_image(tiff_in_GM + "tiger-minisblack-strip-16.tif", img3, gil::tiff_tag());
 
     BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::const_view(img2)));
-    BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));
+    BOOST_TEST(gil::equal_pixels(
+        gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));
 }
 
 void test_subimage_test_32()
@@ -107,7 +111,8 @@ void test_subimage_test_32()
     gil::read_image(tiff_in_GM + "tiger-minisblack-strip-32.tif", img3, gil::tiff_tag());
 
     BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::const_view(img2)));
-    BOOST_TEST(gil::equal_pixels(gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));
+    BOOST_TEST(gil::equal_pixels(
+        gil::const_view(img1), gil::subimage_view(gil::view(img3), top_left, dim)));
 }
 
 int main()
@@ -124,5 +129,7 @@ int main()
 }
 
 #else
-int main() {}
-#endif // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
+int main()
+{
+}
+#endif  // BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES

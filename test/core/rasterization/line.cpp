@@ -7,11 +7,12 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <algorithm>
-#include <boost/core/lightweight_test.hpp>
 #include <boost/gil/point.hpp>
 #include <boost/gil/rasterization/line.hpp>
 
+#include <boost/core/lightweight_test.hpp>
+
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <iterator>
@@ -20,16 +21,13 @@
 
 namespace gil = boost::gil;
 
-namespace boost
-{
-namespace gil
-{
+namespace boost { namespace gil {
 std::ostream& operator<<(std::ostream& os, const point_t p)
 {
     os << "{x=" << p.x << ", y=" << p.y << "}";
     return os;
 }
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 using line_type = std::vector<gil::point_t>;
 
@@ -39,8 +37,9 @@ struct endpoints
     gil::point_t end;
 };
 
-endpoints create_endpoints(std::mt19937& twister,
-                           std::uniform_int_distribution<std::ptrdiff_t>& distr)
+endpoints create_endpoints(
+    std::mt19937& twister,
+    std::uniform_int_distribution<std::ptrdiff_t>& distr)
 {
     gil::point_t start{distr(twister), distr(twister)};
     gil::point_t end{distr(twister), distr(twister)};
@@ -89,30 +88,28 @@ void test_bresenham_rasterizer_follows_equation(line_type line_points)
     if (width < height)
     {
         std::swap(width, height);
-        std::transform(line_points.begin(), line_points.end(), line_points.begin(),
-                       [](gil::point_t p)
-                       {
-                           return gil::point_t{p.y, p.x};
-                       });
+        std::transform(
+            line_points.begin(), line_points.end(), line_points.begin(), [](gil::point_t p) {
+                return gil::point_t{p.y, p.x};
+            });
         // update start and end
         start = line_points.front();
         end = line_points.back();
     }
-    const double sign = [start, end]()
-    {
+    const double sign = [start, end]() {
         auto const width_sign = end.x < start.x;
         auto const height_sign = end.y < start.y;
         auto const slope_sign = width_sign != height_sign;
         return slope_sign ? -1 : 1;
     }();
     const double slope = static_cast<double>(height) / static_cast<double>(width);
-    const double intercept =
-        static_cast<double>(start.y) - sign * slope * static_cast<double>(start.x);
+    const double intercept
+        = static_cast<double>(start.y) - sign * slope * static_cast<double>(start.x);
     for (const auto& point : line_points)
     {
         double const expected_y = sign * slope * static_cast<double>(point.x) + intercept;
-        auto const difference =
-            std::abs(point.y - static_cast<std::ptrdiff_t>(std::round(expected_y)));
+        auto const difference
+            = std::abs(point.y - static_cast<std::ptrdiff_t>(std::round(expected_y)));
         BOOST_TEST_LE(difference, static_cast<std::ptrdiff_t>(slope + 1));
     }
 }

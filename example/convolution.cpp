@@ -6,12 +6,13 @@
 // http://www.boost.org/LICENSE_1_0.txt
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/jpeg.hpp>
-#include <boost/gil/extension/numeric/kernel.hpp>
 #include <boost/gil/extension/numeric/convolve.hpp>
+#include <boost/gil/extension/numeric/kernel.hpp>
 
 // Example for convolve_rows() and convolve_cols() in the numeric extension
 
-int main() {
+int main()
+{
     using namespace boost::gil;
 
     rgb8_image_t img;
@@ -21,8 +22,16 @@ int main() {
     rgb8_image_t convolved(img);
 
     // radius-1 Gaussian kernel, size 9
-    float gaussian_1[]={0.00022923296f,0.0059770769f,0.060597949f,0.24173197f,0.38292751f,
-                        0.24173197f,0.060597949f,0.0059770769f,0.00022923296f};
+    float gaussian_1[]
+        = {0.00022923296f,
+           0.0059770769f,
+           0.060597949f,
+           0.24173197f,
+           0.38292751f,
+           0.24173197f,
+           0.060597949f,
+           0.0059770769f,
+           0.00022923296f};
     /*
     // radius-2 Gaussian kernel, size 15
     float gaussian_2[]={
@@ -54,15 +63,15 @@ int main() {
     };
     */
 
-    kernel_1d_fixed<float,9> kernel(gaussian_1,4);
-    convolve_rows_fixed<rgb32f_pixel_t>(const_view(convolved),kernel,view(convolved));
-    convolve_cols_fixed<rgb32f_pixel_t>(const_view(convolved),kernel,view(convolved));
+    kernel_1d_fixed<float, 9> kernel(gaussian_1, 4);
+    convolve_rows_fixed<rgb32f_pixel_t>(const_view(convolved), kernel, view(convolved));
+    convolve_cols_fixed<rgb32f_pixel_t>(const_view(convolved), kernel, view(convolved));
     write_view("out-convolution.jpg", view(convolved), jpeg_tag{});
 
     // This is how to use a resizable kernel
-    kernel_1d<float> kernel2(gaussian_1,9,4);
-    convolve_rows<rgb32f_pixel_t>(const_view(img),kernel2,view(img));
-    convolve_cols<rgb32f_pixel_t>(const_view(img),kernel2,view(img));
+    kernel_1d<float> kernel2(gaussian_1, 9, 4);
+    convolve_rows<rgb32f_pixel_t>(const_view(img), kernel2, view(img));
+    convolve_cols<rgb32f_pixel_t>(const_view(img), kernel2, view(img));
     write_view("out-convolution2.jpg", view(img), jpeg_tag{});
 
     return 0;

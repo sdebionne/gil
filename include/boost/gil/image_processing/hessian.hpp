@@ -8,9 +8,10 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_HESSIAN_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_HESSIAN_HPP
 
+#include <boost/gil/extension/numeric/kernel.hpp>
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/typedefs.hpp>
-#include <boost/gil/extension/numeric/kernel.hpp>
+
 #include <stdexcept>
 
 namespace boost { namespace gil {
@@ -31,22 +32,20 @@ inline void compute_hessian_responses(
     const detail::kernel_2d<T, Allocator>& weights,
     OutputView dst)
 {
-    if (ddxx.dimensions() != ddyy.dimensions()
-        || ddyy.dimensions() != dxdy.dimensions()
-        || dxdy.dimensions() != dst.dimensions()
-        || weights.center_x() != weights.center_y())
+    if (ddxx.dimensions() != ddyy.dimensions() || ddyy.dimensions() != dxdy.dimensions()
+        || dxdy.dimensions() != dst.dimensions() || weights.center_x() != weights.center_y())
     {
-        throw std::invalid_argument("dimensions of views are not the same"
+        throw std::invalid_argument(
+            "dimensions of views are not the same"
             " or weights don't have equal width and height"
             " or weights' dimensions are not odd");
     }
     // Use pixel type of output, as values will be written to output
-    using pixel_t = typename std::remove_reference<decltype(std::declval<OutputView>()(0, 0))>::type;
+    using pixel_t =
+        typename std::remove_reference<decltype(std::declval<OutputView>()(0, 0))>::type;
 
-    using channel_t = typename std::remove_reference
-        <
-            decltype(std::declval<pixel_t>().at(std::integral_constant<int, 0>{}))
-        >::type;
+    using channel_t = typename std::remove_reference<decltype(std::declval<pixel_t>().at(
+        std::integral_constant<int, 0>{}))>::type;
 
 
     auto center = weights.center_y();
@@ -57,16 +56,23 @@ inline void compute_hessian_responses(
             auto ddxx_i = channel_t();
             auto ddyy_i = channel_t();
             auto dxdy_i = channel_t();
-            for (typename OutputView::coord_t w_y = 0; w_y < static_cast<std::ptrdiff_t>(weights.size()); ++w_y)
+            for (typename OutputView::coord_t w_y = 0;
+                 w_y < static_cast<std::ptrdiff_t>(weights.size());
+                 ++w_y)
             {
-                for (typename OutputView::coord_t w_x = 0; w_x < static_cast<std::ptrdiff_t>(weights.size()); ++w_x)
+                for (typename OutputView::coord_t w_x = 0;
+                     w_x < static_cast<std::ptrdiff_t>(weights.size());
+                     ++w_x)
                 {
                     ddxx_i += ddxx(x + w_x - center, y + w_y - center)
-                        .at(std::integral_constant<int, 0>{}) * weights.at(w_x, w_y);
+                                  .at(std::integral_constant<int, 0>{})
+                            * weights.at(w_x, w_y);
                     ddyy_i += ddyy(x + w_x - center, y + w_y - center)
-                        .at(std::integral_constant<int, 0>{}) * weights.at(w_x, w_y);
+                                  .at(std::integral_constant<int, 0>{})
+                            * weights.at(w_x, w_y);
                     dxdy_i += dxdy(x + w_x - center, y + w_y - center)
-                        .at(std::integral_constant<int, 0>{}) * weights.at(w_x, w_y);
+                                  .at(std::integral_constant<int, 0>{})
+                            * weights.at(w_x, w_y);
                 }
             }
             auto determinant = ddxx_i * ddyy_i - dxdy_i * dxdy_i;
@@ -75,6 +81,6 @@ inline void compute_hessian_responses(
     }
 }
 
-}} // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

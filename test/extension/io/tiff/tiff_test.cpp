@@ -21,8 +21,8 @@
 #include "paths.hpp"
 #include "subimage_test.hpp"
 
-namespace fs   = boost::filesystem;
-namespace gil  = boost::gil;
+namespace fs = boost::filesystem;
+namespace gil = boost::gil;
 namespace mp11 = boost::mp11;
 
 #ifdef BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES
@@ -30,7 +30,7 @@ namespace mp11 = boost::mp11;
 void test_read_image_info()
 {
     {
-        using backend_t   = gil::get_reader_backend<std::string const, gil::tiff_tag>::type;
+        using backend_t = gil::get_reader_backend<std::string const, gil::tiff_tag>::type;
         backend_t backend = gil::read_image_info(tiff_filename, gil::tiff_tag());
 
         BOOST_TEST_EQ(backend._info._width, 1000u);
@@ -39,7 +39,7 @@ void test_read_image_info()
     {
         std::ifstream in(tiff_filename.c_str(), std::ios::binary);
 
-        using backend_t   = gil::get_reader_backend<std::ifstream, gil::tiff_tag>::type;
+        using backend_t = gil::get_reader_backend<std::ifstream, gil::tiff_tag>::type;
         backend_t backend = gil::read_image_info(in, gil::tiff_tag());
 
         BOOST_TEST_EQ(backend._info._width, 1000u);
@@ -48,7 +48,7 @@ void test_read_image_info()
     {
         TIFF* file = TIFFOpen(tiff_filename.c_str(), "r");
 
-        using backend_t   = gil::get_reader_backend<FILE*, gil::tiff_tag>::type;
+        using backend_t = gil::get_reader_backend<FILE*, gil::tiff_tag>::type;
         backend_t backend = gil::read_image_info(file, gil::tiff_tag());
 
         BOOST_TEST_EQ(backend._info._width, 1000u);
@@ -57,7 +57,7 @@ void test_read_image_info()
     {
         fs::path my_path(tiff_filename);
 
-        using backend_t   = gil::get_reader_backend<fs::path, gil::tiff_tag>::type;
+        using backend_t = gil::get_reader_backend<fs::path, gil::tiff_tag>::type;
         backend_t backend = gil::read_image_info(my_path, gil::tiff_tag());
 
         BOOST_TEST_EQ(backend._info._width, 1000u);
@@ -186,7 +186,7 @@ void test_write_view()
 {
     auto const b = gil::rgb8_pixel_t(0, 0, 255);
     auto const g = gil::rgb8_pixel_t(0, 255, 0);
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     {
         std::string filename(tiff_out + "write_test_string.tif");
 
@@ -210,7 +210,7 @@ void test_write_view()
         gil::image_write_info<gil::tiff_tag> info;
         gil::write_view(filename, create_mandel_view(320, 240, b, g), info);
     }
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_stream()
@@ -236,9 +236,9 @@ void test_stream()
     // 5. Write out image.
     std::string filename(tiff_out + "stream_test.tif");
     std::ofstream out(filename.c_str(), std::ios_base::binary);
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(out, gil::view(dst), gil::tiff_tag());
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 void test_stream_2()
@@ -267,19 +267,14 @@ void test_dynamic_image()
 {
     // FIXME: This test has been disabled for now because of compilation issues with MSVC10.
 
-    gil::any_image
-    <
-        gil::gray8_image_t,
-        gil::gray16_image_t,
-        gil::rgb8_image_t,
-        gil::rgba8_image_t
-    > image;
+    gil::any_image<gil::gray8_image_t, gil::gray16_image_t, gil::rgb8_image_t, gil::rgba8_image_t>
+        image;
 
     gil::read_image(tiff_filename.c_str(), image, gil::tiff_tag());
 
-#ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    ifdef BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
     gil::write_view(tiff_out + "dynamic_image_test.tif", gil::view(image), gil::tiff_tag());
-#endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
+#    endif  // BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES
 }
 
 int main()
@@ -300,5 +295,7 @@ int main()
 }
 
 #else
-int main() {}
+int main()
+{
+}
 #endif  // BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES

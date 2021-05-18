@@ -18,27 +18,23 @@
 //
 // Uncomment to enable debugging output
 //#define BOOST_GIL_TEST_DEBUG 1
-#include <boost/config.hpp> // BOOST_HAS_LONG_LONG
 #include <boost/gil/promote_integral.hpp>
 
+#include <boost/config.hpp>  // BOOST_HAS_LONG_LONG
 #include <boost/core/lightweight_test.hpp>
 
 #include <algorithm>
 #include <climits>
 #include <cstddef>
 #ifdef BOOST_GIL_TEST_DEBUG
-#include <iostream>
+#    include <iostream>
 #endif
 #include <limits>
 #include <string>
 
 namespace bg = boost::gil;
 
-template
-<
-    typename T,
-    bool Signed = std::is_fundamental<T>::value && !std::is_unsigned<T>::type::value
->
+template <typename T, bool Signed = std::is_fundamental<T>::value && !std::is_unsigned<T>::type::value>
 struct absolute_value
 {
     static inline T apply(T const& t)
@@ -56,12 +52,7 @@ struct absolute_value<T, false>
     }
 };
 
-template
-    <
-        typename Integral,
-        typename Promoted,
-        bool Signed = !std::is_unsigned<Promoted>::value
-    >
+template <typename Integral, typename Promoted, bool Signed = !std::is_unsigned<Promoted>::value>
 struct test_max_values
 {
     static inline void apply()
@@ -81,8 +72,8 @@ struct test_max_values
 
 #ifdef BOOST_GIL_TEST_DEBUG
         std::cout << "integral min_value^2: " << min_value << std::endl;
-        std::cout << "promoted max_value:   "
-                  << (std::numeric_limits<Promoted>::max)() << std::endl;
+        std::cout << "promoted max_value:   " << (std::numeric_limits<Promoted>::max)()
+                  << std::endl;
 #endif
     }
 };
@@ -94,31 +85,28 @@ struct test_max_values<Integral, Promoted, false>
     {
         Promoted max_value = (std::numeric_limits<Integral>::max)();
         Promoted max_value_sqr = static_cast<Promoted>(max_value * max_value);
-        BOOST_TEST(max_value_sqr < (std::numeric_limits<Promoted>::max)()
-                    &&
-                    max_value_sqr > max_value);
+        BOOST_TEST(
+            max_value_sqr < (std::numeric_limits<Promoted>::max)() && max_value_sqr > max_value);
 
 #ifdef BOOST_GIL_TEST_DEBUG
         std::cout << "integral max_value^2: " << max_value_sqr << std::endl;
-        std::cout << "promoted max_value:   "
-                  << (std::numeric_limits<Promoted>::max)() << std::endl;
+        std::cout << "promoted max_value:   " << (std::numeric_limits<Promoted>::max)()
+                  << std::endl;
 #endif
     }
 };
 
 
 // helper function that returns the bit size of a type
-template
-    <
-        typename T,
-        bool IsFundamental = std::is_fundamental<T>::value
-    >
+template <typename T, bool IsFundamental = std::is_fundamental<T>::value>
 struct bit_size_impl : std::integral_constant<std::size_t, 0>
-{};
+{
+};
 
 template <typename T>
 struct bit_size_impl<T, true> : bg::detail::promote_integral::bit_size<T>::type
-{};
+{
+};
 
 template <typename T>
 std::size_t bit_size()
@@ -134,23 +122,16 @@ struct test_promote_integral
     template <typename Type, typename ExpectedPromotedType>
     static inline void apply(std::string const& case_id)
     {
-        using promoted_integral_type = typename bg::promote_integral
-            <
-                Type, PromoteUnsignedToUnsigned
-            >::type;
+        using promoted_integral_type =
+            typename bg::promote_integral<Type, PromoteUnsignedToUnsigned>::type;
 
-        bool const same_types = std::is_same
-            <
-                promoted_integral_type, ExpectedPromotedType
-            >::value;
+        bool const same_types = std::is_same<promoted_integral_type, ExpectedPromotedType>::value;
 
-        BOOST_CHECK_MESSAGE(same_types,
-                            "case ID: " << case_id
-                                        << "input type: " << typeid(Type).name()
-                                        << "; detected: "
-                                        << typeid(promoted_integral_type).name()
-                                        << "; expected: "
-                                        << typeid(ExpectedPromotedType).name());
+        BOOST_CHECK_MESSAGE(
+            same_types,
+            "case ID: " << case_id << "input type: " << typeid(Type).name()
+                        << "; detected: " << typeid(promoted_integral_type).name()
+                        << "; expected: " << typeid(ExpectedPromotedType).name());
 
         if (!std::is_same<Type, promoted_integral_type>::value)
         {
@@ -159,48 +140,34 @@ struct test_promote_integral
 
 #ifdef BOOST_GIL_TEST_DEBUG
         std::cout << "case ID: " << case_id << std::endl
-                  << "type : " << typeid(Type).name()
-                  << ", sizeof (bits): " << bit_size<Type>()
-                  << ", min value: "
-                  << (std::numeric_limits<Type>::min)()
-                  << ", max value: "
-                  << (std::numeric_limits<Type>::max)()
-                  << std::endl;
-        std::cout << "detected promoted type : "
-                  << typeid(promoted_integral_type).name()
+                  << "type : " << typeid(Type).name() << ", sizeof (bits): " << bit_size<Type>()
+                  << ", min value: " << (std::numeric_limits<Type>::min)()
+                  << ", max value: " << (std::numeric_limits<Type>::max)() << std::endl;
+        std::cout << "detected promoted type : " << typeid(promoted_integral_type).name()
                   << ", sizeof (bits): " << bit_size<promoted_integral_type>()
-                  << ", min value: "
-                  << (std::numeric_limits<promoted_integral_type>::min)()
-                  << ", max value: "
-                  << (std::numeric_limits<promoted_integral_type>::max)()
+                  << ", min value: " << (std::numeric_limits<promoted_integral_type>::min)()
+                  << ", max value: " << (std::numeric_limits<promoted_integral_type>::max)()
                   << std::endl;
-        std::cout << "expected promoted type : "
-                  << typeid(ExpectedPromotedType).name()
+        std::cout << "expected promoted type : " << typeid(ExpectedPromotedType).name()
                   << ", sizeof (bits): " << bit_size<ExpectedPromotedType>()
-                  << ", min value: "
-                  << (std::numeric_limits<ExpectedPromotedType>::min)()
-                  << ", max value: "
-                  << (std::numeric_limits<ExpectedPromotedType>::max)()
+                  << ", min value: " << (std::numeric_limits<ExpectedPromotedType>::min)()
+                  << ", max value: " << (std::numeric_limits<ExpectedPromotedType>::max)()
                   << std::endl;
         std::cout << std::endl;
 #endif
     }
 };
 
-template
-        <
-                typename T,
-                bool PromoteUnsignedToUnsigned = false,
-                bool IsSigned = !std::is_unsigned<T>::value
-        >
+template <
+    typename T,
+    bool PromoteUnsignedToUnsigned = false,
+    bool IsSigned = !std::is_unsigned<T>::value>
 struct test_promotion
 {
     static inline void apply(std::string case_id)
     {
 #ifdef BOOST_GIL_TEST_DEBUG
-        std::cout << "*** "
-                  << (IsSigned ? "signed" : "unsigned")
-                  << " -> signed ***" << std::endl;
+        std::cout << "*** " << (IsSigned ? "signed" : "unsigned") << " -> signed ***" << std::endl;
 #endif
 
         using tester = test_promote_integral<PromoteUnsignedToUnsigned>;

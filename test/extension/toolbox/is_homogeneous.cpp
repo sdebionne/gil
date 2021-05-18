@@ -16,7 +16,7 @@ void test_is_homogeneous()
     static_assert(gil::is_homogeneous<gil::rgb8_pixel_t>::value, "");
     static_assert(gil::is_homogeneous<gil::cmyk16c_planar_ref_t>::value, "");
 
-    using image_t = gil::bit_aligned_image1_type< 4, gil::gray_layout_t>::type;
+    using image_t = gil::bit_aligned_image1_type<4, gil::gray_layout_t>::type;
     static_assert(gil::is_homogeneous<image_t::view_t::reference>::value, "");
 }
 

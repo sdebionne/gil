@@ -15,8 +15,8 @@
 #include <limits>
 
 #ifndef BOOST_GIL_TEST_DEBUG_OSTREAM
-#include <iostream>
-#define BOOST_GIL_TEST_DEBUG_OSTREAM std::cout
+#    include <iostream>
+#    define BOOST_GIL_TEST_DEBUG_OSTREAM std::cout
 #endif
 
 #include "test_utility_output_stream.hpp"
@@ -32,17 +32,9 @@ void test_rgb32f_xyz32f_1()
     gil::color_convert(p32f, xyz32f);
     gil::color_convert(xyz32f, p32f_b);
 
-    BOOST_GIL_TEST_DEBUG_OSTREAM
-        << p32f[0] << " "
-        << p32f[1] << " "
-        << p32f[2] << " -> "
-        << xyz32f[0] << " "
-        << xyz32f[1] << " "
-        << xyz32f[2] << " -> "
-        << p32f_b[0] << " "
-        << p32f_b[1] << " "
-        << p32f_b[2]
-        << '\n';
+    BOOST_GIL_TEST_DEBUG_OSTREAM << p32f[0] << " " << p32f[1] << " " << p32f[2] << " -> "
+                                 << xyz32f[0] << " " << xyz32f[1] << " " << xyz32f[2] << " -> "
+                                 << p32f_b[0] << " " << p32f_b[1] << " " << p32f_b[2] << '\n';
 
     BOOST_TEST_LT(std::fabs(p32f[0] - p32f_b[0]), SKEW);
     BOOST_TEST_LT(std::fabs(p32f[1] - p32f_b[1]), SKEW);
@@ -59,17 +51,9 @@ void test_rgb32f_xyz32f_2()
     gil::color_convert(p32f, xyz32f);
     gil::color_convert(xyz32f, p32f_b);
 
-    BOOST_GIL_TEST_DEBUG_OSTREAM
-        << p32f[0] << " "
-        << p32f[1] << " "
-        << p32f[2] << " -> "
-        << xyz32f[0] << " "
-        << xyz32f[1] << " "
-        << xyz32f[2] << " -> "
-        << p32f_b[0] << " "
-        << p32f_b[1] << " "
-        << p32f_b[2]
-        << '\n';
+    BOOST_GIL_TEST_DEBUG_OSTREAM << p32f[0] << " " << p32f[1] << " " << p32f[2] << " -> "
+                                 << xyz32f[0] << " " << xyz32f[1] << " " << xyz32f[2] << " -> "
+                                 << p32f_b[0] << " " << p32f_b[1] << " " << p32f_b[2] << '\n';
 
     BOOST_TEST_LT(std::fabs(p32f[0] - p32f_b[0]), SKEW);
     BOOST_TEST_LT(std::fabs(p32f[1] - p32f_b[1]), SKEW);
@@ -86,17 +70,9 @@ void test_xyz32f_rgb32f_1()
     gil::color_convert(xyz32f, p32f);
     gil::color_convert(p32f, xyz32f_b);
 
-    BOOST_GIL_TEST_DEBUG_OSTREAM
-        << xyz32f[0] << " "
-        << xyz32f[1] << " "
-        << xyz32f[2] << " -> "
-        << p32f[0] << " "
-        << p32f[1] << " "
-        << p32f[2] << " -> "
-        << xyz32f_b[0] << " "
-        << xyz32f_b[1] << " "
-        << xyz32f_b[2]
-        << '\n';
+    BOOST_GIL_TEST_DEBUG_OSTREAM << xyz32f[0] << " " << xyz32f[1] << " " << xyz32f[2] << " -> "
+                                 << p32f[0] << " " << p32f[1] << " " << p32f[2] << " -> "
+                                 << xyz32f_b[0] << " " << xyz32f_b[1] << " " << xyz32f_b[2] << '\n';
 
     BOOST_TEST_LT(std::fabs(xyz32f_b[0] - xyz32f[0]), SKEW);
     BOOST_TEST_LT(std::fabs(xyz32f_b[1] - xyz32f[1]), SKEW);
@@ -113,17 +89,9 @@ void test_xyz32f_rgb32f_2()
     gil::color_convert(xyz32f, p32f);
     gil::color_convert(p32f, xyz32f_b);
 
-    BOOST_GIL_TEST_DEBUG_OSTREAM
-        << xyz32f[0] << " "
-        << xyz32f[1] << " "
-        << xyz32f[2] << " -> "
-        << p32f[0] << " "
-        << p32f[1] << " "
-        << p32f[2] << " -> "
-        << xyz32f_b[0] << " "
-        << xyz32f_b[1] << " "
-        << xyz32f_b[2]
-        << '\n';
+    BOOST_GIL_TEST_DEBUG_OSTREAM << xyz32f[0] << " " << xyz32f[1] << " " << xyz32f[2] << " -> "
+                                 << p32f[0] << " " << p32f[1] << " " << p32f[2] << " -> "
+                                 << xyz32f_b[0] << " " << xyz32f_b[1] << " " << xyz32f_b[2] << '\n';
 
     BOOST_TEST_LT(std::fabs(xyz32f_b[0] - xyz32f[0]), SKEW);
     BOOST_TEST_LT(std::fabs(xyz32f_b[1] - xyz32f[1]), SKEW);
@@ -140,17 +108,11 @@ void test_rgb8u_xyz32f_1()
     gil::color_convert(p8u, xyz32f);
     gil::color_convert(xyz32f, p8u_b);
 
-    BOOST_GIL_TEST_DEBUG_OSTREAM
-        << static_cast<int>(p8u[0]) << " "
-        << static_cast<int>(p8u[1]) << " "
-        << static_cast<int>(p8u[2]) << " -> "
-        << xyz32f[0] << " "
-        << xyz32f[1] << " "
-        << xyz32f[2] << " -> "
-        << static_cast<int>(p8u_b[0]) << " "
-        << static_cast<int>(p8u_b[1]) << " "
-        << static_cast<int>(p8u_b[2])
-        << '\n';
+    BOOST_GIL_TEST_DEBUG_OSTREAM << static_cast<int>(p8u[0]) << " " << static_cast<int>(p8u[1])
+                                 << " " << static_cast<int>(p8u[2]) << " -> " << xyz32f[0] << " "
+                                 << xyz32f[1] << " " << xyz32f[2] << " -> "
+                                 << static_cast<int>(p8u_b[0]) << " " << static_cast<int>(p8u_b[1])
+                                 << " " << static_cast<int>(p8u_b[2]) << '\n';
 
     BOOST_TEST_EQ(p8u[0], p8u_b[0]);
     BOOST_TEST_EQ(p8u[1], p8u_b[1]);
@@ -164,17 +126,11 @@ void test_rgb8u_xyz32f_2()
     gil::color_convert(p8u, xyz32f);
     gil::color_convert(xyz32f, p8u_b);
 
-    BOOST_GIL_TEST_DEBUG_OSTREAM
-        << static_cast<int>(p8u[0]) << " "
-        << static_cast<int>(p8u[1]) << " "
-        << static_cast<int>(p8u[2]) << " -> "
-        << xyz32f[0] << " "
-        << xyz32f[1] << " "
-        << xyz32f[2] << " -> "
-        << static_cast<int>(p8u_b[0]) << " "
-        << static_cast<int>(p8u_b[1]) << " "
-        << static_cast<int>(p8u_b[2])
-        << '\n';
+    BOOST_GIL_TEST_DEBUG_OSTREAM << static_cast<int>(p8u[0]) << " " << static_cast<int>(p8u[1])
+                                 << " " << static_cast<int>(p8u[2]) << " -> " << xyz32f[0] << " "
+                                 << xyz32f[1] << " " << xyz32f[2] << " -> "
+                                 << static_cast<int>(p8u_b[0]) << " " << static_cast<int>(p8u_b[1])
+                                 << " " << static_cast<int>(p8u_b[2]) << '\n';
 
     BOOST_TEST_EQ(p8u[0], p8u_b[0]);
     BOOST_TEST_EQ(p8u[1], p8u_b[1]);
@@ -188,17 +144,12 @@ void test_rgb16u_xyz32f_1()
     gil::color_convert(p16u, xyz32f);
     gil::color_convert(xyz32f, p16u_b);
 
-    BOOST_GIL_TEST_DEBUG_OSTREAM
-        << static_cast<int>(p16u[0]) << " "
-        << static_cast<int>(p16u[1]) << " "
-        << static_cast<int>(p16u[2]) << " -> "
-        << xyz32f[0] << " "
-        << xyz32f[1] << " "
-        << xyz32f[2] << " -> "
-        << static_cast<int>(p16u_b[0]) << " "
-        << static_cast<int>(p16u_b[1]) << " "
-        << static_cast<int>(p16u_b[2])
-        << '\n';
+    BOOST_GIL_TEST_DEBUG_OSTREAM << static_cast<int>(p16u[0]) << " " << static_cast<int>(p16u[1])
+                                 << " " << static_cast<int>(p16u[2]) << " -> " << xyz32f[0] << " "
+                                 << xyz32f[1] << " " << xyz32f[2] << " -> "
+                                 << static_cast<int>(p16u_b[0]) << " "
+                                 << static_cast<int>(p16u_b[1]) << " "
+                                 << static_cast<int>(p16u_b[2]) << '\n';
 
     BOOST_TEST_EQ(p16u[0], p16u_b[0]);
     BOOST_TEST_EQ(p16u[1], p16u_b[1]);
