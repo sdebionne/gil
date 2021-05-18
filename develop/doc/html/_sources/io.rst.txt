@@ -267,7 +267,7 @@ The following code sample shows the usage::
                             , tag_t
                             > reader_t;
 
-    reader_t reader = make_scanline_reader( "C:/boost/libs/gil/io/test_images/tiff/test.tif", tag_t() );
+    reader_t reader = make_scanline_reader( "C:/boost/libs/gil/test/extension/io/images/tiff/test.tif", tag_t() );
 
     typedef rgba8_image_t image_t;
 
@@ -354,7 +354,6 @@ BOOST_GIL_IO_PNG_DITHERING_SUPPORTED                     Look up "dithering" in 
 BOOST_GIL_IO_PNG_1_4_OR_LOWER                            Allow compiling with libpng 1.4 or lower.
 BOOST_GIL_EXTENSION_IO_JPEG_C_LIB_COMPILED_AS_CPLUSPLUS  libjpeg is compiled as c++ lib.
 BOOST_GIL_EXTENSION_IO_PNG_C_LIB_COMPILED_AS_CPLUSPLUS   libpng is compiled as c++ lib.
-BOOST_GIL_EXTENSION_IO_RAW_C_LIB_COMPILED_AS_CPLUSPLUS   libraw is compiled as c++ lib.
 BOOST_GIL_EXTENSION_IO_TIFF_C_LIB_COMPILED_AS_CPLUSPLUS  libtiff is compiled as c++ lib.
 BOOST_GIL_EXTENSION_IO_ZLIB_C_LIB_COMPILED_AS_CPLUSPLUS  zlib is compiled as c++ lib.
 BOOST_GIL_IO_TEST_ALLOW_READING_IMAGES                   Allow basic test images to be read from local hard drive. The paths can be set in paths.hpp
@@ -362,7 +361,6 @@ BOOST_GIL_IO_TEST_ALLOW_WRITING_IMAGES                   Allow images to be writ
 BOOST_GIL_IO_USE_BMP_TEST_SUITE_IMAGES                   Run tests using the bmp test images suite. See _BMP_TEST_FILES
 BOOST_GIL_IO_USE_PNG_TEST_SUITE_IMAGES                   Run tests using the png test images suite. See _PNG_TEST_FILES
 BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES                   Run tests using the pnm test images suite. Send me an email for accessing the files.
-BOOST_GIL_IO_USE_TARGA_FILEFORMAT_TEST_SUITE_IMAGES      Run tests using the targa file format test images suite. See _TARGA_TEST_FILES
 BOOST_GIL_IO_USE_TIFF_LIBTIFF_TEST_SUITE_IMAGES          Run tests using the targa file format test images suite. See _TIFF_LIB_TIFF_TEST_FILES
 BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES   Run tests using the targa file format test images suite. See _TIFF_GRAPHICSMAGICK_TEST_FILES
 ======================================================== ========================================================
@@ -435,18 +433,17 @@ Currently the code is able to read and write the following image types:
 :Read: gray1, gray2, gray4, gray8, gray16, gray_alpha_8, gray_alpha_16, rgb8, rgb16, rgba8, rgba16
 :Write: gray1, gray2, gray4, gray8, gray16, gray_alpha_8, gray_alpha_16, rgb8, rgb16, rgba8, rgba16
 
-For reading gray_alpha images the user has to enable the ``ENABLE_GRAY_ALPHA``
-compiler switch. This color space is defined in the toolbox by
-using ``gray_alpha.hpp``.
+For reading gray_alpha images the user has to compile application with ``BOOST_GIL_IO_ENABLE_GRAY_ALPHA``
+macro  defined. This color space is defined in the toolbox by using ``gray_alpha.hpp``.
 
 PNM
 +++
 
 For a general overview of the PNM image file format go to the
-following PNM_Wiki_.
+following PNM_Wiki_. No external library is needed for the pnm format.
 
-No external library is needed for the pnm format.
-Both ascii and binary formats are supported.
+The extension can read images in both flavours of the formats, ASCII and binary,
+that is types from P1 through P6; can write only binary formats.
 
 Currently the code is able to read and write the following image types:
 
@@ -634,7 +631,6 @@ to enable the tests:
 :BMP:   BMP_TEST_FILES_                 -- BOOST_GIL_IO_USE_BMP_TEST_SUITE_IMAGES
 :PNG:   PNG_TEST_FILES_                 -- BOOST_GIL_IO_USE_PNG_TEST_SUITE_IMAGES
 :PNM:   request files from me           -- BOOST_GIL_IO_USE_PNM_TEST_SUITE_IMAGES
-:TARGA: TARGA_TEST_FILES_               -- BOOST_GIL_IO_USE_TARGA_FILEFORMAT_TEST_SUITE_IMAGES
 :TIFF:  TIFF_LIB_TIFF_TEST_FILES_       -- BOOST_GIL_IO_USE_TIFF_LIBTIFF_TEST_SUITE_IMAGES
 :TIFF:  TIFF_GRAPHICSMAGICK_TEST_FILES_ -- BOOST_GIL_IO_USE_TIFF_GRAPHICSMAGICK_TEST_SUITE_IMAGES
 
