@@ -239,7 +239,7 @@ $(function() {
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        });</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="keywordflow">return</span> check;</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    }</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
 <div class="line"><a name="l00264"></a><span class="lineno"><a class="line" href="classboost_1_1gil_1_1histogram.html#a0dae242b2c1bf16bde24c124d3097c8a">  264</a></span>&#160;    <span class="keyword">static</span> constexpr <span class="keywordtype">bool</span> <a class="code" href="classboost_1_1gil_1_1histogram.html#a0dae242b2c1bf16bde24c124d3097c8a">is_pixel_compatible</a>()</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    {</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        <span class="keyword">using</span> bin_types = boost::mp11::mp_list&lt;T...&gt;;</div>
@@ -572,11 +572,11 @@ $(function() {
 <div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;{</div>
 <div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;    <span class="keywordflow">if</span> (!accumulate)</div>
 <div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;        hist.clear();</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;    </div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160; </div>
 <div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;    detail::filler&lt;histogram&lt;T...&gt;::dimension()&gt; f;</div>
 <div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;    <span class="keywordflow">if</span> (!sparsefill)</div>
 <div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;        f(hist, lower, upper, bin_width);</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;    </div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160; </div>
 <div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;    hist.template <a class="code" href="group___s_t_l_optimizations.html#gaab999be608ae006f1127b8bb5145a227">fill</a>&lt;Dimensions...&gt;(srcview, bin_width, applymask, mask, lower, upper, setlimits);</div>
 <div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;}</div>
 <div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160; </div>
@@ -590,7 +590,7 @@ $(function() {
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;    static_assert(</div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        boost::mp11::mp_all_of&lt;check_list, boost::mp11::mp_to_bool&gt;::value,</div>
 <div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;        <span class="stringliteral">&quot;Cumulative histogram not possible of this type&quot;</span>);</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    </div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160; </div>
 <div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;    <span class="keyword">using</span> histogram_t = histogram&lt;T...&gt;;</div>
 <div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;    <span class="keyword">using</span> pair_t  = std::pair&lt;typename histogram_t::key_type, typename histogram_t::mapped_type&gt;;</div>
 <div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;    <span class="keyword">using</span> value_t = <span class="keyword">typename</span> histogram_t::value_type;</div>
@@ -650,7 +650,7 @@ $(function() {
 <div class="ttc" id="aclassboost_1_1gil_1_1histogram_html_a1326d1132f56f08297dce325b4b4ff7a"><div class="ttname"><a href="classboost_1_1gil_1_1histogram.html#a1326d1132f56f08297dce325b4b4ff7a">boost::gil::histogram::key_from_tuple</a></div><div class="ttdeci">key_t key_from_tuple(Tuple const &amp;t) const</div><div class="ttdoc">Returns a key compatible to be used as the histogram key from the input tuple.</div><div class="ttdef"><b>Definition:</b> histogram.hpp:294</div></div>
 <div class="ttc" id="aclassboost_1_1gil_1_1histogram_html_ad383819035232b2c4a664b0a9c025989"><div class="ttname"><a href="classboost_1_1gil_1_1histogram.html#ad383819035232b2c4a664b0a9c025989">boost::gil::histogram::fill</a></div><div class="ttdeci">void fill(SrcView const &amp;srcview, std::size_t bin_width=1, bool applymask=false, std::vector&lt; std::vector&lt; bool &gt;&gt; mask={}, key_t lower=key_t(), key_t upper=key_t(), bool setlimits=false)</div><div class="ttdoc">Fills the histogram with the input image view.</div><div class="ttdef"><b>Definition:</b> histogram.hpp:407</div></div>
 <div class="ttc" id="aclassboost_1_1gil_1_1histogram_html_ac5b0f6998ccb8ac1e5fb735acf8735b0"><div class="ttname"><a href="classboost_1_1gil_1_1histogram.html#ac5b0f6998ccb8ac1e5fb735acf8735b0">boost::gil::histogram::nearest_key</a></div><div class="ttdeci">key_t nearest_key(key_t const &amp;k) const</div><div class="ttdoc">Return nearest smaller key to specified histogram key.</div><div class="ttdef"><b>Definition:</b> histogram.hpp:375</div></div>
-<div class="ttc" id="agroup___s_t_l_optimizations_html_gaab999be608ae006f1127b8bb5145a227"><div class="ttname"><a href="group___s_t_l_optimizations.html#gaab999be608ae006f1127b8bb5145a227">std::fill</a></div><div class="ttdeci">void fill(boost::gil::iterator_from_2d&lt; IL &gt; first, boost::gil::iterator_from_2d&lt; IL &gt; last, const V &amp;val)</div><div class="ttdoc">std::fill(I,I,V) with I being a iterator_from_2d</div><div class="ttdef"><b>Definition:</b> algorithm.hpp:359</div></div>
+<div class="ttc" id="agroup___s_t_l_optimizations_html_gaab999be608ae006f1127b8bb5145a227"><div class="ttname"><a href="group___s_t_l_optimizations.html#gaab999be608ae006f1127b8bb5145a227">std::fill</a></div><div class="ttdeci">void fill(boost::gil::iterator_from_2d&lt; IL &gt; first, boost::gil::iterator_from_2d&lt; IL &gt; last, const V &amp;val)</div><div class="ttdoc">std::fill(I,I,V) with I being a iterator_from_2d</div><div class="ttdef"><b>Definition:</b> algorithm.hpp:365</div></div>
 <div class="ttc" id="aclassboost_1_1gil_1_1histogram_html_a383075e79dfce648ead785b87a7f0463"><div class="ttname"><a href="classboost_1_1gil_1_1histogram.html#a383075e79dfce648ead785b87a7f0463">boost::gil::histogram::operator()</a></div><div class="ttdeci">mapped_t &amp; operator()(T... indices)</div><div class="ttdoc">Returns bin value corresponding to specified tuple.</div><div class="ttdef"><b>Definition:</b> histogram.hpp:230</div></div>
 <div class="ttc" id="aclassboost_1_1gil_1_1histogram_html_a0dae242b2c1bf16bde24c124d3097c8a"><div class="ttname"><a href="classboost_1_1gil_1_1histogram.html#a0dae242b2c1bf16bde24c124d3097c8a">boost::gil::histogram::is_pixel_compatible</a></div><div class="ttdeci">static constexpr bool is_pixel_compatible()</div><div class="ttdoc">Checks if the histogram class is compatible to be used with a GIL image type.</div><div class="ttdef"><b>Definition:</b> histogram.hpp:264</div></div>
 <div class="ttc" id="aclassboost_1_1gil_1_1histogram_html_ab0607d4ba35a4d535c4bf1ff5e32db8b"><div class="ttname"><a href="classboost_1_1gil_1_1histogram.html#ab0607d4ba35a4d535c4bf1ff5e32db8b">boost::gil::histogram::sorted_keys</a></div><div class="ttdeci">std::vector&lt; key_t &gt; sorted_keys() const</div><div class="ttdoc">Return sorted keys in a vector.</div><div class="ttdef"><b>Definition:</b> histogram.hpp:551</div></div>
