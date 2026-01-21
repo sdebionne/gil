@@ -5,8 +5,8 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#ifndef BOOST_GIL_TEST_TEST_UTILITY_OUTPUT_STREAM_HPP
-#define BOOST_GIL_TEST_TEST_UTILITY_OUTPUT_STREAM_HPP
+#ifndef BOOST_GIL_TEST_TEST_UTILITY_OUTPUT_STREAM_PIXEL_HPP
+#define BOOST_GIL_TEST_TEST_UTILITY_OUTPUT_STREAM_PIXEL_HPP
 
 #include <boost/gil/color_base_algorithm.hpp> // static_for_each
 #include <boost/gil/packed_pixel.hpp>
@@ -79,14 +79,6 @@ struct print_color_base
 };
 
 }} // namespace test::utility
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, point<T> const& p)
-{
-    os << "point<" << boost::core::demangled_name(typeid(T)) << ">";
-    os << "(" << p.x << ", " << p.y << ")" << std::endl;
-    return os;
-}
 
 template <typename ChannelValue, typename Layout>
 std::ostream& operator<<(std::ostream& os, pixel<ChannelValue, Layout> const& p)

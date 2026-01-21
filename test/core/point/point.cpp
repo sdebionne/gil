@@ -11,7 +11,7 @@
 
 #include <type_traits>
 
-#include "test_utility_output_stream.hpp"
+#include "test_utility_output_stream_point.hpp"
 
 namespace gil = boost::gil;
 

@@ -12,7 +12,7 @@
 #if !defined(BOOST_GIL_USE_CONCEPT_CHECK) && !defined(__clang__)
 #error Compile with BOOST_GIL_USE_CONCEPT_CHECK defined
 #endif
-#include <boost/gil/concepts.hpp>
+#include <boost/gil/concepts/point.hpp>
 #include <boost/gil/point.hpp>
 
 #include <type_traits>
@@ -33,19 +33,14 @@ void test_members()
 
 int main()
 {
-    boost::function_requires<gil::PointNDConcept<gil::point<int>>>();
-    boost::function_requires<gil::PointNDConcept<gil::point_t>>();
+    static_assert(gil::PointNDConcept<gil::point<int>>);
+    static_assert(gil::PointNDConcept<gil::point_t>);
 
-    boost::function_requires<gil::Point2DConcept<gil::point<int>>>();
-    boost::function_requires<gil::Point2DConcept<gil::point_t>>();
+    static_assert(gil::Point2DConcept<gil::point<int>>);
+    static_assert(gil::Point2DConcept<gil::point_t>);
 
     test_members<gil::point<int>>();
     test_members<gil::point_t>();
-
-    // NOTE: point2 is deprecated, available for backward compatibility
-    boost::function_requires<gil::PointNDConcept<gil::point2<int>>>();
-    boost::function_requires<gil::Point2DConcept<gil::point2<int>>>();
-    test_members<gil::point2<int>>();
 
     return 0;
 }
