@@ -8,9 +8,7 @@
 #ifndef BOOST_GIL_CONCEPTS_POINT_HPP
 #define BOOST_GIL_CONCEPTS_POINT_HPP
 
-#include <boost/gil/concepts/basic.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
-
+#include <concepts>
 #include <cstddef>
 
 #if defined(BOOST_CLANG)
@@ -27,7 +25,7 @@
 namespace boost { namespace gil {
 
 // Forward declarations
-template <typename T>
+template <std::regular T>
 class point;
 
 template <std::size_t K, typename T>
@@ -58,33 +56,21 @@ T& axis_value(point<T>& p);
 /// \ingroup PointConcept
 ///
 template <typename P>
-struct PointNDConcept
+concept PointNDConcept = requires(P point, typename P::template axis<0>::coord_t ft, typename P::template axis<P::num_dimensions - 1>::coord_t lt)
 {
-    void constraints()
-    {
-        gil_function_requires<Regular<P>>();
+    typename P::value_type;
+    requires std::regular<typename P::value_type>;
 
-        using value_type = typename P::value_type;
-        ignore_unused_variable_warning(value_type{});
-
-        static const std::size_t N = P::num_dimensions;
-        ignore_unused_variable_warning(N);
-        using FT = typename P::template axis<0>::coord_t;
-        using LT = typename P::template axis<N - 1>::coord_t;
-        FT ft = gil::axis_value<0>(point);
-        axis_value<0>(point) = ft;
-        LT lt = axis_value<N - 1>(point);
-        axis_value<N - 1>(point) = lt;
-
-        //value_type v=point[0];
-        //ignore_unused_variable_warning(v);
-    }
-    P point;
+    P::num_dimensions;
+    ft = gil::axis_value<0>(point);
+    axis_value<0>(point) = ft;
+    lt = axis_value<P::num_dimensions - 1>(point);
+    axis_value<P::num_dimensions - 1>(point) = lt;
 };
 
 /// \brief 2-dimensional point concept
 /// \code
-/// concept Point2DConcept<typename T> : PointNDConcept<T>
+/// concept Point2DConcept<typename T> : PointNDConcept<T>N
 /// {
 ///     where num_dimensions == 2;
 ///     where SameType<axis<0>::type, axis<1>::type>;
@@ -100,16 +86,11 @@ struct PointNDConcept
 /// \ingroup PointConcept
 ///
 template <typename P>
-struct Point2DConcept
+concept Point2DConcept = PointNDConcept<P> && requires(P point)
 {
-    void constraints()
-    {
-        gil_function_requires<PointNDConcept<P>>();
-        static_assert(P::num_dimensions == 2, "");
-        point.x = point.y;
-        point[0] = point[1];
-    }
-    P point;
+    requires P::num_dimensions == 2;
+    point.x = point.y;
+    point[0] = point[1];
 };
 
 }} // namespace boost::gil
