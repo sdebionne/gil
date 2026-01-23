@@ -119,7 +119,7 @@ struct channel_value
         : min_v_(gil::channel_traits<ChannelValue>::min_value())
         , max_v_(gil::channel_traits<ChannelValue>::max_value())
     {
-        boost::function_requires<gil::ChannelValueConcept<ChannelValue>>();
+        static_assert(gil::ChannelValueConcept<ChannelValue>);
     }
 };
 
@@ -138,7 +138,7 @@ struct channel_reference
         , min_v_(parent_t::min_v_)
         , max_v_(parent_t::max_v_)
     {
-        boost::function_requires<ChannelConcept<ChannelRef>>();
+        static_assert(ChannelConcept<ChannelRef>);
     }
 };
 
@@ -155,7 +155,7 @@ struct packed_channel_reference
 
     packed_channel_reference() : min_v_(&min_bitbuf_), max_v_(&max_bitbuf_)
     {
-        boost::function_requires<ChannelConcept<ChannelSubbyteRef>>();
+        static_assert(ChannelConcept<ChannelSubbyteRef>);
 
         ChannelMutableRef b1(&min_bitbuf_);
         b1 = gil::channel_traits<channel_t>::min_value();
@@ -179,7 +179,7 @@ struct packed_dynamic_channel_reference
         : min_v_(&min_bitbuf_, first_bit1)
         , max_v_(&max_bitbuf_, first_bit2)
     {
-        boost::function_requires<ChannelConcept<ChannelSubbyteRef>>();
+        static_assert(ChannelConcept<ChannelSubbyteRef>);
 
         ChannelMutableRef b1(&min_bitbuf_, 1);
         b1 = gil::channel_traits<channel_t>::min_value();

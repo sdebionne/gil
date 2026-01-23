@@ -85,7 +85,7 @@ void test_channel_minimal_requirements()
 {
     // Do only compile-time tests for the archetype
     // (because asserts like val1<val2 fail)
-    boost::function_requires<gil::MutableChannelConcept<channel_archetype>>();
+    static_assert(gil::MutableChannelConcept<channel_archetype>);
 
     fixture::channel_value<channel_value_archetype>();
     fixture::channel_reference<channel_archetype>();
