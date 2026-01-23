@@ -8,8 +8,6 @@
 #ifndef BOOST_GIL_CONCEPTS_COLOR_HPP
 #define BOOST_GIL_CONCEPTS_COLOR_HPP
 
-#include <boost/gil/concepts/concept_check.hpp>
-
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
@@ -34,19 +32,14 @@ namespace boost { namespace gil {
 /// };
 /// \endcode
 template <typename CS>
-struct ColorSpaceConcept
-{
-    void constraints()
-    {
-        // Boost.MP11-compatible list, whose elements are color tags
-
-        // TODO: Is this incomplete?
-    }
-};
+concept ColorSpaceConcept = true; // TODO: Is this incomplete?
 
 // Models ColorSpaceConcept
 template <typename CS1, typename CS2>
-struct color_spaces_are_compatible : std::is_same<CS1, CS2> {};
+using color_spaces_are_compatible = std::is_same<CS1, CS2>;
+
+template <typename CS1, typename CS2>
+constexpr bool color_spaces_are_compatible_v = color_spaces_are_compatible<CS1, CS2>::value;
 
 /// \ingroup ColorSpaceAndLayoutConcept
 /// \brief Two color spaces are compatible if they are the same
@@ -57,13 +50,7 @@ struct color_spaces_are_compatible : std::is_same<CS1, CS2> {};
 /// };
 /// \endcode
 template <typename CS1, typename CS2>
-struct ColorSpacesCompatibleConcept
-{
-    void constraints()
-    {
-        static_assert(color_spaces_are_compatible<CS1, CS2>::value, "");
-    }
-};
+concept ColorSpacesCompatibleConcept = color_spaces_are_compatible_v<CS1, CS2>;
 
 /// \ingroup ColorSpaceAndLayoutConcept
 /// \brief Channel mapping concept
@@ -75,16 +62,7 @@ struct ColorSpacesCompatibleConcept
 /// };
 /// \endcode
 template <typename CM>
-struct ChannelMappingConcept
-{
-    void constraints()
-    {
-        // Boost.MP11-compatible list, whose elements model
-        // MPLIntegralConstant representing a permutation.
-
-        // TODO: Is this incomplete?
-    }
-};
+concept ChannelMappingConcept = true; // TODO: Is this incomplete?
 
 }} // namespace boost::gil
 

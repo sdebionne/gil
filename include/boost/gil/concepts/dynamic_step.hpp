@@ -9,7 +9,6 @@
 #define BOOST_GIL_CONCEPTS_DYNAMIC_STEP_HPP
 
 #include <boost/gil/concepts/fwd.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
 
 #if defined(BOOST_CLANG)
 #pragma clang diagnostic push

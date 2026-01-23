@@ -8,10 +8,11 @@
 #ifndef BOOST_GIL_CONCEPTS_PIXEL_BASED_HPP
 #define BOOST_GIL_CONCEPTS_PIXEL_BASED_HPP
 
-#include <boost/gil/concepts/basic.hpp>
+#include <boost/gil/concepts/concept_check.hpp> //to be removed
+#include <boost/gil/concepts/basic.hpp> //to be removed
+
 #include <boost/gil/concepts/channel.hpp>
 #include <boost/gil/concepts/color.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
 #include <boost/gil/concepts/fwd.hpp>
 
 #include <cstddef>

@@ -14,14 +14,12 @@
 #endif
 #include <boost/gil.hpp>
 
-#include <boost/concept_check.hpp>
 #include <boost/mp11.hpp>
 
 #include "test_fixture.hpp"
 
 namespace gil = boost::gil;
 namespace mp11 = boost::mp11;
-using boost::function_requires;
 
 template <template<typename> class Concept>
 struct assert_concept
@@ -29,7 +27,7 @@ struct assert_concept
     template <typename Pixel>
     void operator()(Pixel&&)
     {
-        function_requires<Concept<Pixel>>();
+        static_assert(requires(Concept<Pixel>));
     }
 };
 

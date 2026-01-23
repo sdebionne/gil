@@ -8,12 +8,9 @@
 #ifndef BOOST_GIL_CONCEPTS_COLOR_BASE_HPP
 #define BOOST_GIL_CONCEPTS_COLOR_BASE_HPP
 
-#include <boost/gil/concepts/basic.hpp>
 #include <boost/gil/concepts/color.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
 #include <boost/gil/concepts/fwd.hpp>
 
-#include <boost/core/ignore_unused.hpp>
 #include <type_traits>
 
 #if defined(BOOST_CLANG)
@@ -133,35 +130,25 @@ auto semantic_at_c(ColorBase const& p)
 ///         bool operator!=(const T&, const T2&);
 /// };
 /// \endcode
-template <typename ColorBase>
-struct ColorBaseConcept
+template <
+    typename ColorBase,
+    int num_elements = size<ColorBase>::value
+>
+concept ColorBaseConcept = std::copy_constructible<ColorBase> && std::equality_comparable<ColorBase>
+    && ColorSpaceConcept<typename ColorBase::layout_t::color_space_t> && requires(ColorBase cb)
 {
-    void constraints()
-    {
-        gil_function_requires<CopyConstructible<ColorBase>>();
-        gil_function_requires<EqualityComparable<ColorBase>>();
+    typename ColorBase::layout_t::color_space_t;
+    typename ColorBase::layout_t::channel_mapping_t;
+    // TODO: channel_mapping_t must be an Boost.MP11-compatible random access sequence
 
-        using color_space_t = typename ColorBase::layout_t::color_space_t;
-        gil_function_requires<ColorSpaceConcept<color_space_t>>();
+    typename kth_element_type<ColorBase, num_elements- 1>::type;
+    typename kth_element_const_reference_type<ColorBase, num_elements- 1>::type;
 
-        using channel_mapping_t = typename ColorBase::layout_t::channel_mapping_t;
-        // TODO: channel_mapping_t must be an Boost.MP11-compatible random access sequence
+    {gil::at_c<num_elements- 1>(cb)} -> std::same_as<typename kth_element_const_reference_type<ColorBase, num_elements- 1>::type>;
 
-        static const int num_elements = size<ColorBase>::value;
-
-        using TN = typename kth_element_type<ColorBase, num_elements - 1>::type;
-        using RN = typename kth_element_const_reference_type<ColorBase, num_elements - 1>::type;
-
-        RN r = gil::at_c<num_elements - 1>(cb);
-        boost::ignore_unused(r);
-
-        // functions that work for every pixel (no need to require them)
-        semantic_at_c<0>(cb);
-        semantic_at_c<num_elements-1>(cb);
-        // also static_max(cb), static_min(cb), static_fill(cb,value),
-        // and all variations of static_for_each(), static_generate(), static_transform()
-    }
-    ColorBase cb;
+    // functions that work for every pixel (no need to require them)
+    semantic_at_c<0>(cb);
+    semantic_at_c<num_elements - 1>(cb);
 };
 
 /// \ingroup ColorBaseConcept
@@ -179,21 +166,16 @@ struct ColorBaseConcept
 ///         T& operator=(T&, const T2&);
 /// };
 /// \endcode
-template <typename ColorBase>
-struct MutableColorBaseConcept
+template <
+    typename ColorBase,
+    typename R0 = typename kth_element_reference_type<ColorBase, 0>::type
+>
+concept MutableColorBaseConcept = ColorBaseConcept<ColorBase> && std::assignable_from<ColorBase, ColorBase> && std::swappable<ColorBase> && requires(ColorBase cb, R0 r)
 {
-    void constraints()
-    {
-        gil_function_requires<ColorBaseConcept<ColorBase>>();
-        gil_function_requires<Assignable<ColorBase>>();
-        gil_function_requires<Swappable<ColorBase>>();
+    typename kth_element_reference_type<ColorBase, 0>::type;
 
-        using R0 = typename kth_element_reference_type<ColorBase, 0>::type;
-
-        R0 r = gil::at_c<0>(cb);
-        gil::at_c<0>(cb) = r;
-    }
-    ColorBase cb;
+    {gil::at_c<0>(cb) } -> std::same_as<R0>;
+    gil::at_c<0>(cb) = r;
 };
 
 /// \ingroup ColorBaseConcept
@@ -204,14 +186,7 @@ struct MutableColorBaseConcept
 /// };
 /// \endcode
 template <typename ColorBase>
-struct ColorBaseValueConcept
-{
-    void constraints()
-    {
-        gil_function_requires<MutableColorBaseConcept<ColorBase>>();
-        gil_function_requires<Regular<ColorBase>>();
-    }
-};
+concept ColorBaseValueConcept = MutableColorBaseConcept<ColorBase> && std::regular<ColorBase>;
 
 /// \ingroup ColorBaseConcept
 /// \brief Color base whose elements all have the same type
@@ -223,25 +198,17 @@ struct ColorBaseValueConcept
 ///     kth_element_const_reference_type<CB,0>::type dynamic_at_c(CB const&, std::size_t n) const;
 /// };
 /// \endcode
-template <typename ColorBase>
-struct HomogeneousColorBaseConcept
+template <
+    typename ColorBase,
+    int num_elements = size<ColorBase>::value,
+    typename T0 = typename kth_element_type<ColorBase, 0>::type,
+    typename TN = typename kth_element_type<ColorBase, num_elements - 1>::type,
+    typename R0 = typename kth_element_const_reference_type<ColorBase, 0>::type
+>
+concept HomogeneousColorBaseConcept = ColorBaseConcept<ColorBase> && requires(ColorBase cb)
 {
-    void constraints()
-    {
-        gil_function_requires<ColorBaseConcept<ColorBase>>();
-
-        static const int num_elements = size<ColorBase>::value;
-
-        using T0 = typename kth_element_type<ColorBase, 0>::type;
-        using TN = typename kth_element_type<ColorBase, num_elements - 1>::type;
-
-        static_assert(std::is_same<T0, TN>::value, "");   // better than nothing
-
-        using R0 = typename kth_element_const_reference_type<ColorBase, 0>::type;
-        R0 r = dynamic_at_c(cb, 0);
-        boost::ignore_unused(r);
-    }
-    ColorBase cb;
+    requires std::same_as<T0, TN>;
+    {dynamic_at_c(cb, 0)} -> std::same_as<R0>;
 };
 
 /// \ingroup ColorBaseConcept
@@ -254,18 +221,11 @@ struct HomogeneousColorBaseConcept
 /// };
 /// \endcode
 template <typename ColorBase>
-struct MutableHomogeneousColorBaseConcept
+concept MutableHomogeneousColorBaseConcept = HomogeneousColorBaseConcept<ColorBase> && requires(ColorBase cb)
 {
-    void constraints()
-    {
-        gil_function_requires<ColorBaseConcept<ColorBase>>();
-        gil_function_requires<HomogeneousColorBaseConcept<ColorBase>>();
-        using R0 = typename kth_element_reference_type<ColorBase, 0>::type;
-        R0 r = dynamic_at_c(cb, 0);
-        boost::ignore_unused(r);
-        dynamic_at_c(cb, 0) = dynamic_at_c(cb, 0);
-    }
-    ColorBase cb;
+    typename kth_element_reference_type<ColorBase, 0>::type;
+    {dynamic_at_c(cb, 0)} -> std::same_as<typename kth_element_reference_type<ColorBase, 0>::type>;
+    dynamic_at_c(cb, 0) = dynamic_at_c(cb, 0);
 };
 
 /// \ingroup ColorBaseConcept
@@ -279,14 +239,7 @@ struct MutableHomogeneousColorBaseConcept
 /// };
 /// \endcode
 template <typename ColorBase>
-struct HomogeneousColorBaseValueConcept
-{
-    void constraints()
-    {
-        gil_function_requires<MutableHomogeneousColorBaseConcept<ColorBase>>();
-        gil_function_requires<Regular<ColorBase>>();
-    }
-};
+concept HomogeneousColorBaseValueConcept = MutableHomogeneousColorBaseConcept<ColorBase> && std::regular<ColorBase>;
 
 /// \ingroup ColorBaseConcept
 /// \brief Two color bases are compatible if they have the same color space and their elements are compatible, semantic-pairwise.

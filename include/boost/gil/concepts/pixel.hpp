@@ -8,11 +8,9 @@
 #ifndef BOOST_GIL_CONCEPTS_PIXEL_HPP
 #define BOOST_GIL_CONCEPTS_PIXEL_HPP
 
-#include <boost/gil/concepts/basic.hpp>
 #include <boost/gil/concepts/channel.hpp>
 #include <boost/gil/concepts/color.hpp>
 #include <boost/gil/concepts/color_base.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
 #include <boost/gil/concepts/fwd.hpp>
 #include <boost/gil/concepts/pixel_based.hpp>
 #include <boost/gil/concepts/detail/type_traits.hpp>

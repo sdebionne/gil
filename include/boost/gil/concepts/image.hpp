@@ -8,8 +8,6 @@
 #ifndef BOOST_GIL_CONCEPTS_IMAGE_HPP
 #define BOOST_GIL_CONCEPTS_IMAGE_HPP
 
-#include <boost/gil/concepts/basic.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
 #include <boost/gil/concepts/fwd.hpp>
 #include <boost/gil/concepts/image_view.hpp>
 #include <boost/gil/concepts/point.hpp>

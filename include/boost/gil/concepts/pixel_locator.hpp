@@ -8,8 +8,6 @@
 #ifndef BOOST_GIL_CONCEPTS_PIXEL_LOCATOR_HPP
 #define BOOST_GIL_CONCEPTS_PIXEL_LOCATOR_HPP
 
-#include <boost/gil/concepts/basic.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
 #include <boost/gil/concepts/fwd.hpp>
 #include <boost/gil/concepts/pixel.hpp>
 #include <boost/gil/concepts/pixel_dereference.hpp>

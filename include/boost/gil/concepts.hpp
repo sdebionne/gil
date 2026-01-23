@@ -13,7 +13,6 @@
 #include <boost/gil/concepts/channel.hpp>
 #include <boost/gil/concepts/color.hpp>
 #include <boost/gil/concepts/color_base.hpp>
-#include <boost/gil/concepts/concept_check.hpp>
 #include <boost/gil/concepts/image.hpp>
 #include <boost/gil/concepts/image_view.hpp>
 #include <boost/gil/concepts/pixel.hpp>
