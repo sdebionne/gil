@@ -14,7 +14,7 @@
 #include <utility>
 
 #include "test_fixture.hpp"
-#include "test_utility_output_stream.hpp"
+#include "test_utility_output_stream_pixel.hpp"
 
 namespace gil = boost::gil;
 namespace fixture = boost::gil::test::fixture;

@@ -17,7 +17,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "test_utility_output_stream.hpp"
+#include "test_utility_output_stream_pixel.hpp"
 
 namespace boost { namespace gil { namespace test { namespace fixture {
 

@@ -6,7 +6,7 @@
 // See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt
 //
-#include <boost/gil.hpp>
+
 #include <boost/gil/channel_numeric_operations.hpp>
 
 #include <boost/core/lightweight_test.hpp>
@@ -14,7 +14,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include "test_utility_output_stream.hpp"
+#include "test_utility_output_stream_pixel.hpp"
 #include "core/channel/test_fixture.hpp"
 
 namespace gil = boost::gil;
